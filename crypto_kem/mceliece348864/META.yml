@@ -1,0 +1,25 @@
+name: Classic McEliece
+type: signature
+claimed-nist-level: 1
+length-public-key: 0
+length-secret-key: 0
+length-signature: 0
+nistkat-sha256: 23b7d52a268bbd8633d139b64a1b0e3263777cb2b074f7af0a7fd315afe94d18
+testvectors-sha256: d647039ae7e1785414c64934d5ae37518f259acab95d6a6e873e9b6d3ad63dfd
+principal-submitters:
+  - Daniel J. Bernstein
+  - Tung Chou
+  - Tanja Lange
+  - Ingo von Maurich
+  - Rafael Misoczki
+  - Ruben Niederhagen
+  - Edoardo Persichetti
+  - Christiane Peters
+  - Peter Schwabe
+  - Nicolas Sendrier
+  - Jakub Szefer
+  - Wen Wang
+auxiliary-submitters: []
+implementations:
+    - name: clean
+      version: SUPERCOP-20191017

@@ -1,5 +1,6 @@
 bin/
-crypto_kem/
+crypto_kem/*/*
+!crypto_kem/*/META.yml
 
 *.o
 *.a
