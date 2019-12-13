@@ -1,8 +1,17 @@
-#ifndef aes256ctr_H
-#define aes256ctr_H
+#ifndef MC_aes256ctr_H
+#define MC_aes256ctr_H
 
-#include "crypto_stream_aes256ctr.h"
+#include <stddef.h>
+#include <stdint.h>
 
-#define aes256ctr crypto_stream_aes256ctr
+#include "aes.h"
+
+
+void MC_aes256ctr(
+    uint8_t *out,
+    size_t outlen,
+    const uint8_t nonce[AESCTR_NONCEBYTES],
+    const uint8_t key[AES256_KEYBYTES]
+);
 
 #endif
