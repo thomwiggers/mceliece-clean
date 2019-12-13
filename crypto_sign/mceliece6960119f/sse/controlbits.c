@@ -114,12 +114,12 @@ static void sort(int n, uint32_t x[n]) {
     merge(n / 2, x, 1);
 }
 
-void sort_63b(int n, uint64_t x[n]) {
+void MC_sort_63b(int n, uint64_t x[n]) {
     if (n <= 1) {
         return;
     }
-    sort_63b(n / 2, x);
-    sort_63b(n / 2, x + n / 2);
+    MC_sort_63b(n / 2, x);
+    MC_sort_63b(n / 2, x + n / 2);
     merge_63b(n / 2, x, 1);
 }
 
@@ -254,7 +254,7 @@ static void controlbitsfrompermutation(int w, int n, int step, int off, unsigned
 
 /* input: pi, a permutation*/
 /* output: out, control bits w.r.t. pi */
-void controlbits(unsigned char *out, uint32_t *pi) {
+void MC_controlbits(unsigned char *out, uint32_t *pi) {
     unsigned int i;
     unsigned char c[ (2 * GFBITS - 1) * (1 << GFBITS) / 16 ];
 

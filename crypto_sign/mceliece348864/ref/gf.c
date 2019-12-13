@@ -6,7 +6,7 @@
 
 #include "params.h"
 
-gf gf_iszero(gf a) {
+gf MC_gf_iszero(gf a) {
     uint32_t t = a;
 
     t -= 1;
@@ -15,11 +15,11 @@ gf gf_iszero(gf a) {
     return (gf) t;
 }
 
-gf gf_add(gf in0, gf in1) {
+gf MC_gf_add(gf in0, gf in1) {
     return in0 ^ in1;
 }
 
-gf gf_mul(gf in0, gf in1) {
+gf MC_gf_mul(gf in0, gf in1) {
     int i;
 
     uint32_t tmp;
@@ -71,44 +71,44 @@ static inline gf gf_sq(gf in) {
     return x & ((1 << GFBITS) - 1);
 }
 
-gf gf_inv(gf in) {
+gf MC_gf_inv(gf in) {
     gf tmp_11;
     gf tmp_1111;
 
     gf out = in;
 
     out = gf_sq(out);
-    tmp_11 = gf_mul(out, in); // 11
+    tmp_11 = MC_gf_mul(out, in); // 11
 
     out = gf_sq(tmp_11);
     out = gf_sq(out);
-    tmp_1111 = gf_mul(out, tmp_11); // 1111
+    tmp_1111 = MC_gf_mul(out, tmp_11); // 1111
 
     out = gf_sq(tmp_1111);
     out = gf_sq(out);
     out = gf_sq(out);
     out = gf_sq(out);
-    out = gf_mul(out, tmp_1111); // 11111111
+    out = MC_gf_mul(out, tmp_1111); // 11111111
 
     out = gf_sq(out);
     out = gf_sq(out);
-    out = gf_mul(out, tmp_11); // 1111111111
+    out = MC_gf_mul(out, tmp_11); // 1111111111
 
     out = gf_sq(out);
-    out = gf_mul(out, in); // 11111111111
+    out = MC_gf_mul(out, in); // 11111111111
 
     return gf_sq(out); // 111111111110
 }
 
 /* input: field element den, num */
 /* return: (num/den) */
-gf gf_frac(gf den, gf num) {
-    return gf_mul(gf_inv(den), num);
+gf MC_gf_frac(gf den, gf num) {
+    return MC_gf_mul(MC_gf_inv(den), num);
 }
 
 /* input: in0, in1 in GF((2^m)^t)*/
 /* output: out = in0*in1 */
-void GF_mul(gf *out, gf *in0, gf *in1) {
+void MC_GF_mul(gf *out, gf *in0, gf *in1) {
     int i, j;
 
     gf prod[ SYS_T * 2 - 1 ];
@@ -119,16 +119,16 @@ void GF_mul(gf *out, gf *in0, gf *in1) {
 
     for (i = 0; i < SYS_T; i++)
         for (j = 0; j < SYS_T; j++) {
-            prod[i + j] ^= gf_mul(in0[i], in1[j]);
+            prod[i + j] ^= MC_gf_mul(in0[i], in1[j]);
         }
 
     //
 
     for (i = (SYS_T - 1) * 2; i >= SYS_T; i--) {
-        prod[i - SYS_T +  9] ^= gf_mul(prod[i], (gf)  877);
-        prod[i - SYS_T +  7] ^= gf_mul(prod[i], (gf) 2888);
-        prod[i - SYS_T +  5] ^= gf_mul(prod[i], (gf) 1781);
-        prod[i - SYS_T +  0] ^= gf_mul(prod[i], (gf)  373);
+        prod[i - SYS_T +  9] ^= MC_gf_mul(prod[i], (gf)  877);
+        prod[i - SYS_T +  7] ^= MC_gf_mul(prod[i], (gf) 2888);
+        prod[i - SYS_T +  5] ^= MC_gf_mul(prod[i], (gf) 1781);
+        prod[i - SYS_T +  0] ^= MC_gf_mul(prod[i], (gf)  373);
     }
 
     for (i = 0; i < SYS_T; i++) {

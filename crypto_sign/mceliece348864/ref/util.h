@@ -8,15 +8,15 @@
 #include "gf.h"
 #include <stdint.h>
 
-void store2(unsigned char *, gf);
-uint16_t load2(const unsigned char *);
+void MC_store2(unsigned char *, gf);
+uint16_t MC_load2(const unsigned char *);
 
-uint32_t load4(const unsigned char *);
+uint32_t MC_load4(const unsigned char *);
 
-void store8(unsigned char *, uint64_t );
-uint64_t load8(const unsigned char *);
+void MC_store8(unsigned char *, uint64_t );
+uint64_t MC_load8(const unsigned char *);
 
-gf bitrev(gf);
+gf MC_bitrev(gf);
 
 #endif
 

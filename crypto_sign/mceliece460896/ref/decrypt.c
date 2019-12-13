@@ -2,7 +2,6 @@
   This file is for Niederreiter decryption
 */
 
-#include <stdio.h>
 #include "decrypt.h"
 
 #include "params.h"
@@ -18,7 +17,7 @@
 /*         c, ciphertext */
 /* output: e, error vector */
 /* return: 0 for success; 1 for failure */
-int decrypt(unsigned char *e, const unsigned char *sk, const unsigned char *c) {
+int MC_decrypt(unsigned char *e, const unsigned char *sk, const unsigned char *c) {
     int i, w = 0;
     uint16_t check;
 
@@ -44,19 +43,19 @@ int decrypt(unsigned char *e, const unsigned char *sk, const unsigned char *c) {
     }
 
     for (i = 0; i < SYS_T; i++) {
-        g[i] = load2(sk);
+        g[i] = MC_load2(sk);
         g[i] &= GFMASK;
         sk += 2;
     }
     g[ SYS_T ] = 1;
 
-    support_gen(L, sk);
+    MC_support_gen(L, sk);
 
-    synd(s, g, L, r);
+    MC_synd(s, g, L, r);
 
-    bm(locator, s);
+    MC_bm(locator, s);
 
-    root(images, locator, L);
+    MC_root(images, locator, L);
 
     //
 
@@ -65,26 +64,14 @@ int decrypt(unsigned char *e, const unsigned char *sk, const unsigned char *c) {
     }
 
     for (i = 0; i < SYS_N; i++) {
-        t = gf_iszero(images[i]) & 1;
+        t = MC_gf_iszero(images[i]) & 1;
 
         e[ i / 8 ] |= t << (i % 8);
         w += t;
 
     }
 
-    #ifdef KAT
-    {
-        int k;
-        printf("decrypt e: positions");
-        for (k = 0; k < SYS_N; ++k)
-            if (e[k / 8] & (1 << (k & 7))) {
-                printf(" %d", k);
-            }
-        printf("\n");
-    }
-    #endif
-
-    synd(s_cmp, g, L, e);
+    MC_synd(s_cmp, g, L, e);
 
     //
 

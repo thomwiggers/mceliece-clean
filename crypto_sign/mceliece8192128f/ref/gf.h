@@ -9,13 +9,13 @@
 
 typedef uint16_t gf;
 
-gf gf_iszero(gf);
-gf gf_add(gf, gf);
-gf gf_mul(gf, gf);
-gf gf_frac(gf, gf);
-gf gf_inv(gf);
+gf MC_gf_iszero(gf);
+gf MC_gf_add(gf, gf);
+gf MC_gf_mul(gf, gf);
+gf MC_gf_frac(gf, gf);
+gf MC_gf_inv(gf);
 
-void GF_mul(gf *, gf *, gf *);
+void MC_GF_mul(gf *, gf *, gf *);
 
 #endif
 

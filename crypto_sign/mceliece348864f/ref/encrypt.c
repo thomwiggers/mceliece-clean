@@ -9,8 +9,6 @@
 #include "randombytes.h"
 
 #include <stdint.h>
-#include <stdio.h>
-#include <assert.h>
 #include <string.h>
 
 #include "gf.h"
@@ -85,7 +83,7 @@ static void gen_e(unsigned char *e) {
 
 /* input: public key pk, error vector e */
 /* output: syndrome s */
-void syndrome(unsigned char *s, const unsigned char *pk, unsigned char *e) {
+static void syndrome(unsigned char *s, const unsigned char *pk, unsigned char *e) {
     unsigned char b, row[SYS_N / 8];
     const unsigned char *pk_ptr = pk;
 
@@ -122,20 +120,8 @@ void syndrome(unsigned char *s, const unsigned char *pk, unsigned char *e) {
     }
 }
 
-void encrypt(unsigned char *s, const unsigned char *pk, unsigned char *e) {
+void MC_encrypt(unsigned char *s, const unsigned char *pk, unsigned char *e) {
     gen_e(e);
-
-    #ifdef KAT
-    {
-        int k;
-        printf("encrypt e: positions");
-        for (k = 0; k < SYS_N; ++k)
-            if (e[k / 8] & (1 << (k & 7))) {
-                printf(" %d", k);
-            }
-        printf("\n");
-    }
-    #endif
 
     syndrome(s, pk, e);
 }

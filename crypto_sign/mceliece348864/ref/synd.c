@@ -7,11 +7,10 @@
 #include "params.h"
 #include "root.h"
 
-#include <stdio.h>
 
 /* input: Goppa polynomial f, support L, received word r */
 /* output: out, the syndrome of length 2t */
-void synd(gf *out, gf *f, gf *L, unsigned char *r) {
+void MC_synd(gf *out, gf *f, gf *L, unsigned char *r) {
     int i, j;
     gf e, e_inv, c;
 
@@ -22,12 +21,12 @@ void synd(gf *out, gf *f, gf *L, unsigned char *r) {
     for (i = 0; i < SYS_N; i++) {
         c = (r[i / 8] >> (i % 8)) & 1;
 
-        e = eval(f, L[i]);
-        e_inv = gf_inv(gf_mul(e, e));
+        e = MC_eval(f, L[i]);
+        e_inv = MC_gf_inv(MC_gf_mul(e, e));
 
         for (j = 0; j < 2 * SYS_T; j++) {
-            out[j] = gf_add(out[j], gf_mul(e_inv, c));
-            e_inv = gf_mul(e_inv, L[i]);
+            out[j] = MC_gf_add(out[j], MC_gf_mul(e_inv, c));
+            e_inv = MC_gf_mul(e_inv, L[i]);
         }
     }
 }

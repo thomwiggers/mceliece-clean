@@ -14,7 +14,7 @@
 #include <stdint.h>
 #include <string.h>
 
-int crypto_kem_enc(
+int MC_crypto_kem_enc(
     unsigned char *c,
     unsigned char *key,
     const unsigned char *pk
@@ -23,9 +23,7 @@ int crypto_kem_enc(
     unsigned char *e = two_e + 1;
     unsigned char one_ec[ 1 + SYS_N / 8 + (SYND_BYTES + 32) ] = {1};
 
-    //
-
-    encrypt(c, pk, e);
+    MC_encrypt(c, pk, e);
 
     crypto_hash_32b(c + SYND_BYTES, two_e, sizeof(two_e));
 
@@ -37,7 +35,7 @@ int crypto_kem_enc(
     return 0;
 }
 
-int crypto_kem_dec(
+int MC_crypto_kem_dec(
     unsigned char *key,
     const unsigned char *c,
     const unsigned char *sk
@@ -57,7 +55,7 @@ int crypto_kem_dec(
 
     //
 
-    ret_decrypt = decrypt(e, sk + SYS_N / 8, c);
+    ret_decrypt = MC_decrypt(e, sk + SYS_N / 8, c);
 
     crypto_hash_32b(conf, two_e, sizeof(two_e));
 
@@ -82,7 +80,7 @@ int crypto_kem_dec(
     return 0;
 }
 
-int crypto_kem_keypair
+int MC_crypto_kem_keypair
 (
     unsigned char *pk,
     unsigned char *sk
@@ -105,30 +103,30 @@ int crypto_kem_keypair
         memcpy(seed, &r[ sizeof(r) - 32 ], 32);
 
         for (i = 0; i < SYS_T; i++) {
-            f[i] = load2(rp + i * 2);
+            f[i] = MC_load2(rp + i * 2);
         }
         rp += sizeof(f);
-        if (genpoly_gen(irr, f)) {
+        if (MC_genpoly_gen(irr, f)) {
             continue;
         }
 
         for (i = 0; i < (1 << GFBITS); i++) {
-            perm[i] = load4(rp + i * 4);
+            perm[i] = MC_load4(rp + i * 4);
         }
         rp += sizeof(perm);
-        if (perm_check(perm)) {
+        if (MC_perm_check(perm)) {
             continue;
         }
 
         for (i = 0; i < SYS_T;   i++) {
-            store2(sk + SYS_N / 8 + i * 2, irr[i]);
+            MC_store2(sk + SYS_N / 8 + i * 2, irr[i]);
         }
-        if (pk_gen(pk, sk + SYS_N / 8, perm)) {
+        if (MC_pk_gen(pk, sk + SYS_N / 8, perm)) {
             continue;
         }
 
         memcpy(sk, rp, SYS_N / 8);
-        controlbits(sk + SYS_N / 8 + IRR_BYTES, perm);
+        MC_controlbits(sk + SYS_N / 8 + IRR_BYTES, perm);
 
         break;
     }

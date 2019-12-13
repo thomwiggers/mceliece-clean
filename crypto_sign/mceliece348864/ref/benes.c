@@ -2,6 +2,8 @@
   This file is for Benes network related functions
 */
 
+#include "benes.h"
+
 #include "util.h"
 #include "transpose.h"
 #include "params.h"
@@ -28,7 +30,7 @@ static void layer(uint64_t *data, uint64_t *bits, int lgs) {
 /*        bits, condition bits of the Benes network */
 /*        rev, 0 for normal application; !0 for inverse */
 /* output: r, permuted bits */
-void apply_benes(unsigned char *r, const unsigned char *bits, int rev) {
+void MC_apply_benes(unsigned char *r, const unsigned char *bits, int rev) {
     int i;
 
     const unsigned char *cond_ptr;
@@ -40,7 +42,7 @@ void apply_benes(unsigned char *r, const unsigned char *bits, int rev) {
     //
 
     for (i = 0; i < 64; i++) {
-        bs[i] = load8(r + i * 8);
+        bs[i] = MC_load8(r + i * 8);
     }
 
     if (rev == 0) {
@@ -53,57 +55,56 @@ void apply_benes(unsigned char *r, const unsigned char *bits, int rev) {
 
     //
 
-    transpose_64x64(bs, bs);
+    MC_transpose_64x64(bs, bs);
 
     for (low = 0; low <= 5; low++) {
         for (i = 0; i < 64; i++) {
-            cond[i] = load4(cond_ptr + i * 4);
+            cond[i] = MC_load4(cond_ptr + i * 4);
         }
-        transpose_64x64(cond, cond);
+        MC_transpose_64x64(cond, cond);
         layer(bs, cond, low);
         cond_ptr += inc;
     }
 
-    transpose_64x64(bs, bs);
+    MC_transpose_64x64(bs, bs);
 
     for (low = 0; low <= 5; low++) {
         for (i = 0; i < 32; i++) {
-            cond[i] = load8(cond_ptr + i * 8);
+            cond[i] = MC_load8(cond_ptr + i * 8);
         }
         layer(bs, cond, low);
         cond_ptr += inc;
     }
     for (low = 4; low >= 0; low--) {
         for (i = 0; i < 32; i++) {
-            cond[i] = load8(cond_ptr + i * 8);
+            cond[i] = MC_load8(cond_ptr + i * 8);
         }
         layer(bs, cond, low);
         cond_ptr += inc;
     }
 
-    transpose_64x64(bs, bs);
+    MC_transpose_64x64(bs, bs);
 
     for (low = 5; low >= 0; low--) {
         for (i = 0; i < 64; i++) {
-            cond[i] = load4(cond_ptr + i * 4);
+            cond[i] = MC_load4(cond_ptr + i * 4);
         }
-        transpose_64x64(cond, cond);
+        MC_transpose_64x64(cond, cond);
         layer(bs, cond, low);
         cond_ptr += inc;
     }
 
-    transpose_64x64(bs, bs);
+    MC_transpose_64x64(bs, bs);
 
-    //
 
     for (i = 0; i < 64; i++) {
-        store8(r + i * 8, bs[i]);
+        MC_store8(r + i * 8, bs[i]);
     }
 }
 
 /* input: condition bits c */
 /* output: support s */
-void support_gen(gf *s, const unsigned char *c) {
+void MC_support_gen(gf *s, const unsigned char *c) {
     gf a;
     int i, j;
     unsigned char L[ GFBITS ][ (1 << GFBITS) / 8 ];
@@ -114,7 +115,7 @@ void support_gen(gf *s, const unsigned char *c) {
         }
 
     for (i = 0; i < (1 << GFBITS); i++) {
-        a = bitrev((gf) i);
+        a = MC_bitrev((gf) i);
 
         for (j = 0; j < GFBITS; j++) {
             L[j][ i / 8 ] |= ((a >> j) & 1) << (i % 8);
@@ -122,7 +123,7 @@ void support_gen(gf *s, const unsigned char *c) {
     }
 
     for (j = 0; j < GFBITS; j++) {
-        apply_benes(L[j], c, 0);
+        MC_apply_benes(L[j], c, 0);
     }
 
     for (i = 0; i < SYS_N; i++) {

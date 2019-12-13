@@ -2,16 +2,16 @@
   This file is for the Berlekamp-Massey algorithm
   see http://crypto.stanford.edu/~mironov/cs359/massey.pdf
 */
+#include "bm.h"
 
 #include "params.h"
-#include "gf.h"
 
 #define min(a, b) ((a < b) ? a : b)
 
 /* the Berlekamp-Massey algorithm */
 /* input: s, sequence of field elements */
 /* output: out, minimal polynomial of s */
-void bm(gf *out, gf *s) {
+void MC_bm(gf *out, gf *s) {
     int i;
 
     uint16_t N = 0;
@@ -39,7 +39,7 @@ void bm(gf *out, gf *s) {
         d = 0;
 
         for (i = 0; i <= min(N, SYS_T); i++) {
-            d ^= gf_mul(C[i], s[ N - i]);
+            d ^= MC_gf_mul(C[i], s[ N - i]);
         }
 
         mne = d;
@@ -56,10 +56,10 @@ void bm(gf *out, gf *s) {
             T[i] = C[i];
         }
 
-        f = gf_frac(b, d);
+        f = MC_gf_frac(b, d);
 
         for (i = 0; i <= SYS_T; i++) {
-            C[i] ^= gf_mul(f, B[i]) & mne;
+            C[i] ^= MC_gf_mul(f, B[i]) & mne;
         }
 
         L = (L & ~mle) | ((N + 1 - L) & mle);

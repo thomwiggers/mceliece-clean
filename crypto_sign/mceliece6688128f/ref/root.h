@@ -1,14 +1,14 @@
+#ifndef ROOT_H
+#define ROOT_H
 /*
   This file is for evaluating a polynomial at one or more field elements
 */
 
-#ifndef ROOT_H
-#define ROOT_H
 
 #include "gf.h"
 
-gf eval(gf *, gf);
-void root(gf *, gf *, gf *);
+gf MC_eval(gf *, gf);
+void MC_root(gf *, gf *, gf *);
 
 #endif
 

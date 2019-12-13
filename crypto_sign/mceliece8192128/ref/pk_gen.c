@@ -3,8 +3,6 @@
 */
 
 #include <stdint.h>
-#include <stdio.h>
-#include <assert.h>
 #include <string.h>
 
 #include "controlbits.h"
@@ -16,7 +14,7 @@
 
 /* input: secret key sk */
 /* output: public key pk */
-int pk_gen(unsigned char *pk, unsigned char *sk, uint32_t *perm) {
+int MC_pk_gen(unsigned char *pk, unsigned char *sk, uint32_t *perm) {
     int i, j, k;
     int row, c;
 
@@ -35,7 +33,7 @@ int pk_gen(unsigned char *pk, unsigned char *sk, uint32_t *perm) {
     g[ SYS_T ] = 1;
 
     for (i = 0; i < SYS_T; i++) {
-        g[i] = load2(sk);
+        g[i] = MC_load2(sk);
         g[i] &= GFMASK;
         sk += 2;
     }
@@ -46,21 +44,21 @@ int pk_gen(unsigned char *pk, unsigned char *sk, uint32_t *perm) {
         buf[i] |= i;
     }
 
-    sort_63b(1 << GFBITS, buf);
+    MC_sort_63b(1 << GFBITS, buf);
 
     for (i = 0; i < (1 << GFBITS); i++) {
         perm[i] = buf[i] & GFMASK;
     }
     for (i = 0; i < SYS_N;         i++) {
-        L[i] = bitrev(perm[i]);
+        L[i] = MC_bitrev(perm[i]);
     }
 
     // filling the matrix
 
-    root(inv, g, L);
+    MC_root(inv, g, L);
 
     for (i = 0; i < SYS_N; i++) {
-        inv[i] = gf_inv(inv[i]);
+        inv[i] = MC_gf_inv(inv[i]);
     }
 
     for (i = 0; i < PK_NROWS; i++)
@@ -91,7 +89,7 @@ int pk_gen(unsigned char *pk, unsigned char *sk, uint32_t *perm) {
             }
 
         for (j = 0; j < SYS_N; j++) {
-            inv[j] = gf_mul(inv[j], L[j]);
+            inv[j] = MC_gf_mul(inv[j], L[j]);
         }
 
     }

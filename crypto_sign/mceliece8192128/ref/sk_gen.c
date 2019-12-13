@@ -13,7 +13,7 @@
 /* input: f, element in GF((2^m)^t) */
 /* output: out, minimal polynomial of f */
 /* return: 0 for success and -1 for failure */
-int genpoly_gen(gf *out, gf *f) {
+int MC_genpoly_gen(gf *out, gf *f) {
     int i, j, k, c;
 
     gf mat[ SYS_T + 1 ][ SYS_T ];
@@ -32,14 +32,14 @@ int genpoly_gen(gf *out, gf *f) {
     }
 
     for (j = 2; j <= SYS_T; j++) {
-        GF_mul(mat[j], mat[j - 1], f);
+        MC_GF_mul(mat[j], mat[j - 1], f);
     }
 
     // gaussian
 
     for (j = 0; j < SYS_T; j++) {
         for (k = j + 1; k < SYS_T; k++) {
-            mask = gf_iszero(mat[ j ][ j ]);
+            mask = MC_gf_iszero(mat[ j ][ j ]);
 
             for (c = j; c < SYS_T + 1; c++) {
                 mat[ c ][ j ] ^= mat[ c ][ k ] & mask;
@@ -51,10 +51,10 @@ int genpoly_gen(gf *out, gf *f) {
             return -1;
         }
 
-        inv = gf_inv(mat[j][j]);
+        inv = MC_gf_inv(mat[j][j]);
 
         for (c = j; c < SYS_T + 1; c++) {
-            mat[ c ][ j ] = gf_mul(mat[ c ][ j ], inv) ;
+            mat[ c ][ j ] = MC_gf_mul(mat[ c ][ j ], inv) ;
         }
 
         for (k = 0; k < SYS_T; k++) {
@@ -62,7 +62,7 @@ int genpoly_gen(gf *out, gf *f) {
                 t = mat[ j ][ k ];
 
                 for (c = j; c < SYS_T + 1; c++) {
-                    mat[ c ][ k ] ^= gf_mul(mat[ c ][ j ], t);
+                    mat[ c ][ k ] ^= MC_gf_mul(mat[ c ][ j ], t);
                 }
             }
         }
@@ -78,7 +78,7 @@ int genpoly_gen(gf *out, gf *f) {
 /* input: permutation p represented as a list of 32-bit intergers */
 /* output: -1 if some interger repeats in p */
 /*          0 otherwise */
-int perm_check(uint32_t *p) {
+int MC_perm_check(uint32_t *p) {
     int i;
     uint64_t list[1 << GFBITS];
 
@@ -86,7 +86,7 @@ int perm_check(uint32_t *p) {
         list[i] = p[i];
     }
 
-    sort_63b(1 << GFBITS, list);
+    MC_sort_63b(1 << GFBITS, list);
 
     for (i = 1; i < (1 << GFBITS); i++)
         if (list[i - 1] == list[i]) {

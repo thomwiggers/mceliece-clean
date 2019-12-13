@@ -6,12 +6,12 @@
 
 #include "params.h"
 
-void store2(unsigned char *dest, gf a) {
+void MC_store2(unsigned char *dest, gf a) {
     dest[0] = a & 0xFF;
     dest[1] = a >> 8;
 }
 
-uint16_t load2(const unsigned char *src) {
+uint16_t MC_load2(const unsigned char *src) {
     uint16_t a;
 
     a = src[1];
@@ -21,7 +21,7 @@ uint16_t load2(const unsigned char *src) {
     return a & GFMASK;
 }
 
-uint32_t load4(const unsigned char *in) {
+uint32_t MC_load4(const unsigned char *in) {
     int i;
     uint32_t ret = in[3];
 
@@ -33,7 +33,7 @@ uint32_t load4(const unsigned char *in) {
     return ret;
 }
 
-void store8(unsigned char *out, uint64_t in) {
+void MC_store8(unsigned char *out, uint64_t in) {
     out[0] = (in >> 0x00) & 0xFF;
     out[1] = (in >> 0x08) & 0xFF;
     out[2] = (in >> 0x10) & 0xFF;
@@ -44,7 +44,7 @@ void store8(unsigned char *out, uint64_t in) {
     out[7] = (in >> 0x38) & 0xFF;
 }
 
-uint64_t load8(const unsigned char *in) {
+uint64_t MC_load8(const unsigned char *in) {
     int i;
     uint64_t ret = in[7];
 
@@ -56,7 +56,7 @@ uint64_t load8(const unsigned char *in) {
     return ret;
 }
 
-gf bitrev(gf a) {
+gf MC_bitrev(gf a) {
     a = ((a & 0x00FF) << 8) | ((a & 0xFF00) >> 8);
     a = ((a & 0x0F0F) << 4) | ((a & 0xF0F0) >> 4);
     a = ((a & 0x3333) << 2) | ((a & 0xCCCC) >> 2);
