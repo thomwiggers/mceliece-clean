@@ -23,7 +23,7 @@ jobs:
       - name: Run tests
         run: |
           cd test
-          python test_functest.py
+          pytest -nauto
 
 
 # vim : set ts=2 sw=2 et :

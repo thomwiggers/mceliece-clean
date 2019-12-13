@@ -10,7 +10,7 @@
 
 #include <stdint.h>
 
-typedef char bit;
+typedef uint8_t bit;
 
 #define N (1 << GFBITS)
 
