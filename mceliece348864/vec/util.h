@@ -1,1 +1,0 @@
-/home/thom/git/phd/mceliece-clean/mceliece348864f/vec/util.h

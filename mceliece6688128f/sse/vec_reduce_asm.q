@@ -1,1 +1,0 @@
-/home/thom/git/phd/mceliece-clean/mceliece460896/avx/vec_reduce_asm.q
