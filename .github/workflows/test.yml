@@ -9,6 +9,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
+      - name: Install dependencies
+        run: |
+          sudo apt install -y astyle clang-tidy valgrind
       - name: Setup Python 3.7
         uses: actions/setup-python@v1
         with:
