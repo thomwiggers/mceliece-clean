@@ -11,6 +11,8 @@ import subprocess
 
 IMPLEMENTATIONS = {
     ('mceliece348864', 'ref', 'clean'),
+    ('mceliece348864f', 'ref', 'clean'),
+    ('mceliece460896', 'ref', 'clean'),
 }
 
 

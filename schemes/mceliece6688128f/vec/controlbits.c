@@ -4,13 +4,11 @@
 */
 
 #include "controlbits.h"
-
-#include "randombytes.h"
 #include "params.h"
 
 #include <stdint.h>
 
-typedef char bit;
+typedef unsigned char bit;
 
 static bit is_smaller(uint32_t a, uint32_t b) {
     uint32_t ret = 0;

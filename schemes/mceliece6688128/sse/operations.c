@@ -15,13 +15,13 @@
 #include <string.h>
 
 int MC_crypto_kem_enc(
-    unsigned char *c,
-    unsigned char *key,
-    const unsigned char *pk
+    uint8_t *c,
+    uint8_t *key,
+    const uint8_t *pk
 ) {
-    unsigned char two_e[ 1 + SYS_N / 8 ] = {2};
-    unsigned char *e = two_e + 1;
-    unsigned char one_ec[ 1 + SYS_N / 8 + (SYND_BYTES + 32) ] = {1};
+    uint8_t two_e[ 1 + SYS_N / 8 ] = {2};
+    uint8_t *e = two_e + 1;
+    uint8_t one_ec[ 1 + SYS_N / 8 + (SYND_BYTES + 32) ] = {1};
 
     MC_encrypt(c, pk, e);
 
@@ -36,22 +36,22 @@ int MC_crypto_kem_enc(
 }
 
 int MC_crypto_kem_dec(
-    unsigned char *key,
-    const unsigned char *c,
-    const unsigned char *sk
+    uint8_t *key,
+    const uint8_t *c,
+    const uint8_t *sk
 ) {
     int i;
 
-    unsigned char ret_confirm = 0;
-    unsigned char ret_decrypt = 0;
+    uint8_t ret_confirm = 0;
+    uint8_t ret_decrypt = 0;
 
     uint16_t m;
 
-    unsigned char conf[32];
-    unsigned char two_e[ 1 + SYS_N / 8 ] = {2};
-    unsigned char *e = two_e + 1;
-    unsigned char preimage[ 1 + SYS_N / 8 + (SYND_BYTES + 32) ];
-    unsigned char *x = preimage;
+    uint8_t conf[32];
+    uint8_t two_e[ 1 + SYS_N / 8 ] = {2};
+    uint8_t *e = two_e + 1;
+    uint8_t preimage[ 1 + SYS_N / 8 + (SYND_BYTES + 32) ];
+    uint8_t *x = preimage;
 
     //
 
@@ -82,14 +82,14 @@ int MC_crypto_kem_dec(
 
 int MC_crypto_kem_keypair
 (
-    unsigned char *pk,
-    unsigned char *sk
+    uint8_t *pk,
+    uint8_t *sk
 ) {
     int i;
-    unsigned char seed[ 32 ];
-    unsigned char r[ SYS_T * 2 + (1 << GFBITS)*sizeof(uint32_t) + SYS_N / 8 + 32 ];
-    unsigned char nonce[ 16 ] = {0};
-    unsigned char *rp;
+    uint8_t seed[ 32 ];
+    uint8_t r[ SYS_T * 2 + (1 << GFBITS)*sizeof(uint32_t) + SYS_N / 8 + 32 ];
+    uint8_t nonce[ 16 ] = {0};
+    uint8_t *rp;
 
     gf f[ SYS_T ]; // element in GF(2^mt)
     gf irr[ SYS_T ]; // Goppa polynomial

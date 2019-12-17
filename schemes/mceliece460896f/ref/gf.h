@@ -1,9 +1,9 @@
+#ifndef MC_GF_H
+#define MC_GF_H
 /*
   This file is for functions for field arithmetic
 */
 
-#ifndef GF_H
-#define GF_H
 
 #include <stdint.h>
 
