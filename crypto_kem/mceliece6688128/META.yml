@@ -1,6 +1,6 @@
 name: Classic McEliece 6688128
 type: kem
-claimed-nist-level: 1
+claimed-nist-level: 5
 claimed-security: IND-CCA2
 length-public-key: 1044992
 length-secret-key: 13892

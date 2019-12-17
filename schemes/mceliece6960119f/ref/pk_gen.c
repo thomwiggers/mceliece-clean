@@ -56,7 +56,7 @@ static inline int ctz(uint64_t in)
 
 	for (i = 0; i < 64; i++)
 	{
-		b = (in >> i) & 1;
+		b = (int)(in >> i) & 1;
 		m |= b;
 		r += (m^1) & (b^1);
 	}

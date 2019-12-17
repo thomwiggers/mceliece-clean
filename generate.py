@@ -36,6 +36,7 @@ def astyle(*paths):
          *paths])
 
 
+
 for (scheme, impl, dst) in IMPLEMENTATIONS:
     namespace = f'PQCLEAN_{scheme}_{dst}_'.upper()
     src_dir = os.path.join('schemes', scheme, impl)
@@ -55,6 +56,16 @@ for (scheme, impl, dst) in IMPLEMENTATIONS:
         replace_in_file(dest_file, 'MC_', namespace)
 
     astyle(*sourcefiles)
+
+    subprocess.run([
+        'clang-tidy', '-fix-errors', '-quiet', '-header-filter=.*',
+        *[file for file in sourcefiles
+          if file[-2:] in ('.c', '*.h')],
+        '--',
+        '-iquote', os.path.join('common'),
+        '-iquote', dest_dir,
+    ], capture_output=True)
+
 
     replace_in_file(os.path.join(dest_dir, 'Makefile'),
                     'libmceliece_clean.a',

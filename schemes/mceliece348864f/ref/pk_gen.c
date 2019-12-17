@@ -56,7 +56,7 @@ static inline int ctz(uint64_t in)
 
 	for (i = 0; i < 64; i++)
 	{
-		b = (in >> i) & 1;
+		b = (int)(in >> i) & 1;
 		m |= b;
 		r += (m^1) & (b^1);
 	}
@@ -86,8 +86,9 @@ static int mov_columns(uint8_t mat[][ SYS_N/8 ], uint32_t * perm)
 
 	// extract the 32x64 matrix
 
-	for (i = 0; i < 32; i++)
+	for (i = 0; i < 32; i++) {
 		buf[i] = MC_load8( &mat[ row + i ][ block_idx ] );
+    }
 
 	// compute the column indices of pivots by Gaussian elimination.
 	// the indices are stored in ctz_list

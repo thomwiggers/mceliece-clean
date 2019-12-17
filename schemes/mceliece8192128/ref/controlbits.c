@@ -128,7 +128,7 @@ void MC_sort_63b(int n, uint64_t *x) {
 /* y[pi[i]] = x[i] */
 /* requires n = 2^w */
 /* requires pi to be a permutation */
-static void composeinv(int n, uint32_t *y, uint32_t *x, uint32_t *pi) { // NC
+static void composeinv(int n, uint32_t *y, const uint32_t *x, const uint32_t *pi) { // NC
     int i;
     uint32_t t[2*N];
 
@@ -180,13 +180,13 @@ static void controlbitsfrompermutation(int w, int n, int step, int off, unsigned
     int j;
     int k;
     int t;
-    uint32_t ip[N];
-    uint32_t I[2 * N];
-    uint32_t P[2 * N];
-    uint32_t PI[2 * N];
-    uint32_t T[2 * N];
-    uint32_t piflip[N];
-    uint32_t subpi[2][N / 2];
+    uint32_t ip[N] = {0};
+    uint32_t I[2 * N] = {0};
+    uint32_t P[2 * N] = {0};
+    uint32_t PI[2 * N] = {0};
+    uint32_t T[2 * N] = {0};
+    uint32_t piflip[N] = {0};
+    uint32_t subpi[2][N / 2] = {0};
 
     if (w == 1) {
         c[ off / 8 ] |= (pi[0] & 1) << (off % 8);
@@ -228,10 +228,11 @@ static void controlbitsfrompermutation(int w, int n, int step, int off, unsigned
         }
     }
 
-    for (i = 0; i < n; ++i)
+    for (i = 0; i < n; ++i) {
         for (j = 0; j < w; ++j) {
             piflip[i] = pi[i];
         }
+    }
 
     for (i = 0; i < n / 2; ++i) {
         c[ (off + i * step) / 8 ] |= ((P[i * 2] >> w) & 1) << ((off + i * step) % 8);
