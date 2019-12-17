@@ -186,7 +186,7 @@ static void controlbitsfrompermutation(int w, int n, int step, int off, unsigned
     uint32_t PI[2 * N] = {0};
     uint32_t T[2 * N] = {0};
     uint32_t piflip[N] = {0};
-    uint32_t subpi[2][N / 2] = {0};
+    uint32_t subpi[2][N / 2] = {{0}};
 
     if (w == 1) {
         c[ off / 8 ] |= (pi[0] & 1) << (off % 8);

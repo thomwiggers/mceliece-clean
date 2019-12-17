@@ -55,7 +55,6 @@ for (scheme, impl, dst) in IMPLEMENTATIONS:
             sourcefiles.append(dest_file)
         replace_in_file(dest_file, 'MC_', namespace)
 
-    astyle(*sourcefiles)
 
     subprocess.run([
         'clang-tidy', '-fix-errors', '-quiet', '-header-filter=.*',
@@ -66,6 +65,7 @@ for (scheme, impl, dst) in IMPLEMENTATIONS:
         '-iquote', dest_dir,
     ], capture_output=True)
 
+    astyle(*sourcefiles)
 
     replace_in_file(os.path.join(dest_dir, 'Makefile'),
                     'libmceliece_clean.a',
