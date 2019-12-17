@@ -79,8 +79,8 @@ static inline uint64_t same_mask(uint16_t x, uint16_t y)
 static int mov_columns(uint8_t mat[][ SYS_N/8 ], uint32_t * perm)
 {
 	int i, j, k, s, block_idx, row, tail;
-	uint64_t buf[64], ctz_list[32], t, d, mask; 
-	unsigned char tmp[9];       
+	uint64_t buf[64], ctz_list[32], t, d, mask;
+	unsigned char tmp[9];
 
 	row = GFBITS * SYS_T - 32;
 	block_idx = row/8;
@@ -93,9 +93,9 @@ static int mov_columns(uint8_t mat[][ SYS_N/8 ], uint32_t * perm)
 		for (j = 0; j < 9; j++) tmp[j] = mat[ row + i ][ block_idx + j ];
 		for (j = 0; j < 8; j++) tmp[j] = (tmp[j] >> tail) | (tmp[j+1] << (8-tail));
 
-		buf[i] = load8( tmp );
+		buf[i] = MC_load8( tmp );
 	}
-        
+
 	// compute the column indices of pivots by Gaussian elimination.
 	// the indices are stored in ctz_list
 
@@ -113,9 +113,9 @@ static int mov_columns(uint8_t mat[][ SYS_N/8 ], uint32_t * perm)
 		for (j =   0; j <  i; j++) { mask = (buf[j] >> s) & 1; mask = -mask; buf[j] ^= buf[i] & mask; }
 		for (j = i+1; j < 32; j++) { mask = (buf[j] >> s) & 1; mask = -mask; buf[j] ^= buf[i] & mask; }
 	}
-   
+
 	// updating permutation
-  
+
 	for (j = 0;   j < 32; j++)
 	for (k = j+1; k < 64; k++)
 	{
@@ -124,7 +124,7 @@ static int mov_columns(uint8_t mat[][ SYS_N/8 ], uint32_t * perm)
 			perm[ row + j ] ^= d;
 			perm[ row + k ] ^= d;
 	}
-   
+
 	// moving columns of mat according to the column indices of pivots
 
 	for (i = 0; i < GFBITS*SYS_T; i += 64)
@@ -135,9 +135,9 @@ static int mov_columns(uint8_t mat[][ SYS_N/8 ], uint32_t * perm)
 			for (k = 0; k < 9; k++) tmp[k] = mat[ i + j ][ block_idx + k ];
 			for (k = 0; k < 8; k++) tmp[k] = (tmp[k] >> tail) | (tmp[k+1] << (8-tail));
 
-			buf[j] = load8( tmp );
+			buf[j] = MC_load8( tmp );
 		}
-               	 
+
 		transpose_64x64(buf, buf);
 
 		for (j = 0; j < 32; j++)
@@ -150,15 +150,15 @@ static int mov_columns(uint8_t mat[][ SYS_N/8 ], uint32_t * perm)
 		}
 
 		transpose_64x64(buf, buf);
-                
+
 		for (j = 0; j < min(64, GFBITS*SYS_T - i); j++)
 		{
-			store8( tmp, buf[j] );
+			MC_store8( tmp, buf[j] );
 
 			mat[ i + j ][ block_idx + 8 ] = (mat[ i + j ][ block_idx + 8 ] >> tail << tail) | (tmp[7] >> (8-tail));
 			mat[ i + j ][ block_idx + 0 ] = (tmp[0] << tail) | (mat[ i + j ][ block_idx ] << (8-tail) >> (8-tail));
 
-			for (k = 7; k >= 1; k--) 
+			for (k = 7; k >= 1; k--)
 				mat[ i + j ][ block_idx + k ] = (tmp[k] << tail) | (tmp[k-1] >> (8-tail));
 		}
 	}
@@ -168,7 +168,7 @@ static int mov_columns(uint8_t mat[][ SYS_N/8 ], uint32_t * perm)
 
 /* input: secret key sk */
 /* output: public key pk */
-int pk_gen(unsigned char * pk, unsigned char * sk, uint32_t * perm)
+int MC_pk_gen(unsigned char * pk, unsigned char * sk, uint32_t * perm)
 {
 	unsigned char *pk_ptr = pk;
 
@@ -189,7 +189,7 @@ int pk_gen(unsigned char * pk, unsigned char * sk, uint32_t * perm)
 
 	g[ SYS_T ] = 1;
 
-	for (i = 0; i < SYS_T; i++) { g[i] = load2(sk); g[i] &= GFMASK; sk += 2; }
+	for (i = 0; i < SYS_T; i++) { g[i] = MC_load2(sk); g[i] &= GFMASK; sk += 2; }
 
 	for (i = 0; i < (1 << GFBITS); i++)
 	{
@@ -198,17 +198,17 @@ int pk_gen(unsigned char * pk, unsigned char * sk, uint32_t * perm)
 		buf[i] |= i;
 	}
 
-	sort_63b(1 << GFBITS, buf);
+	MC_sort_63b(1 << GFBITS, buf);
 
 	for (i = 0; i < (1 << GFBITS); i++) perm[i] = buf[i] & GFMASK;
-	for (i = 0; i < SYS_N;         i++) L[i] = bitrev(perm[i]);
+	for (i = 0; i < SYS_N;         i++) L[i] = MC_bitrev(perm[i]);
 
 	// filling the matrix
 
-	root(inv, g, L);
-		
+	MC_root(inv, g, L);
+
 	for (i = 0; i < SYS_N; i++)
-		inv[i] = gf_inv(inv[i]);
+		inv[i] = MC_gf_inv(inv[i]);
 
 	for (i = 0; i < PK_NROWS; i++)
 	for (j = 0; j < SYS_N/8; j++)
@@ -232,7 +232,7 @@ int pk_gen(unsigned char * pk, unsigned char * sk, uint32_t * perm)
 		}
 
 		for (j = 0; j < SYS_N; j++)
-			inv[j] = gf_mul(inv[j], L[j]);
+			inv[j] = MC_gf_mul(inv[j], L[j]);
 
 	}
 
@@ -241,7 +241,7 @@ int pk_gen(unsigned char * pk, unsigned char * sk, uint32_t * perm)
 	for (i = 0; i < (GFBITS * SYS_T + 7) / 8; i++)
 	for (j = 0; j < 8; j++)
 	{
-		row = i*8 + j;			
+		row = i*8 + j;
 
 		if (row >= GFBITS * SYS_T)
 			break;

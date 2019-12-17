@@ -14,15 +14,15 @@
 
 /* input: secret key sk */
 /* output: public key pk */
-int MC_pk_gen(unsigned char *pk, unsigned char *sk, uint32_t *perm) {
+int MC_pk_gen(uint8_t *pk, uint8_t *sk, uint32_t *perm) {
     int i, j, k;
     int row, c;
 
     uint64_t buf[ 1 << GFBITS ];
 
-    unsigned char mat[ GFBITS * SYS_T ][ SYS_N / 8 ];
-    unsigned char mask;
-    unsigned char b;
+    uint8_t mat[ GFBITS * SYS_T ][ SYS_N / 8 ];
+    uint8_t mask;
+    uint8_t b;
 
     gf g[ SYS_T + 1 ]; // Goppa polynomial
     gf L[ SYS_N ]; // support

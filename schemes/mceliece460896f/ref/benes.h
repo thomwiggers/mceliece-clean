@@ -6,8 +6,8 @@
 
 #include "gf.h"
 
-void MC_apply_benes(unsigned char *, const unsigned char *, int);
-void MC_support_gen(gf *, const unsigned char *);
+void MC_apply_benes(uint8_t *r, const uint8_t *bits, int rev);
+void MC_support_gen(gf *s, const uint8_t *c);
 
 #endif
 

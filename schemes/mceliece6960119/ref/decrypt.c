@@ -18,10 +18,10 @@
 /*         c, ciphertext */
 /* output: e, error vector */
 /* return: 0 for success; 1 for failure */
-int decrypt(unsigned char *e, const unsigned char *sk, const unsigned char *c)
+int MC_decrypt(unsigned char *e, const unsigned char *sk, const unsigned char *c)
 {
-	int i, w = 0; 
-	uint16_t check;	
+	int i, w = 0;
+	uint16_t check;
 
 	unsigned char r[ SYS_N/8 ];
 
@@ -41,42 +41,31 @@ int decrypt(unsigned char *e, const unsigned char *sk, const unsigned char *c)
 	r[i-1] &= (1 << ((GFBITS * SYS_T) % 8)) - 1;
 	for (i = SYND_BYTES; i < SYS_N/8; i++) r[i] = 0;
 
-	for (i = 0; i < SYS_T; i++) { g[i] = load2(sk); g[i] &= GFMASK; sk += 2; } g[ SYS_T ] = 1;
+	for (i = 0; i < SYS_T; i++) { g[i] = MC_load2(sk); g[i] &= GFMASK; sk += 2; } g[ SYS_T ] = 1;
 
-	support_gen(L, sk);
+	MC_support_gen(L, sk);
 
-	synd(s, g, L, r);
+	MC_synd(s, g, L, r);
 
-	bm(locator, s);
+	MC_bm(locator, s);
 
-	root(images, locator, L);
+	MC_root(images, locator, L);
 
 	//
-	
-	for (i = 0; i < SYS_N/8; i++) 
+
+	for (i = 0; i < SYS_N/8; i++)
 		e[i] = 0;
 
 	for (i = 0; i < SYS_N; i++)
 	{
-		t = gf_iszero(images[i]) & 1;
+		t = MC_gf_iszero(images[i]) & 1;
 
 		e[ i/8 ] |= t << (i%8);
 		w += t;
 
 	}
 
-#ifdef KAT
-  {
-    int k;
-    printf("decrypt e: positions");
-    for (k = 0;k < SYS_N;++k)
-      if (e[k/8] & (1 << (k&7)))
-        printf(" %d",k);
-    printf("\n");
-  }
-#endif
-	
-	synd(s_cmp, g, L, e);
+	MC_synd(s_cmp, g, L, e);
 
 	//
 
@@ -84,7 +73,7 @@ int decrypt(unsigned char *e, const unsigned char *sk, const unsigned char *c)
 	check ^= SYS_T;
 
 	for (i = 0; i < SYS_T*2; i++)
-		check |= s[i] ^ s_cmp[i]; 
+		check |= s[i] ^ s_cmp[i];
 
 	check -= 1;
 	check >>= 15;

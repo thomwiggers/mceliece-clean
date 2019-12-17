@@ -108,7 +108,7 @@ gf MC_gf_frac(gf den, gf num) {
 
 /* input: in0, in1 in GF((2^m)^t)*/
 /* output: out = in0*in1 */
-void MC_GF_mul(gf *out, gf *in0, gf *in1) {
+void MC_GF_mul(gf *out, const gf *in0, const gf *in1) {
     int i, j;
 
     gf prod[ SYS_T * 2 - 1 ];
