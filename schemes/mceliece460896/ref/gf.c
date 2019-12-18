@@ -179,9 +179,9 @@ gf MC_gf_frac(gf den, gf num)
 	return gf_sqmul(out, num); // ^1111111111110 = ^-1
 }
 
-gf MC_gf_inv(gf den)
+gf MC_gf_inv(gf in)
 {
-	return MC_gf_frac(den, ((gf) 1));
+	return MC_gf_frac(in, ((gf) 1));
 }
 
 /* input: in0, in1 in GF((2^m)^t)*/
