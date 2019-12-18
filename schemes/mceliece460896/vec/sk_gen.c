@@ -4,7 +4,6 @@
 
 #include "sk_gen.h"
 
-#include "randombytes.h"
 #include "controlbits.h"
 #include "params.h"
 #include "util.h"

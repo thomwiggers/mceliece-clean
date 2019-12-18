@@ -5,7 +5,6 @@
 
 #include "controlbits.h"
 
-#include "randombytes.h"
 #include "params.h"
 
 #include <stdint.h>

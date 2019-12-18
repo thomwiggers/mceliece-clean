@@ -9,7 +9,7 @@ import contextlib
 import subprocess
 
 
-IMPLEMENTATIONS = {
+IMPLEMENTATIONS = [
     ("mceliece348864", "ref", "clean"),
     ("mceliece348864f", "ref", "clean"),
     ("mceliece460896", "ref", "clean"),
@@ -20,7 +20,7 @@ IMPLEMENTATIONS = {
     ("mceliece6960119f", "ref", "clean"),
     ("mceliece8192128", "ref", "clean"),
     ("mceliece8192128f", "ref", "clean"),
-}
+]
 
 
 def replace_in_file(path, text_to_search, replacement_text):
