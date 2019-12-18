@@ -146,7 +146,7 @@ static void composeinv(int n, uint32_t *y, const uint32_t *x, const uint32_t *pi
 /* ip[i] = j iff pi[i] = j */
 /* requires n = 2^w */
 /* requires pi to be a permutation */
-static void invert(int n, uint32_t *ip, uint32_t *pi) {
+static void invert(int n, uint32_t *ip, const uint32_t *pi) {
     int i;
 
     for (i = 0; i < n; i++) {
@@ -157,7 +157,7 @@ static void invert(int n, uint32_t *ip, uint32_t *pi) {
 }
 
 
-static void flow(int w, uint32_t *x, uint32_t *y, const int t) {
+static void flow(int w, uint32_t *x, const uint32_t *y, int t) {
     bit m0;
     bit m1;
 
@@ -175,7 +175,7 @@ static void flow(int w, uint32_t *x, uint32_t *y, const int t) {
 /* input: permutation pi */
 /* output: (2w-1)n/2 (or 0 if n==1) control bits c[0],c[step],c[2*step],... */
 /* requires n = 2^w */
-static void controlbitsfrompermutation(int w, int n, int step, int off, unsigned char *c, uint32_t *pi) {
+static void controlbitsfrompermutation(int w, int n, int step, int off, unsigned char *c, const uint32_t *pi) {
     int i;
     int j;
     int k;
@@ -245,10 +245,11 @@ static void controlbitsfrompermutation(int w, int n, int step, int off, unsigned
         cswap(&piflip[i * 2], &piflip[i * 2 + 1], (P[n + i * 2] >> w) & 1);
     }
 
-    for (k = 0; k < 2; ++k)
+    for (k = 0; k < 2; ++k) {
         for (i = 0; i < n / 2; ++i) {
             subpi[k][i] = piflip[i * 2 + k] >> 1;
         }
+    }
 
     for (k = 0; k < 2; ++k) {
         controlbitsfrompermutation(w - 1, n / 2, step * 2, off + step * (n / 2 + k), c, subpi[k]);
@@ -257,7 +258,7 @@ static void controlbitsfrompermutation(int w, int n, int step, int off, unsigned
 
 /* input: pi, a permutation*/
 /* output: out, control bits w.r.t. pi */
-void MC_controlbits(unsigned char *out, uint32_t *pi) {
+void MC_controlbits(unsigned char *out, const uint32_t *pi) {
     unsigned int i;
     unsigned char c[ (2 * GFBITS - 1) * (1 << GFBITS) / 16 ];
 

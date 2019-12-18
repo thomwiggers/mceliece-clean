@@ -8,8 +8,8 @@
 
 #include <stdint.h>
 
-void MC_sort_63b(int, uint64_t []);
-void MC_controlbits(unsigned char *, uint32_t *);
+void MC_sort_63b(int n, uint64_t *x);
+void MC_controlbits(unsigned char *out, const uint32_t *pi);
 
 #endif
 

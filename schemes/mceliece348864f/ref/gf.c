@@ -117,10 +117,11 @@ void MC_GF_mul(gf *out, const gf *in0, const gf *in1) {
         prod[i] = 0;
     }
 
-    for (i = 0; i < SYS_T; i++)
+    for (i = 0; i < SYS_T; i++) {
         for (j = 0; j < SYS_T; j++) {
             prod[i + j] ^= MC_gf_mul(in0[i], in1[j]);
         }
+    }
 
     //
 
