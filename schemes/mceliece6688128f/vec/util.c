@@ -1,4 +1,11 @@
+/*
+  This file is for loading/storing data in a little-endian fashion
+*/
 #include "util.h"
+
+#include "vec.h"
+
+#include <stdint.h>
 
 void MC_store_i(unsigned char *out, uint64_t in, int i)
 {

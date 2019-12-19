@@ -9,8 +9,6 @@
 #include "randombytes.h"
 
 #include <stdint.h>
-#include <stdio.h>
-#include <assert.h>
 #include <string.h>
 
 #include "gf.h"
@@ -21,15 +19,19 @@ static void gen_e(unsigned char *e)
 	int i, j, eq, count;
 
 	uint16_t ind[ SYS_T*2 ];
+    uint8_t *ind8 = (uint8_t*)ind;
 	uint32_t ind32[ SYS_T*2 ];
-	uint64_t e_int[ (SYS_N+63)/64 ];	
-	uint64_t one = 1;	
-	uint64_t mask;	
-	uint64_t val[ SYS_T ];	
+	uint64_t e_int[ (SYS_N+63)/64 ];
+	uint64_t one = 1;
+	uint64_t mask;
+	uint64_t val[ SYS_T ];
 
 	while (1)
 	{
-		randombytes((unsigned char *) ind, sizeof(ind));
+		randombytes(ind8, sizeof(ind));
+        for (size_t i = 0; i < sizeof(ind); i+=2) {
+            ind[i/2] = (uint16_t)ind8[i+1] << 8 | ind8[i];
+        }
 
 		for (i = 0; i < SYS_T*2; i++)
 			ind[i] &= GFMASK;
@@ -40,15 +42,15 @@ static void gen_e(unsigned char *e)
 		for (i = 0; i < SYS_T*2; i++)
 			if (ind[i] < SYS_N)
 				ind32[ count++ ] = ind[i];
-		
+
 		if (count < SYS_T) continue;
-	
+
 		// check for repetition
 
 		eq = 0;
 
 		for (i = 1; i < SYS_T; i++) for (j = 0; j < i; j++)
-			if (ind32[i] == ind32[j]) 
+			if (ind32[i] == ind32[j])
 				eq = 1;
 
 		if (eq == 0)
@@ -58,7 +60,7 @@ static void gen_e(unsigned char *e)
 	for (j = 0; j < SYS_T; j++)
 		val[j] = one << (ind32[j] & 63);
 
-	for (i = 0; i < (SYS_N+63)/64; i++) 
+	for (i = 0; i < (SYS_N+63)/64; i++)
 	{
 		e_int[i] = 0;
 
@@ -73,10 +75,10 @@ static void gen_e(unsigned char *e)
 		}
 	}
 
-	for (i = 0; i < (SYS_N+63)/64 - 1; i++) 
-		{ store8(e, e_int[i]); e += 8; }
+	for (i = 0; i < (SYS_N+63)/64 - 1; i++)
+		{ MC_store8(e, e_int[i]); e += 8; }
 
-	for (j = 0; j < (SYS_N % 64); j+=8) 
+	for (j = 0; j < (SYS_N % 64); j+=8)
 		e[ j/8 ] = (e_int[i] >> j) & 0xFF;
 }
 
@@ -88,13 +90,13 @@ static void syndrome(unsigned char *s, const unsigned char *pk, unsigned char *e
 
 	uint64_t b;
 
-	const uint64_t *pk_ptr; 
+	const uint64_t *pk_ptr;
 	const uint64_t *e_ptr = ((uint64_t *) (e_tmp + SYND_BYTES - 1));
 
 	int i, j, k, tail = (PK_NROWS % 8);
 
 	//
-	
+
 	for (i = 0; i < SYND_BYTES; i++)
 		s[i] = e[i];
 
@@ -105,10 +107,10 @@ static void syndrome(unsigned char *s, const unsigned char *pk, unsigned char *e
 
 	e_tmp[i] = e[i] >> tail;
 
-	for (i = 0; i < PK_NROWS; i++)	
+	for (i = 0; i < PK_NROWS; i++)
 	{
 		pk_ptr = ((uint64_t *) (pk + PK_ROW_BYTES * i));
-	
+
 		b = 0;
 		for (j = 0; j < PK_NCOLS/64; j++)
 			b ^= pk_ptr[j] & e_ptr[j];
@@ -130,21 +132,9 @@ static void syndrome(unsigned char *s, const unsigned char *pk, unsigned char *e
 
 /* input: public key pk */
 /* output: error vector e, syndrome s */
-void encrypt(unsigned char *s, const unsigned char *pk, unsigned char *e)
+void MC_encrypt(unsigned char *s, unsigned char *e, const unsigned char *pk)
 {
 	gen_e(e);
-
-#ifdef KAT
-  {
-    int k;
-    printf("encrypt e: positions");
-    for (k = 0;k < SYS_N;++k)
-      if (e[k/8] & (1 << (k&7)))
-        printf(" %d",k);
-    printf("\n");
-  }
-#endif
-
 	syndrome(s, pk, e);
 }
 

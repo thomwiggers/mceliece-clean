@@ -30,13 +30,13 @@ static inline uint16_t mask_leq(uint16_t a, uint16_t b)
 	return ret;
 }
 
-static inline void vec_cmov(vec * out, vec * in, uint16_t mask)
+static inline void vec_cmov(vec * out, const vec * in, uint16_t mask)
 {
 	int i;
 
 	vec m0, m1;
 
-	m0 = vec_set1_16b(mask);
+	m0 = MC_vec_set1_16b(mask);
 	m1 = ~m0;
 
 	for (i = 0; i < GFBITS; i++)
@@ -46,7 +46,7 @@ static inline void vec_cmov(vec * out, vec * in, uint16_t mask)
 	}
 }
 
-static inline void interleave(vec *in, int idx0, int idx1, vec *mask, int b)
+static inline void interleave(vec *in, int idx0, int idx1, const vec *mask, int b)
 {
 	int s = 1 << b;
 
@@ -61,7 +61,7 @@ static inline void interleave(vec *in, int idx0, int idx1, vec *mask, int b)
 
 /* input: in, field elements in bitsliced form */
 /* output: out, field elements in non-bitsliced form */
-static inline void get_coefs(gf *out, vec *in)
+static inline void get_coefs(gf *out, const vec *in)
 {
 	int i, k;
 
@@ -71,14 +71,14 @@ static inline void get_coefs(gf *out, vec *in)
 	for (i =  0; i < 13; i++) buf[i] = in[i];
 	for (i = 13; i < 16; i++) buf[i] = 0;
 
-	mask[0][0] = vec_set1_16b(0x5555);
-	mask[0][1] = vec_set1_16b(0xAAAA);
-	mask[1][0] = vec_set1_16b(0x3333);
-	mask[1][1] = vec_set1_16b(0xCCCC);
-	mask[2][0] = vec_set1_16b(0x0F0F);
-	mask[2][1] = vec_set1_16b(0xF0F0);
-	mask[3][0] = vec_set1_16b(0x00FF);
-	mask[3][1] = vec_set1_16b(0xFF00);
+	mask[0][0] = MC_vec_set1_16b(0x5555);
+	mask[0][1] = MC_vec_set1_16b(0xAAAA);
+	mask[1][0] = MC_vec_set1_16b(0x3333);
+	mask[1][1] = MC_vec_set1_16b(0xCCCC);
+	mask[2][0] = MC_vec_set1_16b(0x0F0F);
+	mask[2][1] = MC_vec_set1_16b(0xF0F0);
+	mask[3][0] = MC_vec_set1_16b(0x00FF);
+	mask[3][1] = MC_vec_set1_16b(0xFF00);
 
 	interleave(buf,  0,  8, mask[3], 3);
 	interleave(buf,  1,  9, mask[3], 3);
@@ -162,7 +162,7 @@ static inline gf vec_reduce(vec in[][GFBITS])
 /* input: in, sequence of field elements */
 /* output: out, minimal polynomial of in */
 //void bm(vec out[][ GFBITS ], vec in[][ GFBITS ])
-void bm(vec out[][GFBITS], vec in[][ GFBITS ])
+void MC_bm(vec out[][GFBITS], vec in[][ GFBITS ])
 {
 	int i;
 	uint16_t N, L;
@@ -205,8 +205,8 @@ void bm(vec out[][GFBITS], vec in[][ GFBITS ])
 	{
 		update(interval, coefs[N]);
 
-		vec_mul(prod[0], C[0], interval[0]);
-		vec_mul(prod[1], C[1], interval[1]);
+		MC_vec_mul(prod[0], C[0], interval[0]);
+		MC_vec_mul(prod[1], C[1], interval[1]);
 
 		d = vec_reduce(prod);
 
@@ -214,14 +214,14 @@ void bm(vec out[][GFBITS], vec in[][ GFBITS ])
 
 		for (i = 0; i < GFBITS; i++) 
 		{
-			dd[0][i] = dd[1][i] = vec_setbits((d >> i) & 1);
-			bb[0][i] = bb[1][i] = vec_setbits((b >> i) & 1);
+			dd[0][i] = dd[1][i] = MC_vec_setbits((d >> i) & 1);
+			bb[0][i] = bb[1][i] = MC_vec_setbits((b >> i) & 1);
 		}
 		
-		vec_mul(B_tmp[0], dd[0], B[0]);
-		vec_mul(B_tmp[1], dd[1], B[1]);
-		vec_mul(C_tmp[0], bb[0], C[0]);
-		vec_mul(C_tmp[1], bb[1], C[1]);
+		MC_vec_mul(B_tmp[0], dd[0], B[0]);
+		MC_vec_mul(B_tmp[1], dd[1], B[1]);
+		MC_vec_mul(C_tmp[0], bb[0], C[0]);
+		MC_vec_mul(C_tmp[1], bb[1], C[1]);
 
 		vec_cmov(B[0], C[0], mask);
 		vec_cmov(B[1], C[1], mask);

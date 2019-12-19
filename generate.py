@@ -24,6 +24,7 @@ IMPLEMENTATIONS = [
     ("mceliece6688128", "ref", "clean"),
     ("mceliece6688128f", "ref", "clean"),
     ("mceliece6960119", "ref", "clean"),
+    ("mceliece6960119", "vec", "vec"),
     ("mceliece6960119f", "ref", "clean"),
     ("mceliece8192128", "ref", "clean"),
     ("mceliece8192128f", "ref", "clean"),
