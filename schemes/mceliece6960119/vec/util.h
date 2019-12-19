@@ -1,9 +1,9 @@
+#ifndef UTIL_H
+#define UTIL_H
 /*
   This file is for loading/storing data in a little-endian fashion
 */
 
-#ifndef UTIL_H
-#define UTIL_H
 
 #include "vec.h"
 
