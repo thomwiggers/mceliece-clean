@@ -129,7 +129,7 @@ void MC_sort_63b(int n, uint64_t *x) {
 /* requires pi to be a permutation */
 static void composeinv(int n, uint32_t *y, const uint32_t *x, const uint32_t *pi) { // NC
     int i;
-    uint32_t t[2*N];
+    uint32_t t[2 * N];
 
     for (i = 0; i < n; ++i) {
         t[i] = x[i] | (pi[i] << 16);

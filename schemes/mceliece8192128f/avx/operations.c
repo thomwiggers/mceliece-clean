@@ -23,7 +23,7 @@ int MC_crypto_kem_enc(
     uint8_t *e = two_e + 1;
     uint8_t one_ec[ 1 + SYS_N / 8 + (SYND_BYTES + 32) ] = {1};
 
-    MC_encrypt(c, pk, e);
+    MC_encrypt(c, e, pk);
 
     crypto_hash_32b(c + SYND_BYTES, two_e, sizeof(two_e));
 
@@ -121,7 +121,7 @@ int MC_crypto_kem_keypair
         for (i = 0; i < SYS_T;   i++) {
             MC_store2(sk + SYS_N / 8 + i * 2, irr[i]);
         }
-        if (MC_pk_gen(pk, sk + SYS_N / 8, perm)) {
+        if (MC_pk_gen(pk, perm, sk + SYS_N / 8)) {
             continue;
         }
 

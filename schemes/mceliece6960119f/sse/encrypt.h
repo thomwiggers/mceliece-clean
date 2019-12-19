@@ -5,7 +5,7 @@
 */
 
 
-void MC_encrypt(unsigned char *, const unsigned char *, unsigned char *);
+void MC_encrypt(unsigned char *, unsigned char *, const unsigned char *);
 
 #endif
 

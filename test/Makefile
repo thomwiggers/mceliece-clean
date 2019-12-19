@@ -2,7 +2,7 @@
 
 # override as desired
 TYPE=kem
-SCHEME=kyber768
+SCHEME=mceliece6688128
 IMPLEMENTATION=clean
 
 SCHEME_DIR="../crypto_$(TYPE)/$(SCHEME)/$(IMPLEMENTATION)"

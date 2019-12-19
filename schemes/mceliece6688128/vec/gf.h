@@ -1,21 +1,22 @@
+#ifndef MC_GF_H
+#define MC_GF_H
 /*
   This file is for functions for field arithmetic
 */
 
-#ifndef GF_H
-#define GF_H
 
 #include <stdint.h>
 
 typedef uint16_t gf;
 
-gf gf_iszero(gf);
-gf gf_mul(gf, gf);
-uint64_t gf_mul2(gf, gf, gf);
-gf gf_frac(gf, gf);
-gf gf_inv(gf);
+gf MC_gf_iszero(gf a);
+gf MC_gf_add(gf in0, gf in1);
+gf MC_gf_mul(gf in0, gf in1);
+uint64_t MC_gf_mul2(gf a, gf b0, gf b1);
+gf MC_gf_frac(gf den, gf num);
+gf MC_gf_inv(gf in);
 
-void GF_mul(gf *, gf *, gf *);
+void MC_GF_mul(gf *out, const gf *in0, const gf *in1);
 
 #endif
 

@@ -78,7 +78,7 @@ static void gen_e(unsigned char *e)
 
 /* input: public key pk, error vector e */
 /* output: syndrome s */
-static void syndrome(unsigned char *s, const unsigned char *pk, unsigned char *e)
+static void syndrome(unsigned char *s, const unsigned char *pk, const unsigned char *e)
 {
 	unsigned char b, row[SYS_N/8];
 	const unsigned char *pk_ptr = pk;
@@ -113,7 +113,7 @@ static void syndrome(unsigned char *s, const unsigned char *pk, unsigned char *e
 	}
 }
 
-void MC_encrypt(unsigned char *s, const unsigned char *pk, unsigned char *e)
+void MC_encrypt(unsigned char *s, unsigned char *e, const unsigned char *pk)
 {
 	gen_e(e);
 

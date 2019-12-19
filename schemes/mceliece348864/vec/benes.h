@@ -1,14 +1,12 @@
+#ifndef BENES_H
+#define BENES_H
 /*
   This file is for Benes network related functions
 */
 
-#ifndef BENES_H
-#define BENES_H
+#include <stdint.h>
 
-#include "gf.h"
-
-void benes(uint64_t *, const unsigned char *, int);
-void support_gen(gf *, const unsigned char *);
+void MC_benes(uint64_t *, const unsigned char *, int);
 
 #endif
 

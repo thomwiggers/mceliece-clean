@@ -148,7 +148,7 @@ static int mov_columns(uint8_t mat[][ SYS_N/8 ], uint32_t * perm)
 
 /* input: secret key sk */
 /* output: public key pk */
-int MC_pk_gen(unsigned char * pk, unsigned char * sk, uint32_t * perm)
+int MC_pk_gen(uint8_t* pk,  uint32_t * perm, const uint8_t * sk)
 {
 	int i, j, k;
 	int row, c;

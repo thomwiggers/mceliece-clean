@@ -5,9 +5,9 @@
 */
 
 
-#include "gf.h"
+#include <stdint.h>
 
-int MC_pk_gen(unsigned char *, unsigned char *, uint32_t *);
+int MC_pk_gen(uint8_t *, uint32_t*, const uint8_t *);
 
 #endif
 

@@ -2,19 +2,19 @@
   This file is for public-key generation
 */
 
-#include <stdint.h>
 #include <string.h>
 
-#include "controlbits.h"
-#include "pk_gen.h"
-#include "params.h"
 #include "benes.h"
+#include "controlbits.h"
+#include "gf.h"
+#include "params.h"
+#include "pk_gen.h"
 #include "root.h"
 #include "util.h"
 
 /* input: secret key sk */
 /* output: public key pk */
-int MC_pk_gen(uint8_t *pk, uint8_t *sk, uint32_t *perm) {
+int MC_pk_gen(uint8_t *pk, uint32_t *perm, const uint8_t *sk) {
     int i, j, k;
     int row, c;
 

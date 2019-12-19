@@ -16,7 +16,7 @@
 
 /* input: secret key sk */
 /* output: public key pk */
-int MC_pk_gen(unsigned char * pk, unsigned char * sk, uint32_t * perm)
+int MC_pk_gen(uint8_t * pk, uint32_t * perm, const uint8_t * sk)
 {
 	unsigned char *pk_ptr = pk;
 

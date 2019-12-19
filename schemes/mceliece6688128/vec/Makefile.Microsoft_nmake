@@ -1,0 +1,20 @@
+# This Makefile can be used with GNU Make or BSD Make
+
+LIBRARY = libmceliece_clean.lib
+
+OBJECTS = aes256ctr.c benes.c bm.c controlbits.c decrypt.c encrypt.c fft.c \
+		  fft_tr.c gf.c operations.c pk_gen.c sk_gen.c transpose.c util.c vec.c
+
+CFLAGS=/nologo /O2 /I ..\..\..\common /W4 /WX
+
+all: $(LIBRARY)
+
+# Make sure objects are recompiled if headers change.
+$(OBJECTS): *.h *.inc
+
+$(LIBRARY): $(OBJECTS)
+	LIB.EXE /NOLOGO /WX /OUT:$@ $**
+
+clean:
+	-DEL $(OBJECTS)
+	-DEL $(LIBRARY)

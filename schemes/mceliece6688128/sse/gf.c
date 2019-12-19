@@ -9,7 +9,7 @@
 #include <stdio.h>
 
 /* field multiplication */
-gf gf_mul(gf in0, gf in1)
+gf MC_gf_mul(gf in0, gf in1)
 {
 	int i;
 
@@ -38,7 +38,7 @@ gf gf_mul(gf in0, gf in1)
 }
 
 /* 2 field multiplications */
-uint64_t gf_mul2(gf a, gf b0, gf b1)
+uint64_t MC_gf_mul2(gf a, gf b0, gf b1)
 {
 	int i;
 
@@ -51,7 +51,7 @@ uint64_t gf_mul2(gf a, gf b0, gf b1)
 	t0 = a;
 	t1 = b1;
 	t1 = (t1 << 32) | b0;
-	
+
 	for (i = 0; i < GFBITS; i++)
 	{
 		tmp ^= t0 * (t1 & mask);
@@ -74,17 +74,17 @@ static inline gf gf_sq2(gf in)
 {
 	int i;
 
-	const uint64_t B[] = {0x1111111111111111, 
-	                      0x0303030303030303, 
-	                      0x000F000F000F000F, 
+	const uint64_t B[] = {0x1111111111111111,
+	                      0x0303030303030303,
+	                      0x000F000F000F000F,
 	                      0x000000FF000000FF};
 
-	const uint64_t M[] = {0x0001FF0000000000, 
-	                      0x000000FF80000000, 
-	                      0x000000007FC00000, 
+	const uint64_t M[] = {0x0001FF0000000000,
+	                      0x000000FF80000000,
+	                      0x000000007FC00000,
 	                      0x00000000003FE000};
 
-	uint64_t x = in; 
+	uint64_t x = in;
 	uint64_t t;
 
 	x = (x | (x << 24)) & B[3];
@@ -112,14 +112,14 @@ static inline gf gf_sqmul(gf in, gf m)
 	uint64_t t;
 
 	const uint64_t M[] = {0x0000001FF0000000,
-	                      0x000000000FF80000, 
-	                      0x000000000007E000}; 
+	                      0x000000000FF80000,
+	                      0x000000000007E000};
 
 	t0 = in;
 	t1 = m;
 
 	x = (t1 << 6) * (t0 & (1 << 6));
-	
+
 	t0 ^= (t0 << 7);
 
 	x ^= (t1 * (t0 & (0x04001)));
@@ -149,9 +149,9 @@ static inline gf gf_sq2mul(gf in, gf m)
 	uint64_t t;
 
 	const uint64_t M[] = {0x1FF0000000000000,
-		              0x000FF80000000000, 
-		              0x000007FC00000000, 
-	                      0x00000003FE000000, 
+		              0x000FF80000000000,
+		              0x000007FC00000000,
+	                      0x00000003FE000000,
 	                      0x0000000001FE0000,
 	                      0x000000000001E000};
 
@@ -179,7 +179,7 @@ static inline gf gf_sq2mul(gf in, gf m)
 }
 
 /* return num/den */
-gf gf_frac(gf den, gf num)
+gf MC_gf_frac(gf den, gf num)
 {
 	gf tmp_11;
 	gf tmp_1111;
@@ -187,7 +187,7 @@ gf gf_frac(gf den, gf num)
 
 	tmp_11 = gf_sqmul(den, den); // 11
 	tmp_1111 = gf_sq2mul(tmp_11, tmp_11); // 1111
-	out = gf_sq2(tmp_1111); 
+	out = gf_sq2(tmp_1111);
 	out = gf_sq2mul(out, tmp_1111); // 11111111
 	out = gf_sq2(out);
 	out = gf_sq2mul(out, tmp_1111); // 111111111111
@@ -196,13 +196,13 @@ gf gf_frac(gf den, gf num)
 }
 
 /* return 1/den */
-gf gf_inv(gf den)
+gf MC_gf_inv(gf in)
 {
-	return gf_frac(den, ((gf) 1));
+	return MC_gf_frac(in, ((gf) 1));
 }
 
 /* check if a == 0 */
-gf gf_iszero(gf a)
+gf MC_gf_iszero(gf a)
 {
 	uint32_t t = a;
 
@@ -213,7 +213,7 @@ gf gf_iszero(gf a)
 }
 
 /* multiplication in GF((2^m)^t) */
-void GF_mul(gf *out, gf *in0, gf *in1)
+void MC_GF_mul(gf *out, const gf *in0, const gf *in1)
 {
 	int i, j;
 
@@ -224,15 +224,15 @@ void GF_mul(gf *out, gf *in0, gf *in1)
 
 	for (i = 0; i < 128; i++)
 		for (j = 0; j < 128; j++)
-			prod[i+j] ^= gf_mul(in0[i], in1[j]);
+			prod[i+j] ^= MC_gf_mul(in0[i], in1[j]);
 
 	//
- 
+
 	for (i = 254; i >= 128; i--)
 	{
-		prod[i - 123] ^= gf_mul(prod[i], (gf) 7682);
-		prod[i - 125] ^= gf_mul(prod[i], (gf) 2159);
-		prod[i - 128] ^= gf_mul(prod[i], (gf) 3597);
+		prod[i - 123] ^= MC_gf_mul(prod[i], (gf) 7682);
+		prod[i - 125] ^= MC_gf_mul(prod[i], (gf) 2159);
+		prod[i - 128] ^= MC_gf_mul(prod[i], (gf) 3597);
 	}
 
 	for (i = 0; i < 128; i++)

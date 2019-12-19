@@ -13,13 +13,13 @@ void vec_mul(vec * h, const vec * f, const vec * g)
 	for (i = 0; i < GFBITS; i++)
 	for (j = 0; j < GFBITS; j++)
 		buf[i+j] ^= f[i] & g[j];
-		
+
 	for (i = 2*GFBITS-2; i >= GFBITS; i--)
 	{
-		buf[i-GFBITS+4] ^= buf[i]; 
-		buf[i-GFBITS+3] ^= buf[i]; 
-		buf[i-GFBITS+1] ^= buf[i]; 
-		buf[i-GFBITS+0] ^= buf[i]; 
+		buf[i-GFBITS+4] ^= buf[i];
+		buf[i-GFBITS+3] ^= buf[i];
+		buf[i-GFBITS+1] ^= buf[i];
+		buf[i-GFBITS+0] ^= buf[i];
 	}
 
 	for (i = 0; i < GFBITS; i++)

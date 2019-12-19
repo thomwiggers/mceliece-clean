@@ -22,7 +22,7 @@ static inline uint16_t mask_leq(uint16_t a, uint16_t b)
 {
 	uint32_t a_tmp = a;
 	uint32_t b_tmp = b;
-	uint32_t ret = b_tmp - a_tmp; 
+	uint32_t ret = b_tmp - a_tmp;
 
 	ret >>= 31;
 	ret -= 1;
@@ -36,7 +36,7 @@ static inline void vec_cmov(vec * out, vec * in, uint16_t mask)
 
 	vec m0, m1;
 
-	m0 = vec_set1_16b(mask);
+	m0 = MC_vec_set1_16b(mask);
 	m1 = ~m0;
 
 	for (i = 0; i < GFBITS; i++)
@@ -46,7 +46,7 @@ static inline void vec_cmov(vec * out, vec * in, uint16_t mask)
 	}
 }
 
-static inline void interleave(vec *in, int idx0, int idx1, vec *mask, int b)
+static inline void interleave(vec *in, int idx0, int idx1, const vec *mask, int b)
 {
 	int s = 1 << b;
 
@@ -61,13 +61,13 @@ static inline void interleave(vec *in, int idx0, int idx1, vec *mask, int b)
 
 /* input: in, field elements in bitsliced form */
 /* output: out, field elements in non-bitsliced form */
-static inline void get_coefs(gf *out, vec *in)
+static inline void get_coefs(gf *out, const vec *in)
 {
 	int i, k;
 
 	vec mask[4][2];
 	vec buf[16];
-	
+
 	for (i =  0; i < 13; i++) buf[i] = in[i];
 	for (i = 13; i < 16; i++) buf[i] = 0;
 
@@ -151,7 +151,7 @@ static inline gf vec_reduce(vec in[][GFBITS])
 		tmp ^= tmp >> 4;
 		tmp ^= tmp >> 2;
 		tmp ^= tmp >> 1;
-	
+
 		ret <<= 1;
 		ret |= tmp & 1;
 	}
@@ -187,7 +187,7 @@ void bm(vec out[][ GFBITS ], vec in[][ GFBITS ])
 
 	C[0][0] = 0;
 	C[1][0] = 0;
-	B[0][0] = 0; 
+	B[0][0] = 0;
 	B[1][0] = one << 63;
 
 	for (i = 1; i < GFBITS; i++)
@@ -213,12 +213,12 @@ void bm(vec out[][ GFBITS ], vec in[][ GFBITS ])
 
 		mask = mask_nonzero(d) & mask_leq(L*2, N);
 
-		for (i = 0; i < GFBITS; i++) 
+		for (i = 0; i < GFBITS; i++)
 		{
 			dd[0][i] = dd[1][i] = vec_setbits((d >> i) & 1);
 			bb[0][i] = bb[1][i] = vec_setbits((b >> i) & 1);
 		}
-		
+
 		vec_mul(B_tmp[0], dd[0], B[0]);
 		vec_mul(B_tmp[1], dd[1], B[1]);
 		vec_mul(C_tmp[0], bb[0], C[0]);
@@ -229,19 +229,19 @@ void bm(vec out[][ GFBITS ], vec in[][ GFBITS ])
 		update(B, c0 & mask);
 
 		for (i = 0; i < GFBITS; i++)
-		{ 
+		{
 			C[0][i] = B_tmp[0][i] ^ C_tmp[0][i];
 			C[1][i] = B_tmp[1][i] ^ C_tmp[1][i];
 		}
 
-		c0 = t >> 32; 
+		c0 = t >> 32;
 		b = (d & mask) | (b & ~mask);
 		L = ((N+1-L) & mask) | (L & ~mask);
 	}
 
 	c0 = gf_inv(c0);
 
-	for (i = 0; i < GFBITS; i++) 
+	for (i = 0; i < GFBITS; i++)
 		v[i] = vec_setbits((c0 >> i) & 1);
 
 	vec_mul(out[0], C[0], v);

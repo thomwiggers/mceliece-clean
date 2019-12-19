@@ -40,9 +40,7 @@ def duplicates_of_file(inodes, filename, scheme, src_impl):
     src_path = os.path.join("schemes", scheme, src_impl, filename)
     inode = os.stat(src_path).st_ino
     for (dup_scheme, impl, dup_filename) in inodes[inode]:
-        if (
-            dup_scheme == scheme and src_impl == impl
-        ) or dup_filename != filename:
+        if (dup_scheme == scheme and src_impl == impl) or dup_filename != filename:
             continue
         yield (dup_scheme, impl)
 
@@ -53,10 +51,7 @@ def render_duplicates_file(duplicates):
         for implementation, files in details.items():
             items.append(
                 {
-                    "source": {
-                        "scheme": scheme,
-                        "implementation": implementation,
-                    },
+                    "source": {"scheme": scheme, "implementation": implementation,},
                     "files": files,
                 }
             )
@@ -79,14 +74,12 @@ if __name__ == "__main__":
         for (dup_scheme, dup_impl) in dups:
             if dup_impl == "ref":
                 dup_impl = "clean"
-            if dup_impl != "clean":
+            if dup_impl not in ("clean", "vec"):
                 continue
             duplicates[dup_scheme][dup_impl].append(filename)
 
     with open(
-        os.path.join(
-            "test", "duplicate_consistency", f"{ scheme }_{ dest_impl }.yml"
-        ),
+        os.path.join("test", "duplicate_consistency", f"{ scheme }_{ dest_impl }.yml"),
         "w",
     ) as f:
         f.write(render_duplicates_file(duplicates))

@@ -126,7 +126,7 @@ static void syndrome(unsigned char *s, const unsigned char *pk, unsigned char *e
 	}
 }
 
-void MC_encrypt(unsigned char *s, const unsigned char *pk, unsigned char *e)
+void MC_encrypt(unsigned char *s, unsigned char *e, const unsigned char *pk)
 {
 	gen_e(e);
 

@@ -7,10 +7,17 @@ import shutil
 import os
 import contextlib
 import subprocess
+import sys
 
 
 IMPLEMENTATIONS = [
+    ("mceliece460896", "vec", "vec"),
+    ("mceliece460896f", "vec", "vec"),
+    ("mceliece348864f", "vec", "vec"),
+    ("mceliece6688128", "vec", "vec"),
+    ("mceliece6688128f", "vec", "vec"),
     ("mceliece348864", "ref", "clean"),
+    ("mceliece348864", "vec", "vec"),
     ("mceliece348864f", "ref", "clean"),
     ("mceliece460896", "ref", "clean"),
     ("mceliece460896f", "ref", "clean"),
@@ -52,26 +59,32 @@ for (scheme, impl, dst) in IMPLEMENTATIONS:
             sourcefiles.append(dest_file)
         replace_in_file(dest_file, "MC_", namespace)
 
-    subprocess.run(
-        [
-            "clang-tidy",
-            "-fix-errors",
-            "-quiet",
-            "-header-filter=.*",
-            *[file for file in sourcefiles if file[-2:] in (".c", "*.h")],
-            "--",
-            "-iquote",
-            os.path.join("common"),
-            "-iquote",
-            dest_dir,
-        ],
-        capture_output=True,
-    )
+    if len(sys.argv) > 1 and sys.argv[1] == 'tidy':
+        subprocess.run(
+            [
+                "clang-tidy",
+                "-fix-errors",
+                "-quiet",
+                "-header-filter=.*",
+                *[file for file in sourcefiles if file[-2:] in (".c", "*.h")],
+                "--",
+                "-iquote",
+                os.path.join("common"),
+                "-iquote",
+                dest_dir,
+            ],
+            capture_output=True,
+        )
 
     astyle(*sourcefiles)
 
     replace_in_file(
         os.path.join(dest_dir, "Makefile"),
-        "libmceliece_clean.a",
+        r"libmceliece_.*\.a",
+        f"lib{scheme}_{dst}.a",
+    )
+    replace_in_file(
+        os.path.join(dest_dir, "Makefile.Microsoft_nmake"),
+        r"libmceliece_.*\.lib",
         f"lib{scheme}_{dst}.a",
     )

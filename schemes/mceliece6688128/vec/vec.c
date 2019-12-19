@@ -2,7 +2,58 @@
 
 #include "params.h"
 
-void vec_mul(vec * h, const vec * f, const vec * g)
+vec MC_vec_setbits(vec b)
+{
+	vec ret = -b;
+
+	return ret;
+}
+
+vec MC_vec_set1_16b(uint16_t v)
+{
+	vec ret;
+
+	ret = v;
+	ret |= ret << 16;
+	ret |= ret << 32;
+
+	return ret;
+}
+
+void MC_vec_copy(vec * out, const vec * in)
+{
+	int i;
+
+	for (i = 0; i < GFBITS; i++)
+		out[i] = in[i];
+}
+
+vec MC_vec_or_reduce(const vec * a)
+{
+	int i;
+	vec ret;
+
+	ret = a[0];
+	for (i = 1; i < GFBITS; i++)
+		ret |= a[i];
+
+	return ret;
+}
+
+int MC_vec_testz(vec a)
+{
+	a |= a >> 32;
+	a |= a >> 16;
+	a |= a >> 8;
+	a |= a >> 4;
+	a |= a >> 2;
+	a |= a >> 1;
+
+	return ((int)a&1)^1;
+}
+
+
+void MC_vec_mul(vec * h, const vec * f, const vec * g)
 {
 	int i, j;
 	vec buf[ 2*GFBITS-1 ];
@@ -13,13 +64,13 @@ void vec_mul(vec * h, const vec * f, const vec * g)
 	for (i = 0; i < GFBITS; i++)
 	for (j = 0; j < GFBITS; j++)
 		buf[i+j] ^= f[i] & g[j];
-		
+
 	for (i = 2*GFBITS-2; i >= GFBITS; i--)
 	{
-		buf[i-GFBITS+4] ^= buf[i]; 
-		buf[i-GFBITS+3] ^= buf[i]; 
-		buf[i-GFBITS+1] ^= buf[i]; 
-		buf[i-GFBITS+0] ^= buf[i]; 
+		buf[i-GFBITS+4] ^= buf[i];
+		buf[i-GFBITS+3] ^= buf[i];
+		buf[i-GFBITS+1] ^= buf[i];
+		buf[i-GFBITS+0] ^= buf[i];
 	}
 
 	for (i = 0; i < GFBITS; i++)
@@ -27,7 +78,7 @@ void vec_mul(vec * h, const vec * f, const vec * g)
 }
 
 /* bitsliced field squarings */
-void vec_sq(vec * out, vec * in)
+void MC_vec_sq(vec * out, const vec * in)
 {
 	int i;
 	vec result[GFBITS], t;
@@ -59,32 +110,32 @@ void vec_sq(vec * out, vec * in)
 }
 
 /* bitsliced field inverses */
-void vec_inv(vec * out, vec * in)
+void MC_vec_inv(vec * out, const vec * in)
 {
 	vec tmp_11[ GFBITS ];
 	vec tmp_1111[ GFBITS ];
 
-	vec_copy(out, in);
+	MC_vec_copy(out, in);
 
-	vec_sq(out, out);
-	vec_mul(tmp_11, out, in); // ^11
+	MC_vec_sq(out, out);
+	MC_vec_mul(tmp_11, out, in); // ^11
 
-	vec_sq(out, tmp_11);
-	vec_sq(out, out);
-	vec_mul(tmp_1111, out, tmp_11); // ^1111
+	MC_vec_sq(out, tmp_11);
+	MC_vec_sq(out, out);
+	MC_vec_mul(tmp_1111, out, tmp_11); // ^1111
 
-	vec_sq(out, tmp_1111);
-	vec_sq(out, out);
-	vec_sq(out, out);
-	vec_sq(out, out);
-	vec_mul(out, out, tmp_1111); // ^11111111
+	MC_vec_sq(out, tmp_1111);
+	MC_vec_sq(out, out);
+	MC_vec_sq(out, out);
+	MC_vec_sq(out, out);
+	MC_vec_mul(out, out, tmp_1111); // ^11111111
 
-	vec_sq(out, out);
-	vec_sq(out, out);
-	vec_sq(out, out);
-	vec_sq(out, out);
-	vec_mul(out, out, tmp_1111); // ^111111111111
+	MC_vec_sq(out, out);
+	MC_vec_sq(out, out);
+	MC_vec_sq(out, out);
+	MC_vec_sq(out, out);
+	MC_vec_mul(out, out, tmp_1111); // ^111111111111
 
-	vec_sq(out, out); // ^1111111111110
+	MC_vec_sq(out, out); // ^1111111111110
 }
 

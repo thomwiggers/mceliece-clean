@@ -15,7 +15,7 @@ static void radix_conversions(vec in[][GFBITS])
 {
 	int i, j, k;
 
-	const vec mask[5][2] = 
+	const vec mask[5][2] =
 	{
 		{0x8888888888888888, 0x4444444444444444},
 		{0xC0C0C0C0C0C0C0C0, 0x3030303030303030},
@@ -24,11 +24,11 @@ static void radix_conversions(vec in[][GFBITS])
 		{0xFFFF000000000000, 0x0000FFFF00000000}
 	};
 
-	const vec s[5][2][GFBITS] = 
+	const vec s[5][2][GFBITS] =
 	{
-#include "scalars_2x.data"
+#include "scalars_2x.inc"
 	};
-	
+
 	for (j = 0; j <= 5; j++)
 	{
 		for (i = 0; i < GFBITS; i++)
@@ -48,8 +48,8 @@ static void radix_conversions(vec in[][GFBITS])
 
 		if (j < 5)
 		{
-			vec_mul(in[0], in[0], s[j][0]);
-			vec_mul(in[1], in[1], s[j][1]);
+			MC_vec_mul(in[0], in[0], s[j][0]);
+			MC_vec_mul(in[1], in[1], s[j][1]);
 		}
 	}
 }
@@ -68,31 +68,31 @@ static void butterflies(vec out[][ GFBITS ], vec in[][ GFBITS ])
 
 	const vec consts[ 128 ][ GFBITS ] =
 	{
-#include "consts.data"
+#include "consts.inc"
 	};
 
 	const vec powers[ 128 ][ GFBITS ] =
 	{
-#include "powers.data"
+#include "powers.inc"
 	};
 
-	const unsigned char reversal[128] = 
-	{ 
-	  0, 64, 32, 96, 16, 80, 48, 112, 
-	  8, 72, 40, 104, 24, 88, 56, 120, 
-	  4, 68, 36, 100, 20, 84, 52, 116, 
-	  12, 76, 44, 108, 28, 92, 60, 124, 
-	  2, 66, 34, 98, 18, 82, 50, 114, 
-	  10, 74, 42, 106, 26, 90, 58, 122, 
-	  6, 70, 38, 102, 22, 86, 54, 118, 
-	  14, 78, 46, 110, 30, 94, 62, 126, 
-	  1, 65, 33, 97, 17, 81, 49, 113, 
-	  9, 73, 41, 105, 25, 89, 57, 121, 
-	  5, 69, 37, 101, 21, 85, 53, 117, 
-	  13, 77, 45, 109, 29, 93, 61, 125, 
-	  3, 67, 35, 99, 19, 83, 51, 115, 
-	  11, 75, 43, 107, 27, 91, 59, 123, 
-	  7, 71, 39, 103, 23, 87, 55, 119, 
+	const unsigned char reversal[128] =
+	{
+	  0, 64, 32, 96, 16, 80, 48, 112,
+	  8, 72, 40, 104, 24, 88, 56, 120,
+	  4, 68, 36, 100, 20, 84, 52, 116,
+	  12, 76, 44, 108, 28, 92, 60, 124,
+	  2, 66, 34, 98, 18, 82, 50, 114,
+	  10, 74, 42, 106, 26, 90, 58, 122,
+	  6, 70, 38, 102, 22, 86, 54, 118,
+	  14, 78, 46, 110, 30, 94, 62, 126,
+	  1, 65, 33, 97, 17, 81, 49, 113,
+	  9, 73, 41, 105, 25, 89, 57, 121,
+	  5, 69, 37, 101, 21, 85, 53, 117,
+	  13, 77, 45, 109, 29, 93, 61, 125,
+	  3, 67, 35, 99, 19, 83, 51, 115,
+	  11, 75, 43, 107, 27, 91, 59, 123,
+	  7, 71, 39, 103, 23, 87, 55, 119,
 	  15, 79, 47, 111, 31, 95, 63, 127
 	};
 
@@ -104,16 +104,16 @@ static void butterflies(vec out[][ GFBITS ], vec in[][ GFBITS ])
 	{
 		for (j = 0; j < GFBITS; j++)
 		{
-			pre[i][j] = (beta[i] >> j) & 1; 
+			pre[i][j] = (beta[i] >> j) & 1;
 			pre[i][j] = -pre[i][j];
 		}
 
-		vec_mul(pre[i], in[1], pre[i]);
+		MC_vec_mul(pre[i], in[1], pre[i]);
 	}
 
 	for (i = 0; i < GFBITS; i++)
 	{
-		buf[0] = in[0][i];             
+		buf[0] = in[0][i];
 
 		buf[1] = buf[0] ^ pre[0][i];      buf[32] = in[0][i] ^ pre[5][i];
 		buf[3] = buf[1] ^ pre[1][i];      buf[96] = buf[32] ^ pre[6][i];
@@ -179,12 +179,12 @@ static void butterflies(vec out[][ GFBITS ], vec in[][ GFBITS ])
 		buf[39] = buf[37] ^ pre[1][i];    buf[66] = buf[70] ^ pre[2][i];
 		buf[38] = buf[39] ^ pre[0][i];    buf[67] = buf[66] ^ pre[0][i];
 		buf[34] = buf[38] ^ pre[2][i];    buf[65] = buf[67] ^ pre[1][i];
-		buf[35] = buf[34] ^ pre[0][i];                                     
+		buf[35] = buf[34] ^ pre[0][i];
 		buf[33] = buf[35] ^ pre[1][i];    buf[64] = in[0][i] ^ pre[6][i];
 
-		transpose_64x64(buf +  0, buf +  0);
-		transpose_64x64(buf + 64, buf + 64);
-	
+		MC_transpose_64x64(buf +  0, buf +  0);
+		MC_transpose_64x64(buf + 64, buf + 64);
+
 		for (j = 0; j < 128; j++)
 			out[ reversal[j] ][i] = buf[j];
 	}
@@ -196,7 +196,7 @@ static void butterflies(vec out[][ GFBITS ], vec in[][ GFBITS ])
 		for (j = 0; j < 128; j += 2*s)
 		for (k = j; k < j+s; k++)
 		{
-			vec_mul(tmp, out[k+s], consts[ consts_ptr + (k-j) ]);
+			MC_vec_mul(tmp, out[k+s], consts[ consts_ptr + (k-j) ]);
 
 			for (b = 0; b < GFBITS; b++) out[k  ][b] ^= tmp[b];
 			for (b = 0; b < GFBITS; b++) out[k+s][b] ^= out[k][b];
@@ -206,15 +206,15 @@ static void butterflies(vec out[][ GFBITS ], vec in[][ GFBITS ])
 	}
 
 	// adding the part contributed by x^128
-	
+
 	for (i = 0; i < 128; i++)
-	for (b = 0; b < GFBITS; b++) 
+	for (b = 0; b < GFBITS; b++)
 		out[i][b] ^= powers[i][b];
 }
 
 /* input: in, polynomial in bitsliced form */
 /* output: out, bitsliced results of evaluating in all the field elements */
-void fft(vec out[][GFBITS], vec in[][GFBITS])
+void MC_fft(vec out[][GFBITS], vec in[][GFBITS])
 {
 	radix_conversions(in);
 	butterflies(out, in);
