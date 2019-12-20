@@ -84,14 +84,14 @@ static void gen_e(unsigned char *e)
 
 /* input: public key pk, error vector e */
 /* output: syndrome s */
-static void syndrome(unsigned char *s, const unsigned char *pk, unsigned char *e)
+static void syndrome(unsigned char *s, const unsigned char *pk, const unsigned char *e)
 {
 	unsigned char e_tmp[ SYS_N/8 ];
 
 	uint64_t b;
 
-	const uint64_t *pk_ptr;
-	const uint64_t *e_ptr = ((uint64_t *) (e_tmp + SYND_BYTES - 1));
+	const uint8_t *pk_ptr8;
+	const uint8_t *e_ptr8 = e_tmp + SYND_BYTES - 1;
 
 	int i, j, k, tail = (PK_NROWS % 8);
 
@@ -109,14 +109,14 @@ static void syndrome(unsigned char *s, const unsigned char *pk, unsigned char *e
 
 	for (i = 0; i < PK_NROWS; i++)
 	{
-		pk_ptr = ((uint64_t *) (pk + PK_ROW_BYTES * i));
+		pk_ptr8 = pk + PK_ROW_BYTES * i;
 
 		b = 0;
 		for (j = 0; j < PK_NCOLS/64; j++)
-			b ^= pk_ptr[j] & e_ptr[j];
+			b ^= MC_load8(pk_ptr8 + j*8) & MC_load8(e_ptr8 + j*8);
 
 		for (k = 0; k < (PK_NCOLS%64 + 7)/8; k++)
-			b ^= ((unsigned char *) &pk_ptr[j])[k] & ((unsigned char *) &e_ptr[j])[k];
+			b ^= pk_ptr8[8*j+k] & e_ptr8[8*j+k];
 
 		b ^= b >> 32;
 		b ^= b >> 16;

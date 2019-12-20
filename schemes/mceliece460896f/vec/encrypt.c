@@ -91,8 +91,8 @@ static void gen_e(unsigned char *e) {
 static void syndrome(unsigned char *s, const unsigned char *pk, const unsigned char *e) {
     uint64_t b;
 
-    const uint64_t *pk_ptr;
-    const uint64_t *e_ptr = ((uint64_t *) (e + SYND_BYTES));
+    const uint8_t *e_ptr8 = e + SYND_BYTES;
+    const uint8_t *pk_ptr8;
 
     int i, j;
 
@@ -103,14 +103,14 @@ static void syndrome(unsigned char *s, const unsigned char *pk, const unsigned c
     }
 
     for (i = 0; i < PK_NROWS; i++) {
-        pk_ptr = ((uint64_t *) (pk + PK_ROW_BYTES * i));
+        pk_ptr8 = pk + PK_ROW_BYTES * i;
 
         b = 0;
         for (j = 0; j < PK_NCOLS / 64; j++) {
-            b ^= pk_ptr[j] & e_ptr[j];
+            b ^= MC_load8(pk_ptr8 + 8*j) & MC_load8(e_ptr8 + 8*j);
         }
 
-        b ^= ((uint32_t *) &pk_ptr[j])[0] & ((uint32_t *) &e_ptr[j])[0];
+        b ^= MC_load4(pk_ptr8 + 8 * j) & MC_load4(e_ptr8 + 8 * j);
 
         b ^= b >> 32;
         b ^= b >> 16;
