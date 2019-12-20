@@ -25,7 +25,7 @@ static void radix_conversions_tr(vec in[][ GFBITS ])
 
 	const vec s[6][4][GFBITS] = 
 	{
-#include "scalars_4x.data"
+#include "scalars_4x.inc"
 	};
 	
 	//
@@ -34,10 +34,10 @@ static void radix_conversions_tr(vec in[][ GFBITS ])
 	{
 		if (j < 6)
 		{
-			vec_mul(in[0], in[0], s[j][0]); // scaling
-			vec_mul(in[1], in[1], s[j][1]); // scaling
-			vec_mul(in[2], in[2], s[j][2]); // scaling
-			vec_mul(in[3], in[3], s[j][3]); // scaling
+			MC_vec_mul(in[0], in[0], s[j][0]); // scaling
+			MC_vec_mul(in[1], in[1], s[j][1]); // scaling
+			MC_vec_mul(in[2], in[2], s[j][2]); // scaling
+			MC_vec_mul(in[3], in[3], s[j][3]); // scaling
 		}
 
 		for (k = j; k <= 4; k++)
@@ -78,7 +78,7 @@ static void butterflies_tr(vec out[][ GFBITS ], vec in[][ GFBITS ])
 
 	const vec consts[ 128 ][ GFBITS ] =
 	{
-#include "consts.data"
+#include "consts.inc"
 	};
 
 	uint64_t consts_ptr = 128;
@@ -117,7 +117,7 @@ static void butterflies_tr(vec out[][ GFBITS ], vec in[][ GFBITS ])
 		{
 			for (b = 0; b < GFBITS; b++) in[k][b] ^= in[k+s][b];
 
-			vec_mul(tmp, in[k], consts[ consts_ptr + (k-j) ]);
+			MC_vec_mul(tmp, in[k], consts[ consts_ptr + (k-j) ]);
 
 			for (b = 0; b < GFBITS; b++) in[k+s][b] ^= tmp[b];
 		}
@@ -128,8 +128,8 @@ static void butterflies_tr(vec out[][ GFBITS ], vec in[][ GFBITS ])
 		for (k = 0; k < 128; k++)
 			(&buf[0][0])[ k ] = in[ reversal[k] ][i];
 
-		transpose_64x64(buf[0], buf[0]);
-		transpose_64x64(buf[1], buf[1]);
+		MC_transpose_64x64(buf[0], buf[0]);
+		MC_transpose_64x64(buf[1], buf[1]);
 
 		for (k = 0; k < 2; k++)
 		{
@@ -200,17 +200,17 @@ static void butterflies_tr(vec out[][ GFBITS ], vec in[][ GFBITS ])
 		}
 	}	
 
-	for (j = 0; j < GFBITS; j++) tmp[j] = vec_setbits((beta[0] >> j) & 1);
+	for (j = 0; j < GFBITS; j++) tmp[j] = MC_vec_setbits((beta[0] >> j) & 1);
 
-	vec_mul(out[2], pre[0][0], tmp);
-	vec_mul(out[3], pre[0][1], tmp);
+	MC_vec_mul(out[2], pre[0][0], tmp);
+	MC_vec_mul(out[3], pre[0][1], tmp);
 
 	for (i = 1; i < 6; i++)
 	{
-		for (j = 0; j < GFBITS; j++) tmp[j] = vec_setbits((beta[i] >> j) & 1);
+		for (j = 0; j < GFBITS; j++) tmp[j] = MC_vec_setbits((beta[i] >> j) & 1);
 
-		vec_mul(pre[i][0], pre[i][0], tmp);
-		vec_mul(pre[i][1], pre[i][1], tmp);
+		MC_vec_mul(pre[i][0], pre[i][0], tmp);
+		MC_vec_mul(pre[i][1], pre[i][1], tmp);
 
 		for (b = 0; b < GFBITS; b++) 
 		{
@@ -233,7 +233,7 @@ static void postprocess(vec out[4][GFBITS])
 	}
 }
 
-void fft_tr(vec out[][GFBITS], vec in[][ GFBITS ])
+void MC_fft_tr(vec out[][GFBITS], vec in[][ GFBITS ])
 {
 	butterflies_tr(out, in);
 	radix_conversions_tr(out);

@@ -8,8 +8,40 @@
 
 #include <stdio.h>
 
+/* 2 field multiplications */
+uint64_t MC_gf_mul2(gf a, gf b0, gf b1)
+{
+	int i;
+
+	uint64_t tmp=0;
+	uint64_t t0;
+	uint64_t t1;
+	uint64_t t;
+	uint64_t mask = 0x0000000100000001;
+
+	t0 = a;
+	t1 = b1;
+	t1 = (t1 << 32) | b0;
+	
+	for (i = 0; i < GFBITS; i++)
+	{
+		tmp ^= t0 * (t1 & mask);
+		mask += mask;
+	}
+
+	//
+
+	t = tmp & 0x01FF000001FF0000;
+	tmp ^= (t >> 9) ^ (t >> 10) ^ (t >> 12) ^ (t >> 13);
+
+	t = tmp & 0x0000E0000000E000;
+	tmp ^= (t >> 9) ^ (t >> 10) ^ (t >> 12) ^ (t >> 13);
+
+	return tmp & 0x00001FFF00001FFF;
+}
+
 /* field multiplication */
-gf gf_mul(gf in0, gf in1)
+gf MC_gf_mul(gf in0, gf in1)
 {
 	int i;
 
@@ -147,7 +179,7 @@ static inline gf gf_sq2mul(gf in, gf m)
 }
 
 /* return num/den */
-gf gf_frac(gf den, gf num)
+gf MC_gf_frac(gf den, gf num)
 {
 	gf tmp_11;
 	gf tmp_1111;
@@ -164,13 +196,13 @@ gf gf_frac(gf den, gf num)
 }
 
 /* return 1/den */
-gf gf_inv(gf den)
+gf MC_gf_inv(gf in)
 {
-	return gf_frac(den, ((gf) 1));
+	return MC_gf_frac(in, ((gf) 1));
 }
 
 /* check if a == 0 */
-gf gf_iszero(gf a)
+gf MC_gf_iszero(gf a)
 {
 	uint32_t t = a;
 
@@ -181,7 +213,7 @@ gf gf_iszero(gf a)
 }
 
 /* multiplication in GF((2^m)^t) */
-void GF_mul(gf *out, gf *in0, gf *in1)
+void MC_GF_mul(gf *out, const gf *in0, const gf *in1)
 {
 	int i, j;
 
@@ -192,15 +224,15 @@ void GF_mul(gf *out, gf *in0, gf *in1)
 
 	for (i = 0; i < 128; i++)
 		for (j = 0; j < 128; j++)
-			prod[i+j] ^= gf_mul(in0[i], in1[j]);
+			prod[i+j] ^= MC_gf_mul(in0[i], in1[j]);
 
 	//
  
 	for (i = 254; i >= 128; i--)
 	{
-		prod[i - 123] ^= gf_mul(prod[i], (gf) 7682);
-		prod[i - 125] ^= gf_mul(prod[i], (gf) 2159);
-		prod[i - 128] ^= gf_mul(prod[i], (gf) 3597);
+		prod[i - 123] ^= MC_gf_mul(prod[i], (gf) 7682);
+		prod[i - 125] ^= MC_gf_mul(prod[i], (gf) 2159);
+		prod[i - 128] ^= MC_gf_mul(prod[i], (gf) 3597);
 	}
 
 	for (i = 0; i < 128; i++)

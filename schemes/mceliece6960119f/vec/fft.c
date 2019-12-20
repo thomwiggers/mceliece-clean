@@ -5,7 +5,6 @@
 
 #include "fft.h"
 
-#include "fftconsts.h"
 #include "transpose.h"
 
 #include <stdint.h>
@@ -23,6 +22,11 @@ static void radix_conversions(vec in[][GFBITS])
 		{0xF000F000F000F000, 0x0F000F000F000F00},
 		{0xFF000000FF000000, 0x00FF000000FF0000},
 		{0xFFFF000000000000, 0x0000FFFF00000000}
+	};
+
+	const vec s[5][2][GFBITS] =
+	{
+#include "scalars_2x.inc"
 	};
 
 	for (j = 0; j <= 5; j++)
@@ -44,8 +48,8 @@ static void radix_conversions(vec in[][GFBITS])
 
 		if (j < 5)
 		{
-			vec_mul(in[0], in[0], s[j][0]);
-			vec_mul(in[1], in[1], s[j][1]);
+			MC_vec_mul(in[0], in[0], s[j][0]);
+			MC_vec_mul(in[1], in[1], s[j][1]);
 		}
 	}
 }
@@ -64,7 +68,7 @@ static void butterflies(vec out[][ GFBITS ], vec in[][ GFBITS ])
 
 	const vec consts[ 128 ][ GFBITS ] =
 	{
-#include "consts.data"
+#include "consts.inc"
 	};
 
 	const unsigned char reversal[128] =
@@ -99,7 +103,7 @@ static void butterflies(vec out[][ GFBITS ], vec in[][ GFBITS ])
 			pre[i][j] = -pre[i][j];
 		}
 
-		vec_mul(pre[i], in[1], pre[i]);
+		MC_vec_mul(pre[i], in[1], pre[i]);
 	}
 
 	for (i = 0; i < GFBITS; i++)
@@ -173,8 +177,8 @@ static void butterflies(vec out[][ GFBITS ], vec in[][ GFBITS ])
 		buf[35] = buf[34] ^ pre[0][i];
 		buf[33] = buf[35] ^ pre[1][i];    buf[64] = in[0][i] ^ pre[6][i];
 
-		transpose_64x64(buf +  0, buf +  0);
-		transpose_64x64(buf + 64, buf + 64);
+		MC_transpose_64x64(buf +  0, buf +  0);
+		MC_transpose_64x64(buf + 64, buf + 64);
 
 		for (j = 0; j < 128; j++)
 			out[ reversal[j] ][i] = buf[j];
@@ -187,7 +191,7 @@ static void butterflies(vec out[][ GFBITS ], vec in[][ GFBITS ])
 		for (j = 0; j < 128; j += 2*s)
 		for (k = j; k < j+s; k++)
 		{
-			vec_mul(tmp, out[k+s], consts[ consts_ptr + (k-j) ]);
+			MC_vec_mul(tmp, out[k+s], consts[ consts_ptr + (k-j) ]);
 
 			for (b = 0; b < GFBITS; b++) out[k  ][b] ^= tmp[b];
 			for (b = 0; b < GFBITS; b++) out[k+s][b] ^= out[k][b];
@@ -205,7 +209,7 @@ static void butterflies(vec out[][ GFBITS ], vec in[][ GFBITS ])
 
 /* input: in, polynomial in bitsliced form */
 /* output: out, bitsliced results of evaluating in all the field elements */
-void fft(vec out[][GFBITS], vec in[][GFBITS])
+void MC_fft(vec out[][GFBITS], vec in[][GFBITS])
 {
 	radix_conversions(in);
 	butterflies(out, in);

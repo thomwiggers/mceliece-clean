@@ -24,3 +24,5 @@ auxiliary-submitters: []
 implementations:
     - name: clean
       version: SUPERCOP-20191017
+    - name: vec
+      version: SUPERCOP-20191017

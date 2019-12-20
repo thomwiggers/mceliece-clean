@@ -12,7 +12,7 @@
 
 #include <stdint.h>
 
-static void de_bitslicing(uint64_t * out, const vec in[][GFBITS])
+static void de_bitslicing(uint64_t * out, vec in[][GFBITS])
 {
 	int i, j, r;
 
@@ -21,10 +21,10 @@ static void de_bitslicing(uint64_t * out, const vec in[][GFBITS])
 
 	for (i = 0; i < 128; i++)
 	for (j = GFBITS-1; j >= 0; j--)
-	for (r = 0; r < 64; r++) 
-	{ 
-		out[i*64 + r] <<= 1; 
-		out[i*64 + r] |= (in[i][j] >> r) & 1; 
+	for (r = 0; r < 64; r++)
+	{
+		out[i*64 + r] <<= 1;
+		out[i*64 + r] |= (in[i][j] >> r) & 1;
 	}
 }
 
@@ -40,7 +40,7 @@ static void to_bitslicing_2x(vec out0[][GFBITS], vec out1[][GFBITS], const uint6
 			out1[i][j] <<= 1;
 			out1[i][j] |= (in[i*64 + r] >> (j + GFBITS)) & 1;
 		}
-        
+
 		for (j = GFBITS-1; j >= 0; j--)
 		for (r = 63; r >= 0; r--)
 		{
@@ -50,15 +50,15 @@ static void to_bitslicing_2x(vec out0[][GFBITS], vec out1[][GFBITS], const uint6
 	}
 }
 
-int pk_gen(unsigned char * pk, const unsigned char * irr, uint32_t * perm)
+int MC_pk_gen(unsigned char * pk, uint32_t * perm, const unsigned char * irr)
 {
 	int i, j, k;
 	int row, c, d;
-	
+
 	uint64_t mat[ GFBITS * SYS_T ][ 128 ];
 	uint64_t ops[ GFBITS * SYS_T ][ GFBITS * SYS_T / 64 ];
 
-	uint64_t mask;	
+	uint64_t mask;
 
 	vec irr_int[2][ GFBITS ];
 
@@ -70,39 +70,39 @@ int pk_gen(unsigned char * pk, const unsigned char * irr, uint32_t * perm)
 	uint64_t list[1 << GFBITS];
 	uint64_t one_row[ (SYS_N - GFBITS*SYS_T)/64 ];
 
-	// compute the inverses 
+	// compute the inverses
 
-	irr_load(irr_int, irr);
+	MC_irr_load(irr_int, irr);
 
-	fft(eval, irr_int);
+	MC_fft(eval, irr_int);
 
-	vec_copy(prod[0], eval[0]);
+	MC_vec_copy(prod[0], eval[0]);
 
 	for (i = 1; i < 128; i++)
-		vec_mul(prod[i], prod[i-1], eval[i]);
+		MC_vec_mul(prod[i], prod[i-1], eval[i]);
 
-	vec_inv(tmp, prod[127]);
+	MC_vec_inv(tmp, prod[127]);
 
 	for (i = 126; i >= 0; i--)
 	{
-		vec_mul(prod[i+1], prod[i], tmp);
-		vec_mul(tmp, tmp, eval[i+1]);
+		MC_vec_mul(prod[i+1], prod[i], tmp);
+		MC_vec_mul(tmp, tmp, eval[i+1]);
 	}
 
-	vec_copy(prod[0], tmp);
+	MC_vec_copy(prod[0], tmp);
 
-	// fill matrix 
+	// fill matrix
 
 	de_bitslicing(list, prod);
 
 	for (i = 0; i < (1 << GFBITS); i++)
-	{	
+	{
 		list[i] <<= GFBITS;
-		list[i] |= i;	
+		list[i] |= i;
 		list[i] |= ((uint64_t) perm[i]) << 31;
 	}
 
-	sort_63b(1 << GFBITS, list);
+	MC_sort_63b(1 << GFBITS, list);
 
 	to_bitslicing_2x(consts, prod, list);
 
@@ -116,19 +116,19 @@ int pk_gen(unsigned char * pk, const unsigned char * irr, uint32_t * perm)
 	for (i = 1; i < SYS_T; i++)
 	for (j = 0; j < (GFBITS * SYS_T + 63)/64; j++)
 	{
-		vec_mul(prod[j], prod[j], consts[j]);
+		MC_vec_mul(prod[j], prod[j], consts[j]);
 
 		for (k = 0; k < GFBITS; k++)
 			mat[ i*GFBITS + k ][ j ] = prod[ j ][ k ];
 	}
 
-	// gaussian elimination to obtain an upper triangular matrix 
+	// gaussian elimination to obtain an upper triangular matrix
 	// and keep track of the operations in ops
 
 	for (i = 0; i < (GFBITS * SYS_T) / 64; i++)
 	for (j = 0; j < 64; j++)
 	{
-		row = i*64 + j;			
+		row = i*64 + j;
 		for (c = 0; c < (GFBITS * SYS_T) / 64; c++)
 			ops[ row ][ c ] = 0;
 	}
@@ -136,7 +136,7 @@ int pk_gen(unsigned char * pk, const unsigned char * irr, uint32_t * perm)
 	for (i = 0; i < (GFBITS * SYS_T) / 64; i++)
 	for (j = 0; j < 64; j++)
 	{
-		row = i*64 + j;			
+		row = i*64 + j;
 
 		ops[ row ][ i ] = 1;
 		ops[ row ][ i ] <<= j;
@@ -145,7 +145,7 @@ int pk_gen(unsigned char * pk, const unsigned char * irr, uint32_t * perm)
 	for (i = 0; i < (GFBITS * SYS_T) / 64; i++)
 	for (j = 0; j < 64; j++)
 	{
-		row = i*64 + j;			
+		row = i*64 + j;
 
 		for (k = row + 1; k < GFBITS * SYS_T; k++)
 		{
@@ -184,7 +184,7 @@ int pk_gen(unsigned char * pk, const unsigned char * irr, uint32_t * perm)
 	for (i = (GFBITS * SYS_T) / 64 - 1; i >= 0; i--)
 	for (j = 63; j >= 0; j--)
 	{
-		row = i*64 + j;			
+		row = i*64 + j;
 
 		for (k = 0; k < row; k++)
 		{
@@ -208,7 +208,7 @@ int pk_gen(unsigned char * pk, const unsigned char * irr, uint32_t * perm)
 	for (i = 1; i < SYS_T; i++)
 	for (j = (GFBITS * SYS_T + 63)/64; j < 128; j++)
 	{
-		vec_mul(prod[j], prod[j], consts[j]);
+		MC_vec_mul(prod[j], prod[j], consts[j]);
 
 		for (k = 0; k < GFBITS; k++)
 			mat[ i*GFBITS + k ][ j ] = prod[ j ][ k ];
@@ -217,7 +217,7 @@ int pk_gen(unsigned char * pk, const unsigned char * irr, uint32_t * perm)
 	for (i = 0; i < (GFBITS * SYS_T) / 64; i++)
 	for (j = 0; j < 64; j++)
 	{
-		row = i*64 + j;			
+		row = i*64 + j;
 
 		for (k = 0; k < (SYS_N - GFBITS*SYS_T)/64; k++)
 			one_row[ k ] = 0;
@@ -235,8 +235,8 @@ int pk_gen(unsigned char * pk, const unsigned char * irr, uint32_t * perm)
 
 		for (k = 0; k < (SYS_N - GFBITS*SYS_T)/64; k++)
 		{
-			store8(pk, one_row[ k ]);
-			pk += 8;		
+			MC_store8(pk, one_row[ k ]);
+			pk += 8;
 		}
 	}
 

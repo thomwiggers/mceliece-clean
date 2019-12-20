@@ -30,7 +30,7 @@ static void gen_e(unsigned char *e)
 	{
 		randombytes(ind8, sizeof(ind));
         for (size_t i = 0; i < sizeof(ind); i+=2) {
-            ind[i/2] = (uint16_t)ind8[i+1] | ind8[i];
+            ind[i/2] = (uint16_t)ind8[i+1] << 8 | ind8[i];
         }
 
 		for (i = 0; i < SYS_T*2; i++)
@@ -84,7 +84,7 @@ static void gen_e(unsigned char *e)
 
 /* input: public key pk, error vector e */
 /* output: syndrome s */
-static void syndrome(unsigned char *s, const unsigned char *pk, const unsigned char *e)
+static void syndrome(unsigned char *s, const unsigned char *pk, unsigned char *e)
 {
 	unsigned char e_tmp[ SYS_N/8 ];
 

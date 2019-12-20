@@ -11,22 +11,24 @@ import sys
 
 
 IMPLEMENTATIONS = [
-    ("mceliece460896", "vec", "vec"),
-    ("mceliece460896f", "vec", "vec"),
-    ("mceliece348864f", "vec", "vec"),
-    ("mceliece6688128", "vec", "vec"),
-    ("mceliece6688128f", "vec", "vec"),
     ("mceliece348864", "ref", "clean"),
     ("mceliece348864", "vec", "vec"),
     ("mceliece348864f", "ref", "clean"),
+    ("mceliece348864f", "vec", "vec"),
     ("mceliece460896", "ref", "clean"),
+    ("mceliece460896", "vec", "vec"),
     ("mceliece460896f", "ref", "clean"),
+    ("mceliece460896f", "vec", "vec"),
     ("mceliece6688128", "ref", "clean"),
+    ("mceliece6688128", "vec", "vec"),
     ("mceliece6688128f", "ref", "clean"),
+    ("mceliece6688128f", "vec", "vec"),
     ("mceliece6960119", "ref", "clean"),
     ("mceliece6960119", "vec", "vec"),
     ("mceliece6960119f", "ref", "clean"),
+    ("mceliece6960119f", "vec", "vec"),
     ("mceliece8192128", "ref", "clean"),
+    ("mceliece8192128", "vec", "vec"),
     ("mceliece8192128f", "ref", "clean"),
 ]
 

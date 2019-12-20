@@ -1,5 +1,5 @@
-#ifndef MC_GF_H
-#define MC_GF_H
+#ifndef GF_H
+#define GF_H
 /*
   This file is for functions for field arithmetic
 */
@@ -9,14 +9,12 @@
 
 typedef uint16_t gf;
 
-gf MC_gf_iszero(gf a);
-gf MC_gf_add(gf in0, gf in1);
-gf MC_gf_mul(gf in0, gf in1);
-uint64_t MC_gf_mul2(gf a, gf b0, gf b1);
-gf MC_gf_frac(gf den, gf num);
-gf MC_gf_inv(gf in);
+gf MC_gf_iszero(gf);
+gf MC_gf_mul(gf, gf);
+gf MC_gf_frac(gf, gf);
+gf MC_gf_inv(gf);
 
-void MC_GF_mul(gf *out, const gf *in0, const gf *in1);
+void MC_GF_mul(gf *, const gf *, const gf *);
 
 #endif
 
