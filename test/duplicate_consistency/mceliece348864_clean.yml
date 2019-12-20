@@ -2,6 +2,7 @@ consistency_checks:
 - files:
   - aes256ctr.c
   - aes256ctr.h
+  - controlbits.c
   - controlbits.h
   - gf.c
   - root.c
@@ -9,9 +10,9 @@ consistency_checks:
   - params.h
   - crypto_hash.h
   - operations.h
+  - gf.h
   - benes.c
   - bm.c
-  - controlbits.c
   - decrypt.c
   - encrypt.c
   - operations.c
@@ -25,7 +26,6 @@ consistency_checks:
   - bm.h
   - decrypt.h
   - encrypt.h
-  - gf.h
   - pk_gen.h
   - root.h
   - util.h
@@ -35,12 +35,13 @@ consistency_checks:
 - files:
   - aes256ctr.c
   - aes256ctr.h
+  - controlbits.c
   - controlbits.h
   - root.c
   - crypto_hash.h
   - operations.h
+  - gf.h
   - bm.c
-  - controlbits.c
   - decrypt.c
   - encrypt.c
   - operations.c
@@ -53,7 +54,6 @@ consistency_checks:
   - bm.h
   - decrypt.h
   - encrypt.h
-  - gf.h
   - pk_gen.h
   - root.h
   - util.h
@@ -63,12 +63,13 @@ consistency_checks:
 - files:
   - aes256ctr.c
   - aes256ctr.h
+  - controlbits.c
   - controlbits.h
   - root.c
   - crypto_hash.h
   - operations.h
+  - gf.h
   - bm.c
-  - controlbits.c
   - decrypt.c
   - encrypt.c
   - operations.c
@@ -82,7 +83,6 @@ consistency_checks:
   - bm.h
   - decrypt.h
   - encrypt.h
-  - gf.h
   - pk_gen.h
   - root.h
   - util.h
@@ -92,12 +92,13 @@ consistency_checks:
 - files:
   - aes256ctr.c
   - aes256ctr.h
+  - controlbits.c
   - controlbits.h
   - root.c
   - crypto_hash.h
   - operations.h
+  - gf.h
   - bm.c
-  - controlbits.c
   - decrypt.c
   - encrypt.c
   - operations.c
@@ -110,7 +111,6 @@ consistency_checks:
   - bm.h
   - decrypt.h
   - encrypt.h
-  - gf.h
   - pk_gen.h
   - root.h
   - util.h
@@ -120,12 +120,13 @@ consistency_checks:
 - files:
   - aes256ctr.c
   - aes256ctr.h
+  - controlbits.c
   - controlbits.h
   - root.c
   - crypto_hash.h
   - operations.h
+  - gf.h
   - bm.c
-  - controlbits.c
   - decrypt.c
   - encrypt.c
   - operations.c
@@ -139,7 +140,6 @@ consistency_checks:
   - bm.h
   - decrypt.h
   - encrypt.h
-  - gf.h
   - pk_gen.h
   - root.h
   - util.h
@@ -149,12 +149,13 @@ consistency_checks:
 - files:
   - aes256ctr.c
   - aes256ctr.h
+  - controlbits.c
   - controlbits.h
   - root.c
   - crypto_hash.h
   - operations.h
+  - gf.h
   - bm.c
-  - controlbits.c
   - operations.c
   - sk_gen.c
   - sk_gen.h
@@ -165,7 +166,6 @@ consistency_checks:
   - bm.h
   - decrypt.h
   - encrypt.h
-  - gf.h
   - pk_gen.h
   - root.h
   - util.h
@@ -175,12 +175,13 @@ consistency_checks:
 - files:
   - aes256ctr.c
   - aes256ctr.h
+  - controlbits.c
   - controlbits.h
   - root.c
   - crypto_hash.h
   - operations.h
+  - gf.h
   - bm.c
-  - controlbits.c
   - operations.c
   - sk_gen.c
   - sk_gen.h
@@ -191,7 +192,6 @@ consistency_checks:
   - bm.h
   - decrypt.h
   - encrypt.h
-  - gf.h
   - pk_gen.h
   - root.h
   - util.h
@@ -201,12 +201,13 @@ consistency_checks:
 - files:
   - aes256ctr.c
   - aes256ctr.h
+  - controlbits.c
   - controlbits.h
   - root.c
   - crypto_hash.h
   - operations.h
+  - gf.h
   - bm.c
-  - controlbits.c
   - decrypt.c
   - operations.c
   - sk_gen.c
@@ -218,7 +219,6 @@ consistency_checks:
   - bm.h
   - decrypt.h
   - encrypt.h
-  - gf.h
   - pk_gen.h
   - root.h
   - util.h
@@ -228,12 +228,13 @@ consistency_checks:
 - files:
   - aes256ctr.c
   - aes256ctr.h
+  - controlbits.c
   - controlbits.h
   - root.c
   - crypto_hash.h
   - operations.h
+  - gf.h
   - bm.c
-  - controlbits.c
   - decrypt.c
   - operations.c
   - pk_gen.c
@@ -246,7 +247,6 @@ consistency_checks:
   - bm.h
   - decrypt.h
   - encrypt.h
-  - gf.h
   - pk_gen.h
   - root.h
   - util.h

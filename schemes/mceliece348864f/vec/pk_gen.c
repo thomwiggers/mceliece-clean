@@ -156,7 +156,7 @@ static int mov_columns(uint64_t mat[][ ((SYS_N + 63) / 64) ], uint32_t * perm)
 	return 0;
 }
 
-int MC_pk_gen(uint8_t * pk, uint32_t * perm, const uint8_t * irr)
+int MC_pk_gen(uint8_t * pk, uint32_t * perm, const uint8_t * sk)
 {
 #define NBLOCKS_H  ((SYS_N + 63) / 64)
 #define NBLOCKS_I  ((GFBITS * SYS_T + 63) / 64)
@@ -180,7 +180,7 @@ int MC_pk_gen(uint8_t * pk, uint32_t * perm, const uint8_t * irr)
 
 	// compute the inverses
 
-	MC_irr_load(irr_int, irr);
+	MC_irr_load(irr_int, sk);
 
 	MC_fft(eval, irr_int);
 

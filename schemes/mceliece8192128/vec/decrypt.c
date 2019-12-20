@@ -102,7 +102,7 @@ static uint16_t synd_cmp(vec s0[][ GFBITS ] , vec s1[][ GFBITS ])
 /*         s, ciphertext (syndrome) */
 /* output: e, error vector */
 /* return: 0 for success; 1 for failure */
-int MC_decrypt(unsigned char *e, const unsigned char *sk, const unsigned char *s)
+int MC_decrypt(unsigned char *e, const unsigned char *sk, const unsigned char *c)
 {
 	int i;
 
@@ -124,7 +124,7 @@ int MC_decrypt(unsigned char *e, const unsigned char *sk, const unsigned char *s
 
 	// Berlekamp decoder
 
-	preprocess(recv, s);
+	preprocess(recv, c);
 
 	MC_benes(recv, sk + IRR_BYTES, 1);
 	scaling(scaled, inv, sk, recv);

@@ -50,7 +50,7 @@ static void to_bitslicing_2x(vec out0[][GFBITS], vec out1[][GFBITS], const uint6
 	}
 }
 
-int MC_pk_gen(unsigned char * pk, uint32_t * perm, const unsigned char * irr)
+int MC_pk_gen(unsigned char * pk, uint32_t * perm, const unsigned char * sk)
 {
 	int i, j, k;
 	int row, c, d;
@@ -72,7 +72,7 @@ int MC_pk_gen(unsigned char * pk, uint32_t * perm, const unsigned char * irr)
 
 	// compute the inverses
 
-	MC_irr_load(irr_int, irr);
+	MC_irr_load(irr_int, sk);
 
 	MC_fft(eval, irr_int);
 

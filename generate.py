@@ -30,6 +30,7 @@ IMPLEMENTATIONS = [
     ("mceliece8192128", "ref", "clean"),
     ("mceliece8192128", "vec", "vec"),
     ("mceliece8192128f", "ref", "clean"),
+    ("mceliece8192128f", "vec", "vec"),
 ]
 
 

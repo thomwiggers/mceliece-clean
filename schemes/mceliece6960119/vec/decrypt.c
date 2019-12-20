@@ -130,10 +130,10 @@ static uint16_t synd_cmp(vec s0[][ GFBITS ], vec s1[][ GFBITS ]) {
 
 /* Niederreiter decryption with the Berlekamp decoder */
 /* intput: sk, secret key */
-/*         s, ciphertext (syndrome) */
+/*         c, ciphertext (syndrome) */
 /* output: e, error vector */
 /* return: 0 for success; 1 for failure */
-int MC_decrypt(unsigned char *e, const unsigned char *sk, const unsigned char *s) {
+int MC_decrypt(unsigned char *e, const unsigned char *sk, const unsigned char *c) {
     int i;
 
     uint16_t check_synd;
@@ -154,7 +154,7 @@ int MC_decrypt(unsigned char *e, const unsigned char *sk, const unsigned char *s
 
     // Berlekamp decoder
 
-    preprocess(recv, s);
+    preprocess(recv, c);
 
     MC_benes(recv, sk + IRR_BYTES, 1);
     scaling(scaled, inv, sk, recv);
