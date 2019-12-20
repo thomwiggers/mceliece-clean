@@ -27,7 +27,7 @@ jobs:
           pip install -r requirements.txt
       - name: Generate implementations
         run: |
-          python generate.py
+          python generate.py tidy
       - name: Run tests
         run: |
           cd test
