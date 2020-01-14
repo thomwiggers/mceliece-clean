@@ -90,5 +90,5 @@ for (scheme, impl, dst) in IMPLEMENTATIONS:
     replace_in_file(
         os.path.join(dest_dir, "Makefile.Microsoft_nmake"),
         r"libmceliece_.*\.lib",
-        f"lib{scheme}_{dst}.a",
+        f"lib{scheme}_{dst}.lib",
     )
