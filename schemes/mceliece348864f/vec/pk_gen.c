@@ -253,7 +253,7 @@ int MC_pk_gen(uint8_t * pk, uint32_t * perm, const uint8_t * sk)
 				return -1;
 		}
 
-		for (k = row + 1; k < min(row + 32, PK_NROWS); k++)
+		for (k = row + 1; k < PK_NROWS; k++)
 		{
 			mask = mat[ row ][ i ] >> j;
 			mask &= 1;
