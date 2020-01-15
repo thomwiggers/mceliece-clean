@@ -2,8 +2,8 @@
 
 LIBRARY = libmceliece_clean.lib
 
-OBJECTS = aes256ctr.lib benes.lib bm.lib controlbits.lib decrypt.lib encrypt.lib gf.lib \
-	  operations.lib pk_gen.lib root.lib sk_gen.lib synd.lib transpose.lib util.lib
+OBJECTS = aes256ctr.obj benes.obj bm.obj controlbits.obj decrypt.obj encrypt.obj gf.obj \
+	  operations.obj pk_gen.obj root.obj sk_gen.obj synd.obj transpose.obj util.obj
 
 CFLAGS=/nologo /O2 /I ..\..\..\common /W4 /WX
 
