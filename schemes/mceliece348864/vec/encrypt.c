@@ -27,7 +27,7 @@ static void gen_e(unsigned char *e) {
 
     while (1) {
         randombytes(ind_8, sizeof(ind_));
-        for (size_t i = 0; i < sizeof(ind_); i += 2) {
+        for (i = 0; i < sizeof(ind_); i += 2) {
             ind_[i/2] = (uint16_t)ind_8[i+1] << 8 | ind_8[i];
         }
 

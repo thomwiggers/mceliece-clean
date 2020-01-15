@@ -16,9 +16,9 @@
 #include "gf.h"
 
 /* output: e, an error vector of weight t */
-static void gen_e(unsigned char *e)
-{
-	int i, j, eq, count;
+static void gen_e(unsigned char *e) {
+	size_t i, j;
+    int eq, count;
 
 	uint16_t ind[ SYS_T*2 ];
     uint8_t *ind8 = (uint8_t*)ind;
@@ -31,7 +31,7 @@ static void gen_e(unsigned char *e)
 	while (1)
 	{
 		randombytes(ind8, sizeof(ind));
-        for (size_t i = 0; i < sizeof(ind); i += 2) {
+        for (i = 0; i < sizeof(ind); i += 2) {
             ind[i/2] = (uint16_t)ind8[i+1] << 8 | ind8[i];
         }
 
