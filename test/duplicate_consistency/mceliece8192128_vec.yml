@@ -4,7 +4,6 @@ consistency_checks:
   - aes256ctr.h
   - benes.c
   - benes.h
-  - bm.c
   - bm.h
   - consts.inc
   - controlbits.c
@@ -152,6 +151,7 @@ consistency_checks:
   - aes256ctr.h
   - benes.c
   - benes.h
+  - bm.c
   - bm.h
   - consts.inc
   - controlbits.c
@@ -193,6 +193,7 @@ consistency_checks:
   - aes256ctr.h
   - benes.c
   - benes.h
+  - bm.c
   - bm.h
   - consts.inc
   - controlbits.c
