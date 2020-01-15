@@ -30,12 +30,12 @@ static void radix_conversions(uint64_t *in)
 
 	for (j = 0; j <= 4; j++)
 	{
-		for (i = 0; i < GFBITS; i++)
-			for (k = 4; k >= j; k--)
-			{
+		for (i = 0; i < GFBITS; i++) {
+			for (k = 4; k >= j; k--) {
 				in[i] ^= (in[i] & mask[k][0]) >> (1 << k);
 				in[i] ^= (in[i] & mask[k][1]) >> (1 << k);
 			}
+        }
 
 		MC_vec_mul(in, in, s[j]); // scaling
 	}
@@ -74,12 +74,13 @@ static void butterflies(uint64_t out[][ GFBITS ], const uint64_t *in)
 
 	// boradcast
 
-	for (j = 0; j < 64; j++)
-	for (i = 0; i < GFBITS; i++)
-	{
-			out[j][i] = (in[i] >> reversal[j]) & 1;
-			out[j][i] = -out[j][i];
-	}
+	for (j = 0; j < 64; j++) {
+        for (i = 0; i < GFBITS; i++)
+        {
+                out[j][i] = (in[i] >> reversal[j]) & 1;
+                out[j][i] = -out[j][i];
+        }
+    }
 
 	// butterflies
 
@@ -98,7 +99,7 @@ static void butterflies(uint64_t out[][ GFBITS ], const uint64_t *in)
 			}
 		}
 
-		consts_ptr += (1 << i);
+		consts_ptr += ((uint64_t)1 << i);
 	}
 
 	//

@@ -14,7 +14,8 @@
 
 /* output: e, an error vector of weight t */
 static void gen_e(unsigned char *e) {
-    int i, j, eq, count;
+    size_t i, j;
+    int eq, count;
 
     uint16_t ind_[ SYS_T * 2 ];
     uint8_t *ind_8 = (uint8_t*)ind_;
@@ -48,10 +49,13 @@ static void gen_e(unsigned char *e) {
 
         eq = 0;
 
-        for (i = 1; i < SYS_T; i++) for (j = 0; j < i; j++)
+        for (i = 1; i < SYS_T; i++) {
+            for (j = 0; j < i; j++) {
                 if (ind[i] == ind[j]) {
                     eq = 1;
                 }
+            }
+        }
 
         if (eq == 0) {
             break;

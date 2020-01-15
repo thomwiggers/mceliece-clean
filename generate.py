@@ -63,6 +63,7 @@ for (scheme, impl, dst) in IMPLEMENTATIONS:
             sourcefiles.append(dest_file)
         replace_in_file(dest_file, "MC_", namespace)
 
+    astyle(*sourcefiles)
     if len(sys.argv) > 1 and sys.argv[1] == 'tidy':
         subprocess.run(
             [
@@ -77,6 +78,7 @@ for (scheme, impl, dst) in IMPLEMENTATIONS:
                 "-iquote",
                 dest_dir,
             ],
+            check=False,
             capture_output=True,
         )
 

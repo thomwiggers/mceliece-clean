@@ -223,14 +223,14 @@ void MC_bm(vec *out, vec in[][ GFBITS ]) {
         MC_vec_mul(B_tmp, d_vec, B);
         MC_vec_mul(C_tmp, b_vec, C);
 
-        vec_cmov(B, C, mask);
+        vec_cmov(B, C, (uint16_t)mask);
         update(B, mask & c0);
 
         for (i = 0; i < GFBITS; i++) {
             C[i] = B_tmp[i] ^ C_tmp[i];
         }
 
-        c0 = t >> 32;
+        c0 = (gf)(t >> 32);
         b = (d & mask) | (b & ~mask);
         L = ((N + 1 - L) & mask) | (L & ~mask);
 

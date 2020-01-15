@@ -1,163 +1,163 @@
 consistency_checks:
 - files:
-  - api.h
-  - crypto_hash.h
-  - operations.h
   - aes256ctr.c
   - aes256ctr.h
+  - api.h
   - controlbits.c
   - controlbits.h
-  - operations.c
-  - sk_gen.c
-  - sk_gen.h
+  - crypto_hash.h
   - decrypt.h
   - encrypt.h
+  - operations.c
+  - operations.h
   - pk_gen.h
+  - sk_gen.c
+  - sk_gen.h
   source:
     implementation: clean
     scheme: mceliece6688128f
 - files:
-  - api.h
-  - crypto_hash.h
-  - operations.h
   - aes256ctr.c
   - aes256ctr.h
+  - api.h
   - controlbits.c
   - controlbits.h
-  - operations.c
-  - sk_gen.c
-  - sk_gen.h
+  - crypto_hash.h
   - decrypt.h
   - encrypt.h
+  - operations.c
+  - operations.h
   - pk_gen.h
+  - sk_gen.c
+  - sk_gen.h
   source:
     implementation: clean
     scheme: mceliece6688128
 - files:
-  - crypto_hash.h
-  - operations.h
   - aes256ctr.c
   - aes256ctr.h
   - controlbits.c
   - controlbits.h
-  - operations.c
-  - sk_gen.c
-  - sk_gen.h
+  - crypto_hash.h
   - decrypt.h
   - encrypt.h
+  - operations.c
+  - operations.h
   - pk_gen.h
+  - sk_gen.c
+  - sk_gen.h
   source:
     implementation: clean
     scheme: mceliece348864f
 - files:
-  - crypto_hash.h
-  - operations.h
   - aes256ctr.c
   - aes256ctr.h
   - controlbits.c
   - controlbits.h
-  - operations.c
-  - sk_gen.c
-  - sk_gen.h
+  - crypto_hash.h
   - decrypt.h
   - encrypt.h
+  - operations.c
+  - operations.h
   - pk_gen.h
+  - sk_gen.c
+  - sk_gen.h
   source:
     implementation: clean
     scheme: mceliece348864
 - files:
-  - crypto_hash.h
-  - operations.h
   - aes256ctr.c
   - aes256ctr.h
   - controlbits.c
   - controlbits.h
-  - operations.c
-  - sk_gen.c
-  - sk_gen.h
+  - crypto_hash.h
   - decrypt.h
   - encrypt.h
+  - operations.c
+  - operations.h
   - pk_gen.h
+  - sk_gen.c
+  - sk_gen.h
   source:
     implementation: clean
     scheme: mceliece460896f
 - files:
-  - crypto_hash.h
-  - operations.h
   - aes256ctr.c
   - aes256ctr.h
   - controlbits.c
   - controlbits.h
-  - operations.c
-  - sk_gen.c
-  - sk_gen.h
+  - crypto_hash.h
   - decrypt.h
   - encrypt.h
+  - operations.c
+  - operations.h
   - pk_gen.h
+  - sk_gen.c
+  - sk_gen.h
   source:
     implementation: clean
     scheme: mceliece460896
 - files:
-  - crypto_hash.h
-  - operations.h
   - aes256ctr.c
   - aes256ctr.h
   - controlbits.c
   - controlbits.h
-  - operations.c
-  - sk_gen.c
-  - sk_gen.h
+  - crypto_hash.h
   - decrypt.h
   - encrypt.h
+  - operations.c
+  - operations.h
   - pk_gen.h
+  - sk_gen.c
+  - sk_gen.h
   source:
     implementation: clean
     scheme: mceliece6960119f
 - files:
-  - crypto_hash.h
-  - operations.h
   - aes256ctr.c
   - aes256ctr.h
   - controlbits.c
   - controlbits.h
-  - operations.c
-  - sk_gen.c
-  - sk_gen.h
+  - crypto_hash.h
   - decrypt.h
   - encrypt.h
+  - operations.c
+  - operations.h
   - pk_gen.h
+  - sk_gen.c
+  - sk_gen.h
   source:
     implementation: clean
     scheme: mceliece6960119
 - files:
-  - crypto_hash.h
-  - operations.h
   - aes256ctr.c
   - aes256ctr.h
   - controlbits.c
   - controlbits.h
-  - operations.c
-  - sk_gen.c
-  - sk_gen.h
+  - crypto_hash.h
   - decrypt.h
   - encrypt.h
+  - operations.c
+  - operations.h
   - pk_gen.h
+  - sk_gen.c
+  - sk_gen.h
   source:
     implementation: clean
     scheme: mceliece8192128f
 - files:
-  - crypto_hash.h
-  - operations.h
   - aes256ctr.c
   - aes256ctr.h
   - controlbits.c
   - controlbits.h
-  - operations.c
-  - sk_gen.c
-  - sk_gen.h
+  - crypto_hash.h
   - decrypt.h
   - encrypt.h
+  - operations.c
+  - operations.h
   - pk_gen.h
+  - sk_gen.c
+  - sk_gen.h
   source:
     implementation: clean
     scheme: mceliece8192128

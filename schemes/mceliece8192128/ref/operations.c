@@ -55,7 +55,7 @@ int MC_crypto_kem_dec(
 
     //
 
-    ret_decrypt = MC_decrypt(e, sk + SYS_N / 8, c);
+    ret_decrypt = (uint8_t)MC_decrypt(e, sk + SYS_N / 8, c);
 
     crypto_hash_32b(conf, two_e, sizeof(two_e));
 

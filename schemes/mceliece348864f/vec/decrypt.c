@@ -48,10 +48,11 @@ static void scaling(vec out[][GFBITS], vec inv[][GFBITS], const unsigned char *s
 
     //
 
-    for (i = 0; i < 64; i++)
+    for (i = 0; i < 64; i++) {
         for (j = 0; j < GFBITS; j++) {
             out[i][j] = inv[i][j] & recv[i];
         }
+    }
 }
 
 static void preprocess(vec *recv, const unsigned char *s) {
@@ -94,7 +95,7 @@ static void scaling_inv(vec out[][GFBITS], vec inv[][GFBITS], const vec *recv) {
     }
 }
 
-static int weight_check(const unsigned char *e, const vec *error) {
+static uint16_t weight_check(const unsigned char *e, const vec *error) {
     int i;
     uint16_t w0 = 0;
     uint16_t w1 = 0;
@@ -125,7 +126,7 @@ static uint16_t synd_cmp(vec s0[][ GFBITS ], vec s1[][ GFBITS ]) {
         }
     }
 
-    return MC_vec_testz(diff);
+    return (uint16_t)MC_vec_testz(diff);
 }
 
 /* Niederreiter decryption with the Berlekamp decoder */

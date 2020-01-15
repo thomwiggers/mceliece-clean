@@ -7,7 +7,7 @@
 
 #include <stdint.h>
 
-void MC_transpose_64x64(uint64_t *, uint64_t *);
+void MC_transpose_64x64(uint64_t *, const uint64_t *);
 
 #endif
 

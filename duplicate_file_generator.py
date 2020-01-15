@@ -52,7 +52,7 @@ def render_duplicates_file(duplicates):
             items.append(
                 {
                     "source": {"scheme": scheme, "implementation": implementation,},
-                    "files": files,
+                    "files": list(sorted(files)),
                 }
             )
     return yaml.dump({"consistency_checks": items}, indent=2)

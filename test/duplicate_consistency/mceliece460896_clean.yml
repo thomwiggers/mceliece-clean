@@ -1,272 +1,272 @@
 consistency_checks:
 - files:
-  - util.c
-  - params.h
-  - gf.h
-  - root.c
-  - crypto_hash.h
-  - operations.h
-  - benes.h
   - aes256ctr.c
-  - controlbits.c
-  - controlbits.h
   - aes256ctr.h
   - benes.c
+  - benes.h
   - bm.c
+  - bm.h
+  - controlbits.c
+  - controlbits.h
+  - crypto_hash.h
   - decrypt.c
+  - decrypt.h
   - encrypt.c
+  - encrypt.h
   - gf.c
+  - gf.h
   - operations.c
+  - operations.h
+  - params.h
+  - pk_gen.h
+  - root.c
+  - root.h
   - sk_gen.c
   - sk_gen.h
   - synd.c
   - synd.h
   - transpose.c
   - transpose.h
-  - bm.h
-  - decrypt.h
-  - encrypt.h
-  - pk_gen.h
-  - root.h
+  - util.c
   - util.h
   source:
     implementation: clean
     scheme: mceliece460896f
 - files:
-  - util.c
-  - gf.h
-  - root.c
-  - crypto_hash.h
-  - operations.h
-  - benes.h
   - aes256ctr.c
-  - controlbits.c
-  - controlbits.h
   - aes256ctr.h
   - benes.c
+  - benes.h
   - bm.c
+  - bm.h
+  - controlbits.c
+  - controlbits.h
+  - crypto_hash.h
   - decrypt.c
+  - decrypt.h
   - encrypt.c
+  - encrypt.h
+  - gf.h
   - operations.c
+  - operations.h
+  - pk_gen.h
+  - root.c
+  - root.h
   - sk_gen.c
   - sk_gen.h
   - synd.c
   - synd.h
   - transpose.c
   - transpose.h
-  - bm.h
-  - decrypt.h
-  - encrypt.h
-  - pk_gen.h
-  - root.h
+  - util.c
   - util.h
   source:
     implementation: clean
     scheme: mceliece6688128f
 - files:
-  - util.c
-  - gf.h
-  - root.c
-  - crypto_hash.h
-  - operations.h
-  - benes.h
   - aes256ctr.c
-  - controlbits.c
-  - controlbits.h
   - aes256ctr.h
   - benes.c
+  - benes.h
   - bm.c
+  - bm.h
+  - controlbits.c
+  - controlbits.h
+  - crypto_hash.h
   - decrypt.c
+  - decrypt.h
   - encrypt.c
+  - encrypt.h
+  - gf.h
   - operations.c
+  - operations.h
   - pk_gen.c
+  - pk_gen.h
+  - root.c
+  - root.h
   - sk_gen.c
   - sk_gen.h
   - synd.c
   - synd.h
   - transpose.c
   - transpose.h
-  - bm.h
-  - decrypt.h
-  - encrypt.h
-  - pk_gen.h
-  - root.h
+  - util.c
   - util.h
   source:
     implementation: clean
     scheme: mceliece6688128
 - files:
-  - util.c
-  - gf.h
-  - root.c
-  - crypto_hash.h
-  - operations.h
-  - benes.h
   - aes256ctr.c
-  - controlbits.c
-  - controlbits.h
   - aes256ctr.h
   - benes.c
+  - benes.h
   - bm.c
+  - bm.h
+  - controlbits.c
+  - controlbits.h
+  - crypto_hash.h
+  - decrypt.h
+  - encrypt.h
+  - gf.h
   - operations.c
+  - operations.h
+  - pk_gen.h
+  - root.c
+  - root.h
   - sk_gen.c
   - sk_gen.h
   - synd.c
   - synd.h
   - transpose.c
   - transpose.h
-  - bm.h
-  - decrypt.h
-  - encrypt.h
-  - pk_gen.h
-  - root.h
+  - util.c
   - util.h
   source:
     implementation: clean
     scheme: mceliece6960119f
 - files:
-  - util.c
-  - gf.h
-  - root.c
-  - crypto_hash.h
-  - operations.h
-  - benes.h
   - aes256ctr.c
-  - controlbits.c
-  - controlbits.h
   - aes256ctr.h
   - benes.c
+  - benes.h
   - bm.c
+  - bm.h
+  - controlbits.c
+  - controlbits.h
+  - crypto_hash.h
+  - decrypt.h
+  - encrypt.h
+  - gf.h
   - operations.c
+  - operations.h
+  - pk_gen.h
+  - root.c
+  - root.h
   - sk_gen.c
   - sk_gen.h
   - synd.c
   - synd.h
   - transpose.c
   - transpose.h
-  - bm.h
-  - decrypt.h
-  - encrypt.h
-  - pk_gen.h
-  - root.h
+  - util.c
   - util.h
   source:
     implementation: clean
     scheme: mceliece6960119
 - files:
-  - util.c
-  - gf.h
-  - root.c
-  - crypto_hash.h
-  - operations.h
-  - benes.h
   - aes256ctr.c
-  - controlbits.c
-  - controlbits.h
   - aes256ctr.h
   - benes.c
+  - benes.h
   - bm.c
+  - bm.h
+  - controlbits.c
+  - controlbits.h
+  - crypto_hash.h
   - decrypt.c
+  - decrypt.h
+  - encrypt.h
+  - gf.h
   - operations.c
+  - operations.h
+  - pk_gen.h
+  - root.c
+  - root.h
   - sk_gen.c
   - sk_gen.h
   - synd.c
   - synd.h
   - transpose.c
   - transpose.h
-  - bm.h
-  - decrypt.h
-  - encrypt.h
-  - pk_gen.h
-  - root.h
+  - util.c
   - util.h
   source:
     implementation: clean
     scheme: mceliece8192128f
 - files:
-  - util.c
-  - gf.h
-  - root.c
-  - crypto_hash.h
-  - operations.h
-  - benes.h
   - aes256ctr.c
-  - controlbits.c
-  - controlbits.h
   - aes256ctr.h
   - benes.c
+  - benes.h
   - bm.c
+  - bm.h
+  - controlbits.c
+  - controlbits.h
+  - crypto_hash.h
   - decrypt.c
+  - decrypt.h
+  - encrypt.h
+  - gf.h
   - operations.c
+  - operations.h
   - pk_gen.c
+  - pk_gen.h
+  - root.c
+  - root.h
   - sk_gen.c
   - sk_gen.h
   - synd.c
   - synd.h
   - transpose.c
   - transpose.h
-  - bm.h
-  - decrypt.h
-  - encrypt.h
-  - pk_gen.h
-  - root.h
+  - util.c
   - util.h
   source:
     implementation: clean
     scheme: mceliece8192128
 - files:
-  - gf.h
-  - root.c
-  - crypto_hash.h
-  - operations.h
   - aes256ctr.c
-  - controlbits.c
-  - controlbits.h
   - aes256ctr.h
   - bm.c
+  - bm.h
+  - controlbits.c
+  - controlbits.h
+  - crypto_hash.h
   - decrypt.c
+  - decrypt.h
   - encrypt.c
+  - encrypt.h
+  - gf.h
   - operations.c
+  - operations.h
+  - pk_gen.h
+  - root.c
+  - root.h
   - sk_gen.c
   - sk_gen.h
   - synd.c
   - synd.h
   - transpose.c
   - transpose.h
-  - bm.h
-  - decrypt.h
-  - encrypt.h
-  - pk_gen.h
-  - root.h
   - util.h
   source:
     implementation: clean
     scheme: mceliece348864f
 - files:
-  - gf.h
-  - root.c
-  - crypto_hash.h
-  - operations.h
   - aes256ctr.c
-  - controlbits.c
-  - controlbits.h
   - aes256ctr.h
   - bm.c
+  - bm.h
+  - controlbits.c
+  - controlbits.h
+  - crypto_hash.h
   - decrypt.c
+  - decrypt.h
   - encrypt.c
+  - encrypt.h
+  - gf.h
   - operations.c
+  - operations.h
   - pk_gen.c
+  - pk_gen.h
+  - root.c
+  - root.h
   - sk_gen.c
   - sk_gen.h
   - synd.c
   - synd.h
   - transpose.c
   - transpose.h
-  - bm.h
-  - decrypt.h
-  - encrypt.h
-  - pk_gen.h
-  - root.h
   - util.h
   source:
     implementation: clean
