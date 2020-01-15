@@ -80,7 +80,7 @@ static void gen_e(unsigned char *e) {
         e[i] = 0;
 
         for (j = 0; j < SYS_T; j++) {
-            mask = same_mask((uint32_t)i, (ind[j] >> 3));
+            mask = same_mask((uint16_t)i, (ind[j] >> 3));
 
             e[i] |= val[j] & mask;
         }
