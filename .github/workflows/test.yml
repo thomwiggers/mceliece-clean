@@ -15,7 +15,7 @@ jobs:
           echo "deb http://apt.llvm.org/bionic/ llvm-toolchain-bionic-9 main" | sudo tee -a /etc/apt/sources.list
           sudo apt-get update
           git submodule update --init
-          sudo apt-get install -y astyle valgrind clang-tidy-9
+          sudo apt-get install -y astyle valgrind clang-tidy-9 rmlint
           sudo update-alternatives --install /usr/bin/clang-tidy clang-tidy /usr/bin/clang-tidy-9 100
       - name: Setup Python 3.7
         uses: actions/setup-python@v1
@@ -28,6 +28,7 @@ jobs:
       - name: Generate implementations
         run: |
           python generate.py tidy
+          ./update_duplicate_consistency.sh
       - name: Run tests
         run: |
           cd test
