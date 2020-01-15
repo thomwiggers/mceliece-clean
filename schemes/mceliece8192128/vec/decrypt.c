@@ -77,11 +77,11 @@ static void preprocess(vec *recv, const unsigned char *s) {
     }
 }
 
-static int weight(const vec *v) {
-    int i, w = 0;
+static uint16_t weight(const vec *v) {
+    uint16_t i, w = 0;
 
     for (i = 0; i < SYS_N; i++) {
-        w += (int)((v[i / 64] >> (i % 64)) & 1);
+        w += (uint16_t)((v[i / 64] >> (i % 64)) & 1);
     }
 
     return w;
@@ -96,7 +96,7 @@ static uint16_t synd_cmp(vec s0[][ GFBITS ], vec s1[][ GFBITS ]) {
             diff |= (s0[i][j] ^ s1[i][j]);
         }
 
-    return MC_vec_testz(diff);
+    return (uint16_t)MC_vec_testz(diff);
 }
 
 /* Niederreiter decryption with the Berlekamp decoder */

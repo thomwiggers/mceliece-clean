@@ -227,7 +227,7 @@ void MC_bm(vec out[][ GFBITS ], vec in[][ GFBITS ]) {
             C[1][i] = B_tmp[1][i] ^ C_tmp[1][i];
         }
 
-        c0 = t >> 32;
+        c0 = (gf)(t >> 32);
         b = (d & mask) | (b & ~mask);
         L = ((N + 1 - L) & mask) | (L & ~mask);
     }
