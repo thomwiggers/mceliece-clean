@@ -123,7 +123,7 @@ static uint16_t synd_cmp(vec s0[][ GFBITS ], vec s1[][ GFBITS ]) {
             diff |= (s0[i][j] ^ s1[i][j]);
         }
 
-    return MC_vec_testz(diff);
+    return (uint16_t)MC_vec_testz(diff);
 }
 
 /* Niederreiter decryption with the Berlekamp decoder */
@@ -181,7 +181,7 @@ int MC_decrypt(unsigned char *e, const unsigned char *sk, const unsigned char *c
 
     postprocess(e, error);
 
-    check_weight = weight_check(e, error);
+    check_weight = (uint16_t)weight_check(e, error);
 
     return 1 - (check_synd & check_weight);
 }

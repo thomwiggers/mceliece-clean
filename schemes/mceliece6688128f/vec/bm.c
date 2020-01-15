@@ -15,7 +15,7 @@ static inline uint16_t mask_nonzero(gf a)
     ret >>= 31;
     ret -= 1;
 
-    return ret;
+    return (uint16_t)ret;
 }
 
 static inline uint16_t mask_leq(uint16_t a, uint16_t b)
@@ -27,7 +27,7 @@ static inline uint16_t mask_leq(uint16_t a, uint16_t b)
     ret >>= 31;
     ret -= 1;
 
-    return ret;
+    return (uint16_t)ret;
 }
 
 static inline void vec_cmov(vec * out, const vec * in, uint16_t mask)
@@ -234,7 +234,7 @@ void MC_bm(vec out[][ GFBITS ], vec in[][ GFBITS ])
             C[1][i] = B_tmp[1][i] ^ C_tmp[1][i];
         }
 
-        c0 = t >> 32;
+        c0 = (gf)(t >> 32);
         b = (d & mask) | (b & ~mask);
         L = ((N+1-L) & mask) | (L & ~mask);
     }

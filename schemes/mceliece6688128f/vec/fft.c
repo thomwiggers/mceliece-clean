@@ -202,7 +202,7 @@ static void butterflies(vec out[][ GFBITS ], vec in[][ GFBITS ])
 			for (b = 0; b < GFBITS; b++) out[k+s][b] ^= out[k][b];
 		}
 
-		consts_ptr += (1 << i);
+		consts_ptr += ((uint64_t)1 << i);
 	}
 
 	// adding the part contributed by x^128
