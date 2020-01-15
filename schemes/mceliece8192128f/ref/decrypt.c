@@ -75,7 +75,7 @@ int MC_decrypt(unsigned char *e, const unsigned char *sk, const unsigned char *c
 
     //
 
-    check = w;
+    check = (uint16_t)w;
     check ^= SYS_T;
 
     for (i = 0; i < SYS_T * 2; i++) {

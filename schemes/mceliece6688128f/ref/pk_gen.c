@@ -191,7 +191,7 @@ int MC_pk_gen(uint8_t *pk,  uint32_t *perm, const uint8_t *sk) {
         perm[i] = buf[i] & GFMASK;
     }
     for (i = 0; i < SYS_N;         i++) {
-        L[i] = MC_bitrev(perm[i]);
+        L[i] = MC_bitrev((gf)perm[i]);
     }
 
     // filling the matrix

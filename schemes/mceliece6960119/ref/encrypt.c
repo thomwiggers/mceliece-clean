@@ -28,7 +28,8 @@ static inline uint32_t same_mask(uint16_t x, uint16_t y) {
 
 /* output: e, an error vector of weight t */
 static void gen_e(unsigned char *e) {
-    int i, j, eq, count;
+    size_t i, j;
+    int eq, count;
 
     uint16_t ind_[ SYS_T * 2 ];
     uint8_t *ind_8 = (uint8_t *)ind_;
@@ -39,7 +40,7 @@ static void gen_e(unsigned char *e) {
     while (1) {
         randombytes(ind_8, sizeof(ind_));
         // Copy to uint16_t ind_ in a little-endian way
-        for (size_t i = 0; i < sizeof(ind_); i += 2) {
+        for (i = 0; i < sizeof(ind_); i += 2) {
             ind_[i / 2] = ind_8[i + 1] << 8 | ind_8[i];
         }
 
