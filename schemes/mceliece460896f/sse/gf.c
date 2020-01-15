@@ -169,8 +169,8 @@ gf MC_gf_frac(gf den, gf num) {
 }
 
 /* return 1/den */
-gf MC_gf_inv(gf den) {
-    return MC_gf_frac(den, ((gf) 1));
+gf MC_gf_inv(gf in) {
+    return MC_gf_frac(in, ((gf) 1));
 }
 
 /* multiplication in GF((2^m)^t) */

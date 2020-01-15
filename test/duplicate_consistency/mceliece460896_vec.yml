@@ -2,6 +2,23 @@ consistency_checks:
 - files:
   - aes256ctr.c
   - aes256ctr.h
+  - controlbits.c
+  - controlbits.h
+  - crypto_hash.h
+  - decrypt.h
+  - encrypt.h
+  - operations.c
+  - operations.h
+  - params.h
+  - pk_gen.h
+  - sk_gen.c
+  - sk_gen.h
+  source:
+    implementation: clean
+    scheme: mceliece460896f
+- files:
+  - aes256ctr.c
+  - aes256ctr.h
   - benes.c
   - benes.h
   - bm.c
@@ -39,279 +56,6 @@ consistency_checks:
 - files:
   - aes256ctr.c
   - aes256ctr.h
-  - controlbits.c
-  - controlbits.h
-  - crypto_hash.h
-  - decrypt.h
-  - encrypt.h
-  - operations.c
-  - operations.h
-  - params.h
-  - pk_gen.h
-  - sk_gen.c
-  - sk_gen.h
-  source:
-    implementation: clean
-    scheme: mceliece460896f
-- files:
-  - aes256ctr.c
-  - aes256ctr.h
-  - benes.c
-  - benes.h
-  - bm.h
-  - consts.inc
-  - controlbits.c
-  - controlbits.h
-  - crypto_hash.h
-  - decrypt.c
-  - decrypt.h
-  - encrypt.h
-  - fft.h
-  - fft_tr.h
-  - gf.h
-  - operations.c
-  - operations.h
-  - pk_gen.h
-  - scalars_2x.inc
-  - scalars_4x.inc
-  - sk_gen.c
-  - sk_gen.h
-  - transpose.c
-  - transpose.h
-  - util.c
-  - vec.c
-  source:
-    implementation: vec
-    scheme: mceliece6688128f
-- files:
-  - aes256ctr.c
-  - aes256ctr.h
-  - controlbits.c
-  - controlbits.h
-  - crypto_hash.h
-  - decrypt.h
-  - encrypt.h
-  - operations.c
-  - operations.h
-  - pk_gen.h
-  - sk_gen.c
-  - sk_gen.h
-  source:
-    implementation: clean
-    scheme: mceliece6688128f
-- files:
-  - aes256ctr.c
-  - aes256ctr.h
-  - benes.c
-  - benes.h
-  - bm.h
-  - consts.inc
-  - controlbits.c
-  - controlbits.h
-  - crypto_hash.h
-  - decrypt.c
-  - decrypt.h
-  - encrypt.h
-  - fft.h
-  - fft_tr.h
-  - gf.h
-  - operations.c
-  - operations.h
-  - pk_gen.h
-  - scalars_2x.inc
-  - scalars_4x.inc
-  - sk_gen.c
-  - sk_gen.h
-  - transpose.c
-  - transpose.h
-  - util.c
-  - vec.c
-  source:
-    implementation: vec
-    scheme: mceliece6688128
-- files:
-  - aes256ctr.c
-  - aes256ctr.h
-  - controlbits.c
-  - controlbits.h
-  - crypto_hash.h
-  - decrypt.h
-  - encrypt.h
-  - operations.c
-  - operations.h
-  - pk_gen.h
-  - sk_gen.c
-  - sk_gen.h
-  source:
-    implementation: clean
-    scheme: mceliece6688128
-- files:
-  - aes256ctr.c
-  - aes256ctr.h
-  - benes.c
-  - benes.h
-  - bm.h
-  - consts.inc
-  - controlbits.c
-  - controlbits.h
-  - crypto_hash.h
-  - decrypt.h
-  - encrypt.h
-  - fft.c
-  - fft.h
-  - fft_tr.h
-  - operations.c
-  - operations.h
-  - scalars_2x.inc
-  - scalars_4x.inc
-  - sk_gen.c
-  - sk_gen.h
-  - transpose.c
-  - transpose.h
-  - util.c
-  source:
-    implementation: vec
-    scheme: mceliece6960119f
-- files:
-  - aes256ctr.c
-  - aes256ctr.h
-  - controlbits.c
-  - controlbits.h
-  - crypto_hash.h
-  - decrypt.h
-  - encrypt.h
-  - operations.c
-  - operations.h
-  - pk_gen.h
-  - sk_gen.c
-  - sk_gen.h
-  source:
-    implementation: clean
-    scheme: mceliece6960119f
-- files:
-  - aes256ctr.c
-  - aes256ctr.h
-  - benes.c
-  - benes.h
-  - bm.h
-  - consts.inc
-  - controlbits.c
-  - controlbits.h
-  - crypto_hash.h
-  - decrypt.h
-  - encrypt.h
-  - fft.c
-  - fft.h
-  - fft_tr.h
-  - operations.c
-  - operations.h
-  - scalars_2x.inc
-  - scalars_4x.inc
-  - sk_gen.c
-  - sk_gen.h
-  - transpose.c
-  - transpose.h
-  - util.c
-  source:
-    implementation: vec
-    scheme: mceliece6960119
-- files:
-  - aes256ctr.c
-  - aes256ctr.h
-  - controlbits.c
-  - controlbits.h
-  - crypto_hash.h
-  - decrypt.h
-  - encrypt.h
-  - operations.c
-  - operations.h
-  - pk_gen.h
-  - sk_gen.c
-  - sk_gen.h
-  source:
-    implementation: clean
-    scheme: mceliece6960119
-- files:
-  - aes256ctr.c
-  - aes256ctr.h
-  - benes.c
-  - benes.h
-  - bm.h
-  - consts.inc
-  - controlbits.c
-  - controlbits.h
-  - crypto_hash.h
-  - decrypt.h
-  - encrypt.h
-  - operations.c
-  - operations.h
-  - scalars_2x.inc
-  - scalars_4x.inc
-  - sk_gen.c
-  - sk_gen.h
-  - transpose.c
-  - transpose.h
-  source:
-    implementation: vec
-    scheme: mceliece8192128f
-- files:
-  - aes256ctr.c
-  - aes256ctr.h
-  - controlbits.c
-  - controlbits.h
-  - crypto_hash.h
-  - decrypt.h
-  - encrypt.h
-  - operations.c
-  - operations.h
-  - pk_gen.h
-  - sk_gen.c
-  - sk_gen.h
-  source:
-    implementation: clean
-    scheme: mceliece8192128f
-- files:
-  - aes256ctr.c
-  - aes256ctr.h
-  - benes.c
-  - benes.h
-  - bm.h
-  - consts.inc
-  - controlbits.c
-  - controlbits.h
-  - crypto_hash.h
-  - decrypt.h
-  - encrypt.h
-  - operations.c
-  - operations.h
-  - scalars_2x.inc
-  - scalars_4x.inc
-  - sk_gen.c
-  - sk_gen.h
-  - transpose.c
-  - transpose.h
-  source:
-    implementation: vec
-    scheme: mceliece8192128
-- files:
-  - aes256ctr.c
-  - aes256ctr.h
-  - controlbits.c
-  - controlbits.h
-  - crypto_hash.h
-  - decrypt.h
-  - encrypt.h
-  - operations.c
-  - operations.h
-  - pk_gen.h
-  - sk_gen.c
-  - sk_gen.h
-  source:
-    implementation: clean
-    scheme: mceliece8192128
-- files:
-  - aes256ctr.c
-  - aes256ctr.h
   - api.h
   - controlbits.c
   - controlbits.h
@@ -330,6 +74,22 @@ consistency_checks:
 - files:
   - aes256ctr.c
   - aes256ctr.h
+  - controlbits.c
+  - controlbits.h
+  - crypto_hash.h
+  - decrypt.h
+  - encrypt.h
+  - operations.c
+  - operations.h
+  - pk_gen.h
+  - sk_gen.c
+  - sk_gen.h
+  source:
+    implementation: clean
+    scheme: mceliece348864f
+- files:
+  - aes256ctr.c
+  - aes256ctr.h
   - benes.h
   - controlbits.c
   - controlbits.h
@@ -362,7 +122,7 @@ consistency_checks:
   - sk_gen.h
   source:
     implementation: clean
-    scheme: mceliece348864f
+    scheme: mceliece348864
 - files:
   - aes256ctr.c
   - aes256ctr.h
@@ -398,4 +158,244 @@ consistency_checks:
   - sk_gen.h
   source:
     implementation: clean
-    scheme: mceliece348864
+    scheme: mceliece6688128f
+- files:
+  - aes256ctr.c
+  - aes256ctr.h
+  - benes.c
+  - benes.h
+  - bm.h
+  - consts.inc
+  - controlbits.c
+  - controlbits.h
+  - crypto_hash.h
+  - decrypt.c
+  - decrypt.h
+  - encrypt.h
+  - fft.h
+  - fft_tr.h
+  - gf.h
+  - operations.c
+  - operations.h
+  - pk_gen.h
+  - scalars_2x.inc
+  - scalars_4x.inc
+  - sk_gen.c
+  - sk_gen.h
+  - transpose.c
+  - transpose.h
+  - util.c
+  - vec.c
+  source:
+    implementation: vec
+    scheme: mceliece6688128f
+- files:
+  - aes256ctr.c
+  - aes256ctr.h
+  - controlbits.c
+  - controlbits.h
+  - crypto_hash.h
+  - decrypt.h
+  - encrypt.h
+  - operations.c
+  - operations.h
+  - pk_gen.h
+  - sk_gen.c
+  - sk_gen.h
+  source:
+    implementation: clean
+    scheme: mceliece6688128
+- files:
+  - aes256ctr.c
+  - aes256ctr.h
+  - benes.c
+  - benes.h
+  - bm.h
+  - consts.inc
+  - controlbits.c
+  - controlbits.h
+  - crypto_hash.h
+  - decrypt.c
+  - decrypt.h
+  - encrypt.h
+  - fft.h
+  - fft_tr.h
+  - gf.h
+  - operations.c
+  - operations.h
+  - pk_gen.h
+  - scalars_2x.inc
+  - scalars_4x.inc
+  - sk_gen.c
+  - sk_gen.h
+  - transpose.c
+  - transpose.h
+  - util.c
+  - vec.c
+  source:
+    implementation: vec
+    scheme: mceliece6688128
+- files:
+  - aes256ctr.c
+  - aes256ctr.h
+  - controlbits.c
+  - controlbits.h
+  - crypto_hash.h
+  - decrypt.h
+  - encrypt.h
+  - operations.c
+  - operations.h
+  - pk_gen.h
+  - sk_gen.c
+  - sk_gen.h
+  source:
+    implementation: clean
+    scheme: mceliece6960119f
+- files:
+  - aes256ctr.c
+  - aes256ctr.h
+  - benes.c
+  - benes.h
+  - bm.h
+  - consts.inc
+  - controlbits.c
+  - controlbits.h
+  - crypto_hash.h
+  - decrypt.h
+  - encrypt.h
+  - fft.c
+  - fft.h
+  - fft_tr.h
+  - operations.c
+  - operations.h
+  - scalars_2x.inc
+  - scalars_4x.inc
+  - sk_gen.c
+  - sk_gen.h
+  - transpose.c
+  - transpose.h
+  - util.c
+  source:
+    implementation: vec
+    scheme: mceliece6960119f
+- files:
+  - aes256ctr.c
+  - aes256ctr.h
+  - controlbits.c
+  - controlbits.h
+  - crypto_hash.h
+  - decrypt.h
+  - encrypt.h
+  - operations.c
+  - operations.h
+  - pk_gen.h
+  - sk_gen.c
+  - sk_gen.h
+  source:
+    implementation: clean
+    scheme: mceliece6960119
+- files:
+  - aes256ctr.c
+  - aes256ctr.h
+  - benes.c
+  - benes.h
+  - bm.h
+  - consts.inc
+  - controlbits.c
+  - controlbits.h
+  - crypto_hash.h
+  - decrypt.h
+  - encrypt.h
+  - fft.c
+  - fft.h
+  - fft_tr.h
+  - operations.c
+  - operations.h
+  - scalars_2x.inc
+  - scalars_4x.inc
+  - sk_gen.c
+  - sk_gen.h
+  - transpose.c
+  - transpose.h
+  - util.c
+  source:
+    implementation: vec
+    scheme: mceliece6960119
+- files:
+  - aes256ctr.c
+  - aes256ctr.h
+  - controlbits.c
+  - controlbits.h
+  - crypto_hash.h
+  - decrypt.h
+  - encrypt.h
+  - operations.c
+  - operations.h
+  - pk_gen.h
+  - sk_gen.c
+  - sk_gen.h
+  source:
+    implementation: clean
+    scheme: mceliece8192128f
+- files:
+  - aes256ctr.c
+  - aes256ctr.h
+  - benes.c
+  - benes.h
+  - bm.h
+  - consts.inc
+  - controlbits.c
+  - controlbits.h
+  - crypto_hash.h
+  - decrypt.h
+  - encrypt.h
+  - operations.c
+  - operations.h
+  - scalars_2x.inc
+  - scalars_4x.inc
+  - sk_gen.c
+  - sk_gen.h
+  - transpose.c
+  - transpose.h
+  source:
+    implementation: vec
+    scheme: mceliece8192128f
+- files:
+  - aes256ctr.c
+  - aes256ctr.h
+  - controlbits.c
+  - controlbits.h
+  - crypto_hash.h
+  - decrypt.h
+  - encrypt.h
+  - operations.c
+  - operations.h
+  - pk_gen.h
+  - sk_gen.c
+  - sk_gen.h
+  source:
+    implementation: clean
+    scheme: mceliece8192128
+- files:
+  - aes256ctr.c
+  - aes256ctr.h
+  - benes.c
+  - benes.h
+  - bm.h
+  - consts.inc
+  - controlbits.c
+  - controlbits.h
+  - crypto_hash.h
+  - decrypt.h
+  - encrypt.h
+  - operations.c
+  - operations.h
+  - scalars_2x.inc
+  - scalars_4x.inc
+  - sk_gen.c
+  - sk_gen.h
+  - transpose.c
+  - transpose.h
+  source:
+    implementation: vec
+    scheme: mceliece8192128

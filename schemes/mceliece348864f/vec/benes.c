@@ -31,7 +31,7 @@ static void layer(uint64_t *data, uint64_t *bits, int lgs) {
 /*        bits, condition bits of the Benes network */
 /*        rev, 0 for normal application; !0 for inverse */
 /* output: r, permuted bits */
-void MC_benes(uint64_t *bs, const unsigned char *bits, int rev) {
+void MC_benes(uint64_t *r, const unsigned char *bits, int rev) {
     int i;
 
     const unsigned char *cond_ptr;
@@ -51,45 +51,45 @@ void MC_benes(uint64_t *bs, const unsigned char *bits, int rev) {
 
     //
 
-    MC_transpose_64x64(bs, bs);
+    MC_transpose_64x64(r, r);
 
     for (low = 0; low <= 5; low++) {
         for (i = 0; i < 64; i++) {
             cond[i] = MC_load4(cond_ptr + i * 4);
         }
         MC_transpose_64x64(cond, cond);
-        layer(bs, cond, low);
+        layer(r, cond, low);
         cond_ptr += inc;
     }
 
-    MC_transpose_64x64(bs, bs);
+    MC_transpose_64x64(r, r);
 
     for (low = 0; low <= 5; low++) {
         for (i = 0; i < 32; i++) {
             cond[i] = MC_load8(cond_ptr + i * 8);
         }
-        layer(bs, cond, low);
+        layer(r, cond, low);
         cond_ptr += inc;
     }
     for (low = 4; low >= 0; low--) {
         for (i = 0; i < 32; i++) {
             cond[i] = MC_load8(cond_ptr + i * 8);
         }
-        layer(bs, cond, low);
+        layer(r, cond, low);
         cond_ptr += inc;
     }
 
-    MC_transpose_64x64(bs, bs);
+    MC_transpose_64x64(r, r);
 
     for (low = 5; low >= 0; low--) {
         for (i = 0; i < 64; i++) {
             cond[i] = MC_load4(cond_ptr + i * 4);
         }
         MC_transpose_64x64(cond, cond);
-        layer(bs, cond, low);
+        layer(r, cond, low);
         cond_ptr += inc;
     }
 
-    MC_transpose_64x64(bs, bs);
+    MC_transpose_64x64(r, r);
 }
 
