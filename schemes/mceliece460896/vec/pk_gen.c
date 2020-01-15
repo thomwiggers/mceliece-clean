@@ -13,237 +13,228 @@
 
 #include <stdint.h>
 
-static void de_bitslicing(uint64_t * out, vec in[][GFBITS])
-{
-	int i, j, r;
+static void de_bitslicing(uint64_t *out, vec in[][GFBITS]) {
+    int i, j, r;
 
-	for (i = 0; i < (1 << GFBITS); i++)
-		out[i] = 0 ;
+    for (i = 0; i < (1 << GFBITS); i++) {
+        out[i] = 0 ;
+    }
 
-	for (i = 0; i < 128; i++)
-	for (j = GFBITS-1; j >= 0; j--)
-	for (r = 0; r < 64; r++)
-	{
-		out[i*64 + r] <<= 1;
-		out[i*64 + r] |= (in[i][j] >> r) & 1;
-	}
+    for (i = 0; i < 128; i++)
+        for (j = GFBITS - 1; j >= 0; j--)
+            for (r = 0; r < 64; r++) {
+                out[i * 64 + r] <<= 1;
+                out[i * 64 + r] |= (in[i][j] >> r) & 1;
+            }
 }
 
-static void to_bitslicing_2x(vec out0[][GFBITS], vec out1[][GFBITS], const uint64_t * in)
-{
-	int i, j, r;
+static void to_bitslicing_2x(vec out0[][GFBITS], vec out1[][GFBITS], const uint64_t *in) {
+    int i, j, r;
 
-	for (i = 0; i < 128; i++)
-	{
-		for (j = GFBITS-1; j >= 0; j--)
-		for (r = 63; r >= 0; r--)
-		{
-			out1[i][j] <<= 1;
-			out1[i][j] |= (in[i*64 + r] >> (j + GFBITS)) & 1;
-		}
+    for (i = 0; i < 128; i++) {
+        for (j = GFBITS - 1; j >= 0; j--)
+            for (r = 63; r >= 0; r--) {
+                out1[i][j] <<= 1;
+                out1[i][j] |= (in[i * 64 + r] >> (j + GFBITS)) & 1;
+            }
 
-		for (j = GFBITS-1; j >= 0; j--)
-		for (r = 63; r >= 0; r--)
-		{
-			out0[i][GFBITS-1-j] <<= 1;
-			out0[i][GFBITS-1-j] |= (in[i*64 + r] >> j) & 1;
-		}
-	}
+        for (j = GFBITS - 1; j >= 0; j--)
+            for (r = 63; r >= 0; r--) {
+                out0[i][GFBITS - 1 - j] <<= 1;
+                out0[i][GFBITS - 1 - j] |= (in[i * 64 + r] >> j) & 1;
+            }
+    }
 }
 
-int MC_pk_gen(unsigned char * pk, uint32_t* perm, const unsigned char * sk)
-{
+int MC_pk_gen(unsigned char *pk, uint32_t *perm, const unsigned char *sk) {
 #define NBLOCKS_H ((SYS_N + 63) / 64)
 #define NBLOCKS_I ((GFBITS * SYS_T + 63) / 64)
-	const int block_idx = NBLOCKS_I - 1;
-	int tail = (GFBITS * SYS_T) % 64;
+    const int block_idx = NBLOCKS_I - 1;
+    int tail = (GFBITS * SYS_T) % 64;
 
-	int i, j, k;
-	int row, c;
+    int i, j, k;
+    int row, c;
 
-	uint64_t mat[ GFBITS * SYS_T ][ NBLOCKS_H ];
-	uint64_t ops[ GFBITS * SYS_T ][ NBLOCKS_I ];
+    uint64_t mat[ GFBITS * SYS_T ][ NBLOCKS_H ];
+    uint64_t ops[ GFBITS * SYS_T ][ NBLOCKS_I ];
 
-	uint64_t mask;
+    uint64_t mask;
 
-	vec irr_int[2][ GFBITS ];
+    vec irr_int[2][ GFBITS ];
 
-	vec consts[ 128 ][ GFBITS ];
-	vec eval[ 128 ][ GFBITS ];
-	vec prod[ 128 ][ GFBITS ];
-	vec tmp[ GFBITS ];
+    vec consts[ 128 ][ GFBITS ];
+    vec eval[ 128 ][ GFBITS ];
+    vec prod[ 128 ][ GFBITS ];
+    vec tmp[ GFBITS ];
 
-	uint64_t list[1 << GFBITS];
-	uint64_t one_row[ 128 ];
+    uint64_t list[1 << GFBITS];
+    uint64_t one_row[ 128 ];
 
-	// compute the inverses
+    // compute the inverses
 
-	MC_irr_load(irr_int, sk);
+    MC_irr_load(irr_int, sk);
 
-	MC_fft(eval, irr_int);
+    MC_fft(eval, irr_int);
 
-	MC_vec_copy(prod[0], eval[0]);
+    MC_vec_copy(prod[0], eval[0]);
 
-	for (i = 1; i < 128; i++)
-		MC_vec_mul(prod[i], prod[i-1], eval[i]);
+    for (i = 1; i < 128; i++) {
+        MC_vec_mul(prod[i], prod[i - 1], eval[i]);
+    }
 
-	MC_vec_inv(tmp, prod[127]);
+    MC_vec_inv(tmp, prod[127]);
 
-	for (i = 126; i >= 0; i--)
-	{
-		MC_vec_mul(prod[i+1], prod[i], tmp);
-		MC_vec_mul(tmp, tmp, eval[i+1]);
-	}
+    for (i = 126; i >= 0; i--) {
+        MC_vec_mul(prod[i + 1], prod[i], tmp);
+        MC_vec_mul(tmp, tmp, eval[i + 1]);
+    }
 
-	MC_vec_copy(prod[0], tmp);
+    MC_vec_copy(prod[0], tmp);
 
-	// fill matrix
+    // fill matrix
 
-	de_bitslicing(list, prod);
+    de_bitslicing(list, prod);
 
-	for (i = 0; i < (1 << GFBITS); i++)
-	{
-		list[i] <<= GFBITS;
-		list[i] |= i;
-		list[i] |= ((uint64_t) perm[i]) << 31;
-	}
+    for (i = 0; i < (1 << GFBITS); i++) {
+        list[i] <<= GFBITS;
+        list[i] |= i;
+        list[i] |= ((uint64_t) perm[i]) << 31;
+    }
 
-	MC_sort_63b(1 << GFBITS, list);
+    MC_sort_63b(1 << GFBITS, list);
 
-	to_bitslicing_2x(consts, prod, list);
+    to_bitslicing_2x(consts, prod, list);
 
-	for (i = 0; i < (1 << GFBITS); i++)
-		perm[i] = list[i] & GFMASK;
+    for (i = 0; i < (1 << GFBITS); i++) {
+        perm[i] = list[i] & GFMASK;
+    }
 
-	for (j = 0; j < NBLOCKS_I; j++)
-	for (k = 0; k < GFBITS; k++)
-		mat[ k ][ j ] = prod[ j ][ k ];
+    for (j = 0; j < NBLOCKS_I; j++)
+        for (k = 0; k < GFBITS; k++) {
+            mat[ k ][ j ] = prod[ j ][ k ];
+        }
 
-	for (i = 1; i < SYS_T; i++)
-	for (j = 0; j < NBLOCKS_I; j++)
-	{
-		MC_vec_mul(prod[j], prod[j], consts[j]);
+    for (i = 1; i < SYS_T; i++)
+        for (j = 0; j < NBLOCKS_I; j++) {
+            MC_vec_mul(prod[j], prod[j], consts[j]);
 
-		for (k = 0; k < GFBITS; k++)
-			mat[ i*GFBITS + k ][ j ] = prod[ j ][ k ];
-	}
+            for (k = 0; k < GFBITS; k++) {
+                mat[ i * GFBITS + k ][ j ] = prod[ j ][ k ];
+            }
+        }
 
-	// gaussian elimination to obtain an upper triangular matrix
-	// and keep track of the operations in ops
+    // gaussian elimination to obtain an upper triangular matrix
+    // and keep track of the operations in ops
 
-	for (i = 0; i < PK_NROWS; i++)
-	for (j = 0; j < NBLOCKS_I; j++)
-		ops[ i ][ j ] = 0;
+    for (i = 0; i < PK_NROWS; i++)
+        for (j = 0; j < NBLOCKS_I; j++) {
+            ops[ i ][ j ] = 0;
+        }
 
-	for (i = 0; i < PK_NROWS; i++)
-	{
-		ops[ i ][ i / 64 ] = 1;
-		ops[ i ][ i / 64 ] <<= (i % 64);
-	}
+    for (i = 0; i < PK_NROWS; i++) {
+        ops[ i ][ i / 64 ] = 1;
+        ops[ i ][ i / 64 ] <<= (i % 64);
+    }
 
-	uint64_t column[ PK_NROWS ];
+    uint64_t column[ PK_NROWS ];
 
-	for (i = 0; i < PK_NROWS; i++)
-		column[i] = mat[ i ][ block_idx ];
+    for (i = 0; i < PK_NROWS; i++) {
+        column[i] = mat[ i ][ block_idx ];
+    }
 
-	for (row = 0; row < PK_NROWS; row++)
-	{
-		i = row >> 6;
-		j = row & 63;
+    for (row = 0; row < PK_NROWS; row++) {
+        i = row >> 6;
+        j = row & 63;
 
-		for (k = row + 1; k < PK_NROWS; k++)
-		{
-			mask = mat[ row ][ i ] >> j;
-			mask &= 1;
-			mask -= 1;
+        for (k = row + 1; k < PK_NROWS; k++) {
+            mask = mat[ row ][ i ] >> j;
+            mask &= 1;
+            mask -= 1;
 
-			for (c = 0; c < NBLOCKS_I; c++)
-			{
-				mat[ row ][ c ] ^= mat[ k ][ c ] & mask;
-				ops[ row ][ c ] ^= ops[ k ][ c ] & mask;
-			}
-		}
+            for (c = 0; c < NBLOCKS_I; c++) {
+                mat[ row ][ c ] ^= mat[ k ][ c ] & mask;
+                ops[ row ][ c ] ^= ops[ k ][ c ] & mask;
+            }
+        }
 
-		if ( ((mat[ row ][ i ] >> j) & 1) == 0 ) // return if not systematic
-		{
-			return -1;
-		}
+        if ( ((mat[ row ][ i ] >> j) & 1) == 0 ) { // return if not systematic
+            return -1;
+        }
 
-		for (k = row+1; k < PK_NROWS; k++)
-		{
-			mask = mat[ k ][ i ] >> j;
-			mask &= 1;
-			mask = -mask;
+        for (k = row + 1; k < PK_NROWS; k++) {
+            mask = mat[ k ][ i ] >> j;
+            mask &= 1;
+            mask = -mask;
 
-			for (c = 0; c < NBLOCKS_I; c++)
-			{
-				mat[ k ][ c ] ^= mat[ row ][ c ] & mask;
-				ops[ k ][ c ] ^= ops[ row ][ c ] & mask;
-			}
-		}
-	}
+            for (c = 0; c < NBLOCKS_I; c++) {
+                mat[ k ][ c ] ^= mat[ row ][ c ] & mask;
+                ops[ k ][ c ] ^= ops[ row ][ c ] & mask;
+            }
+        }
+    }
 
-	// computing the lineaer map required to obatin the systematic form
+    // computing the lineaer map required to obatin the systematic form
 
-	for (row = PK_NROWS-1; row >= 0; row--)
-	for (k = 0; k < row; k++)
-	{
-		mask = mat[ k ][ row/64 ] >> (row&63);
-		mask &= 1;
-		mask = -mask;
+    for (row = PK_NROWS - 1; row >= 0; row--)
+        for (k = 0; k < row; k++) {
+            mask = mat[ k ][ row / 64 ] >> (row & 63);
+            mask &= 1;
+            mask = -mask;
 
-		for (c = 0; c < NBLOCKS_I; c++)
-			ops[ k ][ c ] ^= ops[ row ][ c ] & mask;
-	}
+            for (c = 0; c < NBLOCKS_I; c++) {
+                ops[ k ][ c ] ^= ops[ row ][ c ] & mask;
+            }
+        }
 
-	// apply the linear map to the non-systematic part
+    // apply the linear map to the non-systematic part
 
-	for (j = NBLOCKS_I; j < NBLOCKS_H; j++)
-	for (k = 0; k < GFBITS; k++)
-		mat[ k ][ j ] = prod[ j ][ k ];
+    for (j = NBLOCKS_I; j < NBLOCKS_H; j++)
+        for (k = 0; k < GFBITS; k++) {
+            mat[ k ][ j ] = prod[ j ][ k ];
+        }
 
-	for (i = 1; i < SYS_T; i++)
-	for (j = NBLOCKS_I; j < NBLOCKS_H; j++)
-	{
-		MC_vec_mul(prod[j], prod[j], consts[j]);
+    for (i = 1; i < SYS_T; i++)
+        for (j = NBLOCKS_I; j < NBLOCKS_H; j++) {
+            MC_vec_mul(prod[j], prod[j], consts[j]);
 
-		for (k = 0; k < GFBITS; k++)
-			mat[ i*GFBITS + k ][ j ] = prod[ j ][ k ];
-	}
+            for (k = 0; k < GFBITS; k++) {
+                mat[ i * GFBITS + k ][ j ] = prod[ j ][ k ];
+            }
+        }
 
-	for (i = 0; i < PK_NROWS; i++)
-		mat[ i ][ block_idx ] = column[i];
+    for (i = 0; i < PK_NROWS; i++) {
+        mat[ i ][ block_idx ] = column[i];
+    }
 
-	for (row = 0; row < PK_NROWS; row++)
-	{
-		for (k = 0; k < NBLOCKS_H; k++)
-			one_row[ k ] = 0;
+    for (row = 0; row < PK_NROWS; row++) {
+        for (k = 0; k < NBLOCKS_H; k++) {
+            one_row[ k ] = 0;
+        }
 
-		for (c = 0; c < PK_NROWS; c++)
-		{
-			mask = ops[ row ][ c >> 6 ] >> (c & 63);
-			mask &= 1;
-			mask = -mask;
+        for (c = 0; c < PK_NROWS; c++) {
+            mask = ops[ row ][ c >> 6 ] >> (c & 63);
+            mask &= 1;
+            mask = -mask;
 
-			for (k = block_idx; k < NBLOCKS_H; k++)
-				one_row[ k ] ^= mat[ c ][ k ] & mask;
-		}
+            for (k = block_idx; k < NBLOCKS_H; k++) {
+                one_row[ k ] ^= mat[ c ][ k ] & mask;
+            }
+        }
 
-		for (k = block_idx; k < NBLOCKS_H - 1; k++)
-		{
-                        one_row[k] = (one_row[k] >> tail) | (one_row[k+1] << (64-tail));
-			MC_store8(pk, one_row[k]);
-			pk += 8;
-		}
+        for (k = block_idx; k < NBLOCKS_H - 1; k++) {
+            one_row[k] = (one_row[k] >> tail) | (one_row[k + 1] << (64 - tail));
+            MC_store8(pk, one_row[k]);
+            pk += 8;
+        }
 
-		one_row[k] >>= tail;
-                MC_store_i(pk, one_row[k], PK_ROW_BYTES % 8);
+        one_row[k] >>= tail;
+        MC_store_i(pk, one_row[k], PK_ROW_BYTES % 8);
 
-		pk += PK_ROW_BYTES % 8;
-	}
+        pk += PK_ROW_BYTES % 8;
+    }
 
-	//
+    //
 
-	return 0;
+    return 0;
 }
 

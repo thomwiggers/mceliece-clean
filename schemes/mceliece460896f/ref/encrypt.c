@@ -29,7 +29,7 @@ static void gen_e(unsigned char *e) {
     int i, j, eq, count;
 
     uint16_t ind_[ SYS_T * 2 ];
-    uint8_t *ind_8 = (uint8_t*)ind_;
+    uint8_t *ind_8 = (uint8_t *)ind_;
     uint16_t ind[ SYS_T * 2 ];
     unsigned char mask;
     unsigned char val[ SYS_T ];
@@ -37,8 +37,8 @@ static void gen_e(unsigned char *e) {
     while (1) {
         randombytes(ind_8, sizeof(ind_));
         // Copy to uint16_t ind_ in a little-endian way
-        for (size_t i = 0; i < sizeof(ind_); i+=2) {
-            ind_[i/2] = ((uint16_t)ind_8[i+1]) << 8 | (uint16_t)ind_8[i];
+        for (size_t i = 0; i < sizeof(ind_); i += 2) {
+            ind_[i / 2] = ((uint16_t)ind_8[i + 1]) << 8 | (uint16_t)ind_8[i];
         }
 
         for (i = 0; i < SYS_T * 2; i++) {

@@ -9,9 +9,8 @@
 
 void transpose_64x128_sp_asm(vec128 *);
 
-static void transpose_64x128_sp(vec128 *in)
-{
-        transpose_64x128_sp_asm(in);
+static void transpose_64x128_sp(vec128 *in) {
+    transpose_64x128_sp_asm(in);
 }
 
 #endif

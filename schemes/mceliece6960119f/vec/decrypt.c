@@ -62,7 +62,7 @@ static void preprocess(vec *recv, const unsigned char *s) {
         r[i] = s[i];
     }
 
-    r[i-1] &= (1 << ((GFBITS * SYS_T) % 8)) - 1; // throwing away redundant bits
+    r[i - 1] &= (1 << ((GFBITS * SYS_T) % 8)) - 1; // throwing away redundant bits
 
     for (i = SYND_BYTES; i < 1024; i++) {
         r[i] = 0;

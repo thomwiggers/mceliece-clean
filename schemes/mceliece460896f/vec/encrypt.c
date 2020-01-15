@@ -21,7 +21,7 @@ static void gen_e(unsigned char *e) {
     int eq, count;
 
     uint16_t ind[ SYS_T * 2 ];
-    uint8_t *ind8 = (uint8_t*)ind;
+    uint8_t *ind8 = (uint8_t *)ind;
     uint32_t ind32[ SYS_T * 2 ];
     uint64_t e_int[ (SYS_N + 63) / 64 ];
     uint64_t one = 1;
@@ -31,7 +31,7 @@ static void gen_e(unsigned char *e) {
     while (1) {
         randombytes(ind8, sizeof(ind));
         for (i = 0; i < sizeof(ind); i += 2) {
-            ind[i/2] = (uint16_t)ind8[i+1] << 8 | ind8[i];
+            ind[i / 2] = (uint16_t)ind8[i + 1] << 8 | ind8[i];
         }
 
         for (i = 0; i < SYS_T * 2; i++) {
@@ -108,7 +108,7 @@ static void syndrome(unsigned char *s, const unsigned char *pk, const unsigned c
 
         b = 0;
         for (j = 0; j < PK_NCOLS / 64; j++) {
-            b ^= MC_load8(pk_ptr8 + 8*j) & MC_load8(e_ptr8 + 8*j);
+            b ^= MC_load8(pk_ptr8 + 8 * j) & MC_load8(e_ptr8 + 8 * j);
         }
 
         b ^= MC_load4(pk_ptr8 + 8 * j) & MC_load4(e_ptr8 + 8 * j);

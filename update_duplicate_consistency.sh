@@ -1,5 +1,5 @@
 #!/bin/bash
-rmlint -c sh:hardlink schemes/*/ref >/dev/null
+rmlint -c sh:hardlink schemes/*/* >/dev/null
 ./rmlint.sh -d > /dev/null
 
 for scheme in schemes/*; do

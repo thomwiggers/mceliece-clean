@@ -11,9 +11,9 @@ vec MC_vec_setbits(vec b);
 
 vec MC_vec_set1_16b(uint16_t v);
 
-void MC_vec_copy(vec * out, const vec * in);
+void MC_vec_copy(vec *out, const vec *in);
 
-vec MC_vec_or_reduce(const vec * a);
+vec MC_vec_or_reduce(const vec *a);
 
 int MC_vec_testz(vec a);
 

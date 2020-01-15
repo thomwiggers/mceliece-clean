@@ -35,6 +35,23 @@ consistency_checks:
 - files:
   - aes256ctr.c
   - aes256ctr.h
+  - controlbits.c
+  - controlbits.h
+  - crypto_hash.h
+  - decrypt.h
+  - encrypt.h
+  - operations.c
+  - operations.h
+  - params.h
+  - pk_gen.h
+  - sk_gen.c
+  - sk_gen.h
+  source:
+    implementation: vec
+    scheme: mceliece460896f
+- files:
+  - aes256ctr.c
+  - aes256ctr.h
   - benes.c
   - benes.h
   - bm.c
@@ -62,6 +79,22 @@ consistency_checks:
   - util.h
   source:
     implementation: clean
+    scheme: mceliece6688128f
+- files:
+  - aes256ctr.c
+  - aes256ctr.h
+  - controlbits.c
+  - controlbits.h
+  - crypto_hash.h
+  - decrypt.h
+  - encrypt.h
+  - operations.c
+  - operations.h
+  - pk_gen.h
+  - sk_gen.c
+  - sk_gen.h
+  source:
+    implementation: vec
     scheme: mceliece6688128f
 - files:
   - aes256ctr.c
@@ -98,6 +131,22 @@ consistency_checks:
 - files:
   - aes256ctr.c
   - aes256ctr.h
+  - controlbits.c
+  - controlbits.h
+  - crypto_hash.h
+  - decrypt.h
+  - encrypt.h
+  - operations.c
+  - operations.h
+  - pk_gen.h
+  - sk_gen.c
+  - sk_gen.h
+  source:
+    implementation: vec
+    scheme: mceliece6688128
+- files:
+  - aes256ctr.c
+  - aes256ctr.h
   - benes.c
   - benes.h
   - bm.c
@@ -123,6 +172,21 @@ consistency_checks:
   - util.h
   source:
     implementation: clean
+    scheme: mceliece6960119f
+- files:
+  - aes256ctr.c
+  - aes256ctr.h
+  - controlbits.c
+  - controlbits.h
+  - crypto_hash.h
+  - decrypt.h
+  - encrypt.h
+  - operations.c
+  - operations.h
+  - sk_gen.c
+  - sk_gen.h
+  source:
+    implementation: vec
     scheme: mceliece6960119f
 - files:
   - aes256ctr.c
@@ -156,6 +220,21 @@ consistency_checks:
 - files:
   - aes256ctr.c
   - aes256ctr.h
+  - controlbits.c
+  - controlbits.h
+  - crypto_hash.h
+  - decrypt.h
+  - encrypt.h
+  - operations.c
+  - operations.h
+  - sk_gen.c
+  - sk_gen.h
+  source:
+    implementation: vec
+    scheme: mceliece6960119
+- files:
+  - aes256ctr.c
+  - aes256ctr.h
   - benes.c
   - benes.h
   - bm.c
@@ -182,6 +261,21 @@ consistency_checks:
   - util.h
   source:
     implementation: clean
+    scheme: mceliece8192128f
+- files:
+  - aes256ctr.c
+  - aes256ctr.h
+  - controlbits.c
+  - controlbits.h
+  - crypto_hash.h
+  - decrypt.h
+  - encrypt.h
+  - operations.c
+  - operations.h
+  - sk_gen.c
+  - sk_gen.h
+  source:
+    implementation: vec
     scheme: mceliece8192128f
 - files:
   - aes256ctr.c
@@ -217,6 +311,39 @@ consistency_checks:
 - files:
   - aes256ctr.c
   - aes256ctr.h
+  - controlbits.c
+  - controlbits.h
+  - crypto_hash.h
+  - decrypt.h
+  - encrypt.h
+  - operations.c
+  - operations.h
+  - sk_gen.c
+  - sk_gen.h
+  source:
+    implementation: vec
+    scheme: mceliece8192128
+- files:
+  - aes256ctr.c
+  - aes256ctr.h
+  - api.h
+  - controlbits.c
+  - controlbits.h
+  - crypto_hash.h
+  - decrypt.h
+  - encrypt.h
+  - operations.c
+  - operations.h
+  - params.h
+  - pk_gen.h
+  - sk_gen.c
+  - sk_gen.h
+  source:
+    implementation: vec
+    scheme: mceliece460896
+- files:
+  - aes256ctr.c
+  - aes256ctr.h
   - bm.c
   - bm.h
   - controlbits.c
@@ -241,6 +368,22 @@ consistency_checks:
   - util.h
   source:
     implementation: clean
+    scheme: mceliece348864f
+- files:
+  - aes256ctr.c
+  - aes256ctr.h
+  - controlbits.c
+  - controlbits.h
+  - crypto_hash.h
+  - decrypt.h
+  - encrypt.h
+  - operations.c
+  - operations.h
+  - pk_gen.h
+  - sk_gen.c
+  - sk_gen.h
+  source:
+    implementation: vec
     scheme: mceliece348864f
 - files:
   - aes256ctr.c
@@ -270,4 +413,20 @@ consistency_checks:
   - util.h
   source:
     implementation: clean
+    scheme: mceliece348864
+- files:
+  - aes256ctr.c
+  - aes256ctr.h
+  - controlbits.c
+  - controlbits.h
+  - crypto_hash.h
+  - decrypt.h
+  - encrypt.h
+  - operations.c
+  - operations.h
+  - pk_gen.h
+  - sk_gen.c
+  - sk_gen.h
+  source:
+    implementation: vec
     scheme: mceliece348864

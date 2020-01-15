@@ -7,7 +7,7 @@
 
 #include <stdint.h>
 
-int MC_pk_gen(uint8_t *, uint32_t*, const uint8_t *);
+int MC_pk_gen(uint8_t *, uint32_t *, const uint8_t *);
 
 #endif
 
