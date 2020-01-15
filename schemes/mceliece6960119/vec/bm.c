@@ -15,7 +15,7 @@ static inline uint16_t mask_nonzero(gf a)
 	ret >>= 31;
 	ret -= 1;
 
-	return ret;
+	return (uint16_t)ret;
 }
 
 static inline uint16_t mask_leq(uint16_t a, uint16_t b)
@@ -27,7 +27,7 @@ static inline uint16_t mask_leq(uint16_t a, uint16_t b)
 	ret >>= 31;
 	ret -= 1;
 
-	return ret;
+	return (uint16_t)ret;
 }
 
 static inline void vec_cmov(vec * out, const vec * in, uint16_t mask)
