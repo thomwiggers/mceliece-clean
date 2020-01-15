@@ -15,7 +15,7 @@
 
 #include "gf.h"
 
-static inline uint32_t same_mask(uint16_t x, uint16_t y) {
+static inline uint8_t same_mask(uint16_t x, uint16_t y) {
     uint32_t mask;
 
     mask = x ^ y;
@@ -23,7 +23,7 @@ static inline uint32_t same_mask(uint16_t x, uint16_t y) {
     mask >>= 31;
     mask = -mask;
 
-    return mask;
+    return (uint8_t)mask;
 }
 
 /* output: e, an error vector of weight t */
@@ -33,7 +33,7 @@ static void gen_e(unsigned char *e) {
 
     uint16_t ind[ SYS_T ];
     uint8_t *ind8 = (uint8_t *)ind;
-    unsigned char mask;
+    uint8_t mask;
     unsigned char val[ SYS_T ];
 
     while (1) {
@@ -69,7 +69,7 @@ static void gen_e(unsigned char *e) {
         e[i] = 0;
 
         for (j = 0; j < SYS_T; j++) {
-            mask = same_mask(i, (ind[j] >> 3));
+            mask = same_mask((uint16_t)i, (ind[j] >> 3));
 
             e[i] |= val[j] & mask;
         }
