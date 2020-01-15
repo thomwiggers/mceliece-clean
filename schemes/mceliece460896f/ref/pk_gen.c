@@ -121,7 +121,7 @@ static int mov_columns(uint8_t mat[][ SYS_N / 8 ], uint32_t *perm) {
     for (j = 0;   j < 32; j++)
         for (k = j + 1; k < 64; k++) {
             d = perm[ row + j ] ^ perm[ row + k ];
-            d &= same_mask(k, ctz_list[j]);
+            d &= same_mask((uint16_t)k, (uint16_t)ctz_list[j]);
             perm[ row + j ] ^= d;
             perm[ row + k ] ^= d;
         }
@@ -138,7 +138,7 @@ static int mov_columns(uint8_t mat[][ SYS_N / 8 ], uint32_t *perm) {
         for (j = 0; j < 32; j++)
             for (k = j + 1; k < 64; k++) {
                 d = buf[ j ] ^ buf[ k ];
-                d &= same_mask(k, ctz_list[j]);
+                d &= same_mask((uint16_t)k, (uint16_t)ctz_list[j]);
                 buf[ j ] ^= d;
                 buf[ k ] ^= d;
             }
