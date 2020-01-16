@@ -63,7 +63,7 @@ static inline void interleave(vec128 *in, int idx0, int idx1, vec128 *mask, int 
 /* input: in, field elements in bitsliced form */
 /* output: out, field elements in non-bitsliced form */
 static inline void get_coefs(gf *out, vec128 *in) {
-    int i, j, k;
+    int i, k;
 
     vec128 mask[4][2];
     vec128 buf[16];
@@ -121,10 +121,9 @@ static inline void get_coefs(gf *out, vec128 *in) {
     interleave(buf, 14, 15, mask[0], 0);
 
     for (i = 0; i < 16; i++) {
-        for (j = 0; j <  2; j++) {
-            for (k = 0; k <  4; k++) {
-                out[ (4 * j + k) * 16 + i ] = (vec128_extract(buf[i], j) >> (k * 16)) & GFMASK;
-            }
+        for (k = 0; k <  4; k++) {
+            out[ (4 * 0 + k) * 16 + i ] = (vec128_extract(buf[i], 0) >> (k * 16)) & GFMASK;
+            out[ (4 * 1 + k) * 16 + i ] = (vec128_extract(buf[i], 1) >> (k * 16)) & GFMASK;
         }
     }
 }

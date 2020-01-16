@@ -38,7 +38,7 @@ static void de_bitslicing(uint64_t *out, vec128 in[][GFBITS]) {
 
 static void to_bitslicing_2x(vec128 out0[][GFBITS], vec128 out1[][GFBITS], const uint64_t *in) {
     int i, j, k, r;
-    uint64_t u[2];
+    uint64_t u[2] = {0};
 
     for (i = 0; i < 32; i++) {
         for (j = GFBITS - 1; j >= 0; j--) {
@@ -219,8 +219,6 @@ int MC_pk_gen(unsigned char *pk, uint32_t *perm, const unsigned char *sk) {
         }
 
     for (row = 0; row < PK_NROWS; row++) {
-        i = row >> 6;
-        j = row & 63;
 
         for (k = 0; k < NBLOCKS1_H; k++) {
             one_row[ k ] = 0;

@@ -277,7 +277,7 @@ void MC_benes(uint64_t *r, uint64_t cond[][32], int rev) {
     layer_1(bs, cond[ block ]);
     block += inc;
     layer_0(bs, cond[ block ]);
-    block += inc;
+    //block += inc;
 
     MC_transpose_64x64(bs);
 }
