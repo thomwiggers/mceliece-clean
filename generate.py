@@ -13,6 +13,7 @@ import sys
 IMPLEMENTATIONS = [
     ("mceliece348864", "ref", "clean"),
     ("mceliece348864", "vec", "vec"),
+    ("mceliece348864", "sse", "sse"),
     ("mceliece348864f", "ref", "clean"),
     ("mceliece348864f", "vec", "vec"),
     ("mceliece460896", "ref", "clean"),
@@ -55,6 +56,12 @@ for (scheme, impl, dst) in IMPLEMENTATIONS:
     os.makedirs(dest_dir)
     sourcefiles = []
 
+    subprocess.run(
+        ['make', 'clean'],
+        cwd=src_dir,
+        check=False,
+        capture_output=True)
+
     for src_file in glob.glob(os.path.join(src_dir, "*")):
         filename = os.path.basename(src_file)
         dest_file = os.path.join(dest_dir, filename)
@@ -89,8 +96,9 @@ for (scheme, impl, dst) in IMPLEMENTATIONS:
         r"libmceliece_.*\.a",
         f"lib{scheme}_{dst}.a",
     )
-    replace_in_file(
-        os.path.join(dest_dir, "Makefile.Microsoft_nmake"),
-        r"libmceliece_.*\.lib",
-        f"lib{scheme}_{dst}.lib",
-    )
+    if impl not in ('sse',):
+        replace_in_file(
+            os.path.join(dest_dir, "Makefile.Microsoft_nmake"),
+            r"libmceliece_.*\.lib",
+            f"lib{scheme}_{dst}.lib",
+        )

@@ -13,8 +13,8 @@
 #include <stdint.h>
 #include <assert.h>
 
-extern void update_asm(void *, gf, int);
-extern gf vec_reduce_asm(uint64_t *);
+extern void MC_update_asm(void *, gf, int);
+extern gf MC_vec_reduce_asm(uint64_t *);
 
 static inline uint64_t mask_nonzero(gf a) {
     uint64_t ret = a;
@@ -37,38 +37,11 @@ static inline uint64_t mask_leq(uint16_t a, uint16_t b) {
     return ret;
 }
 
-void vec_cmov(uint64_t out[][2], uint64_t mask) {
+static void vec_cmov(uint64_t out[][2], uint64_t mask) {
     int i;
 
     for (i = 0; i < GFBITS; i++) {
         out[i][0] = (out[i][0] & ~mask) | (out[i][1] & mask);
-    }
-}
-
-void vec_mul_sp(uint64_t *h, uint64_t *f, const uint64_t g[][2]) {
-    int i, j;
-    uint64_t result[2 * GFBITS - 1];
-
-    //
-
-    for (i = 0; i < 2 * GFBITS - 1; i++) {
-        result[i] = 0;
-    }
-
-    for (i = 0; i < GFBITS; i++)
-        for (j = 0; j < GFBITS; j++) {
-            result[i + j] ^= f[i] & g[j][1];
-        }
-
-    for (i = 2 * GFBITS - 2; i >= GFBITS; i--) {
-        result[i - GFBITS + 3] ^= result[i];
-        result[i - GFBITS + 0] ^= result[i];
-    }
-
-    //
-
-    for (i = 0; i < GFBITS; i++) {
-        h[i] = result[i];
     }
 }
 
@@ -147,16 +120,18 @@ static inline void get_coefs(gf *out, vec128 *in) {
     interleave(buf, 12, 13, mask[0], 0);
     interleave(buf, 14, 15, mask[0], 0);
 
-    for (i = 0; i < 16; i++)
-        for (j = 0; j <  2; j++)
+    for (i = 0; i < 16; i++) {
+        for (j = 0; j <  2; j++) {
             for (k = 0; k <  4; k++) {
                 out[ (4 * j + k) * 16 + i ] = (vec128_extract(buf[i], j) >> (k * 16)) & GFMASK;
             }
+        }
+    }
 }
 
 /* input: in, sequence of field elements */
 /* output: out, minimal polynomial of in */
-void bm(uint64_t out[ GFBITS ], vec128 in[ GFBITS ]) {
+void MC_bm(uint64_t out[ GFBITS ], vec128 in[ GFBITS ]) {
     uint16_t i;
     uint16_t N, L;
 
@@ -197,13 +172,13 @@ void bm(uint64_t out[ GFBITS ], vec128 in[ GFBITS ]) {
     for (N = 0; N < SYS_T * 2; N++) {
         // computing d
 
-        vec_mul_asm(prod, in_tmp, &BC[0][1], 16);
+        MC_vec_mul_asm(prod, in_tmp, &BC[0][1], 16);
 
-        update_asm(in_tmp, coefs[N], 8);
+        MC_update_asm(in_tmp, coefs[N], 8);
 
-        d = vec_reduce_asm(prod);
+        d = MC_vec_reduce_asm(prod);
 
-        t = gf_mul2(c0, coefs[N], b);
+        t = MC_gf_mul2(c0, coefs[N], b);
 
         d ^= t & 0xFFFFFFFF;
 
@@ -222,7 +197,7 @@ void bm(uint64_t out[ GFBITS ], vec128 in[ GFBITS ]) {
 
         vec_cmov(BC, mask);
 
-        update_asm(BC, mask & c0, 16);
+        MC_update_asm(BC, mask & c0, 16);
 
         for (i = 0; i < GFBITS; i++) {
             BC[i][1] = BC_tmp[i][0] ^ BC_tmp[i][1];
@@ -234,13 +209,13 @@ void bm(uint64_t out[ GFBITS ], vec128 in[ GFBITS ]) {
 
     }
 
-    c0 = gf_inv(c0);
+    c0 = MC_gf_inv(c0);
 
     for (i = 0; i < GFBITS; i++) {
         out[i] = (c0 >> i) & 1;
         out[i] = -out[i];
     }
 
-    vec_mul_asm(out, out, &BC[0][1], 16);
+    MC_vec_mul_asm(out, out, &BC[0][1], 16);
 }
 

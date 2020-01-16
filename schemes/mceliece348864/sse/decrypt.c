@@ -4,12 +4,12 @@
 
 #include "decrypt.h"
 
-#include "params.h"
-#include "fft_tr.h"
 #include "benes.h"
-#include "util.h"
-#include "fft.h"
 #include "bm.h"
+#include "fft.h"
+#include "fft_tr.h"
+#include "params.h"
+#include "util.h"
 
 #include <stdio.h>
 
@@ -22,12 +22,12 @@ static void scaling(vec128 out[][GFBITS], vec128 inv[][GFBITS], const unsigned c
 
     //
 
-    irr_load(irr_int, sk);
+    MC_irr_load(irr_int, sk);
 
-    fft(eval, irr_int);
+    MC_fft(eval, irr_int);
 
     for (i = 0; i < 32; i++) {
-        vec128_sq(eval[i], eval[i]);
+        MC_vec128_sq(eval[i], eval[i]);
     }
 
     vec128_copy(inv[0], eval[0]);
@@ -36,7 +36,7 @@ static void scaling(vec128 out[][GFBITS], vec128 inv[][GFBITS], const unsigned c
         vec128_mul(inv[i], inv[i - 1], eval[i]);
     }
 
-    vec128_inv(tmp, inv[31]);
+    MC_vec128_inv(tmp, inv[31]);
 
     for (i = 30; i >= 0; i--) {
         vec128_mul(inv[i + 1], tmp, inv[i]);
@@ -47,15 +47,16 @@ static void scaling(vec128 out[][GFBITS], vec128 inv[][GFBITS], const unsigned c
 
     //
 
-    for (i = 0; i < 32; i++)
+    for (i = 0; i < 32; i++) {
         for (j = 0; j < GFBITS; j++) {
             out[i][j] = vec128_and(inv[i][j], recv[i]);
         }
+    }
 }
 
 static void preprocess(vec128 *recv, const unsigned char *s) {
     int i;
-    unsigned char r[ 512 ];
+    uint8_t r[ 512 ];
 
     for (i = 0; i < SYND_BYTES; i++) {
         r[i] = s[i];
@@ -66,7 +67,7 @@ static void preprocess(vec128 *recv, const unsigned char *s) {
     }
 
     for (i = 0; i < 32; i++) {
-        recv[i] = load16(r + i * 16);
+        recv[i] = MC_load16(r + i * 16);
     }
 }
 
@@ -79,8 +80,8 @@ static void postprocess(unsigned char *e, vec128 *err) {
         v[0] = vec128_extract(err[i], 0);
         v[1] = vec128_extract(err[i], 1);
 
-        store8(error8 + i * 16 + 0, v[0]);
-        store8(error8 + i * 16 + 8, v[1]);
+        MC_store8(error8 + i * 16 + 0, v[0]);
+        MC_store8(error8 + i * 16 + 8, v[1]);
     }
 
     for (i = 0; i < SYS_N / 8; i++) {
@@ -91,13 +92,14 @@ static void postprocess(unsigned char *e, vec128 *err) {
 static void scaling_inv(vec128 out[][GFBITS], vec128 inv[][GFBITS], vec128 *recv) {
     int i, j;
 
-    for (i = 0; i < 32; i++)
+    for (i = 0; i < 32; i++) {
         for (j = 0; j < GFBITS; j++) {
             out[i][j] = vec128_and(inv[i][j], recv[i]);
         }
+    }
 }
 
-static int weight_check(unsigned char *e, vec128 *error) {
+static uint16_t weight_check(unsigned char *e, vec128 *error) {
     int i;
     uint16_t w0 = 0;
     uint16_t w1 = 0;
@@ -137,7 +139,7 @@ static uint64_t synd_cmp(vec128 s0[ GFBITS ], vec128 s1[ GFBITS ]) {
 /*         s, ciphertext (syndrome) */
 /* output: e, error vector */
 /* return: 0 for success; 1 for failure */
-int decrypt(unsigned char *e, const unsigned char *sk, const unsigned char *s) {
+int MC_decrypt(unsigned char *e, const unsigned char *sk, const unsigned char *s) {
     int i;
 
     uint16_t check_synd;
@@ -163,16 +165,16 @@ int decrypt(unsigned char *e, const unsigned char *sk, const unsigned char *s) {
 
     preprocess(recv, s);
 
-    load_bits(bits_int, sk + IRR_BYTES);
-    benes((uint64_t *) recv, bits_int, 1);
+    MC_load_bits(bits_int, sk + IRR_BYTES);
+    MC_benes((uint64_t *) recv, bits_int, 1);
 
     scaling(scaled, inv, sk, recv);
 
-    fft_tr(s_priv, scaled);
+    MC_fft_tr(s_priv, scaled);
 
-    bm(locator, s_priv);
+    MC_bm(locator, s_priv);
 
-    fft(eval, locator);
+    MC_fft(eval, locator);
 
     // reencryption and weight check
 
@@ -184,29 +186,17 @@ int decrypt(unsigned char *e, const unsigned char *sk, const unsigned char *s) {
     }
 
     scaling_inv(scaled, inv, error);
-    fft_tr(s_priv_cmp, scaled);
+    MC_fft_tr(s_priv_cmp, scaled);
 
     check_synd = synd_cmp(s_priv, s_priv_cmp);
 
     //
 
-    benes((uint64_t *) error, bits_int, 0);
+    MC_benes((uint64_t *) error, bits_int, 0);
 
     postprocess(e, error);
 
     check_weight = weight_check(e, error);
-
-    #ifdef KAT
-    {
-        int k;
-        printf("decrypt e: positions");
-        for (k = 0; k < SYS_N; ++k)
-            if (e[k / 8] & (1 << (k & 7))) {
-                printf(" %d", k);
-            }
-        printf("\n");
-    }
-    #endif
 
     return 1 - (check_synd & check_weight);
 }

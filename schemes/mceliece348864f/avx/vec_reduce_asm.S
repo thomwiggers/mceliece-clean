@@ -37,12 +37,12 @@
 
 # qhasm: enter vec_reduce_asm
 .p2align 5
-.hidden _vec_reduce_asm
-.hidden vec_reduce_asm
-.global _vec_reduce_asm
-.global vec_reduce_asm
-_vec_reduce_asm:
-vec_reduce_asm:
+.hidden _MC_vec_reduce_asm
+.hidden MC_vec_reduce_asm
+.global _MC_vec_reduce_asm
+.global MC_vec_reduce_asm
+_MC_vec_reduce_asm:
+MC_vec_reduce_asm:
 mov %rsp,%r11
 and $31,%r11
 add $0,%r11

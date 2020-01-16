@@ -6,12 +6,12 @@
 #include "fft_tr.h"
 
 #include "transpose.h"
-#include "vec128.h"
 #include "vec.h"
+#include "vec128.h"
 
 #include <stdint.h>
 
-void radix_conversions_tr(vec128 in[ GFBITS ]) {
+static void radix_conversions_tr(vec128 in[ GFBITS ]) {
     int i, j, k;
 
     const vec128 mask[10] = {
@@ -28,7 +28,7 @@ void radix_conversions_tr(vec128 in[ GFBITS ]) {
     };
 
     const vec128 s[5][GFBITS] = {
-#include "scalars_2x.data"
+#include "scalars_2x.inc"
     };
 
     uint64_t v0, v1;
@@ -41,11 +41,12 @@ void radix_conversions_tr(vec128 in[ GFBITS ]) {
             vec128_mul(in, in, s[j]);
         }
 
-        for (i = 0; i < GFBITS; i++)
+        for (i = 0; i < GFBITS; i++) {
             for (k = j; k <= 4; k++) {
                 in[i] ^= vec128_sll_2x(in[i] & mask[2 * k + 0], 1 << k);
                 in[i] ^= vec128_sll_2x(in[i] & mask[2 * k + 1], 1 << k);
             }
+        }
 
         for (i = 0; i < GFBITS; i++) {
             v0 = vec128_extract(in[i], 0);
@@ -59,7 +60,7 @@ void radix_conversions_tr(vec128 in[ GFBITS ]) {
     }
 }
 
-void butterflies_tr(vec128 out[ GFBITS ], vec128 in[][ GFBITS ]) {
+static void butterflies_tr(vec128 out[ GFBITS ], vec128 in[][ GFBITS ]) {
     int i, j, k, s, b;
 
     uint64_t t[ GFBITS ];
@@ -73,12 +74,12 @@ void butterflies_tr(vec128 out[ GFBITS ], vec128 in[][ GFBITS ]) {
     vec128 x[ GFBITS ], y[ GFBITS ];
 
     const vec128 consts[ 32 ][ GFBITS ] = {
-#include "consts.data"
+#include "consts.inc"
     };
 
     uint64_t consts_ptr = 32;
 
-    const unsigned char reversal[64] = {
+    const uint8_t reversal[64] = {
         0, 32, 16, 48,  8, 40, 24, 56,
         4, 36, 20, 52, 12, 44, 28, 60,
         2, 34, 18, 50, 10, 42, 26, 58,
@@ -141,7 +142,7 @@ void butterflies_tr(vec128 out[ GFBITS ], vec128 in[][ GFBITS ]) {
                                                   vec128_extract(in[j / 2 + 1][i + 1], 1));
         }
 
-        transpose_64x128_sp(buf);
+        MC_transpose_64x128_sp(buf);
 
         p2[0] = buf[32];
         buf[33] = vec128_xor(buf[33], buf[32]);
@@ -304,7 +305,7 @@ void butterflies_tr(vec128 out[ GFBITS ], vec128 in[][ GFBITS ]) {
     }
 }
 
-void fft_tr(vec128 out[GFBITS], vec128 in[][ GFBITS ]) {
+void MC_fft_tr(vec128 out[GFBITS], vec128 in[][ GFBITS ]) {
     butterflies_tr(out, in);
     radix_conversions_tr(out);
 }

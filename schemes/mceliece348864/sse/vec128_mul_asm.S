@@ -107,12 +107,12 @@
 
 # qhasm: enter vec128_mul_asm
 .p2align 5
-.hidden _vec128_mul_asm
-.hidden vec128_mul_asm
-.global _vec128_mul_asm
-.global vec128_mul_asm
-_vec128_mul_asm:
-vec128_mul_asm:
+.hidden _MC_vec128_mul_asm
+.hidden MC_vec128_mul_asm
+.global _MC_vec128_mul_asm
+.global MC_vec128_mul_asm
+_MC_vec128_mul_asm:
+MC_vec128_mul_asm:
 mov %rsp,%r11
 and $31,%r11
 add $0,%r11

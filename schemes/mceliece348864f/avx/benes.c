@@ -1,6 +1,7 @@
 /*
   This file is for Benes network related functions
 */
+#include "benes.h"
 
 #include "util.h"
 #include "transpose.h"
@@ -158,7 +159,7 @@ static void layer_5(uint64_t *bs, uint64_t *cond) {
 
 /* input: bits, control bits as array of bytes */
 /* output: out, control bits as array of 128-bit vectors */
-void load_bits(uint64_t out[][32], const unsigned char *bits) {
+void MC_load_bits(uint64_t out[][32], const unsigned char *bits) {
     int i, low, block = 0;
 
     uint64_t cond[64];
@@ -167,9 +168,9 @@ void load_bits(uint64_t out[][32], const unsigned char *bits) {
 
     for (low = 0; low <= 5; low++) {
         for (i = 0; i < 64; i++) {
-            cond[i] = load4(bits + block * 256 + i * 4);
+            cond[i] = MC_load4(bits + block * 256 + i * 4);
         }
-        transpose_64x64(cond);
+        MC_transpose_64x64(cond);
 
         for (i = 0; i < 32; i++) {
             out[ block ][i] = cond[i];
@@ -179,23 +180,23 @@ void load_bits(uint64_t out[][32], const unsigned char *bits) {
 
     for (low = 0; low <= 5; low++) {
         for (i = 0; i < 32; i++) {
-            out[ block ][i] = load8(bits + block * 256 + i * 8);
+            out[ block ][i] = MC_load8(bits + block * 256 + i * 8);
         }
         block++;
     }
 
     for (low = 4; low >= 0; low--) {
         for (i = 0; i < 32; i++) {
-            out[ block ][i] = load8(bits + block * 256 + i * 8);
+            out[ block ][i] = MC_load8(bits + block * 256 + i * 8);
         }
         block++;
     }
 
     for (low = 5; low >= 0; low--) {
         for (i = 0; i < 64; i++) {
-            cond[i] = load4(bits + block * 256 + i * 4);
+            cond[i] = MC_load4(bits + block * 256 + i * 4);
         }
-        transpose_64x64(cond);
+        MC_transpose_64x64(cond);
 
         for (i = 0; i < 32; i++) {
             out[ block ][i] = cond[i];
@@ -208,7 +209,7 @@ void load_bits(uint64_t out[][32], const unsigned char *bits) {
 /*        cond, control bits as array of 128-bit vectors  */
 /*        rev, 0 for normal application; !0 for inverse */
 /* output: r, permuted bits */
-void benes(uint64_t *r, uint64_t cond[][32], int rev) {
+void MC_benes(uint64_t *r, uint64_t cond[][32], int rev) {
     int block, inc;
 
     uint64_t *bs = r;
@@ -223,7 +224,7 @@ void benes(uint64_t *r, uint64_t cond[][32], int rev) {
         inc = -1;
     }
 
-    transpose_64x64(bs);
+    MC_transpose_64x64(bs);
 
     layer_0(bs, cond[ block ]);
     block += inc;
@@ -238,7 +239,7 @@ void benes(uint64_t *r, uint64_t cond[][32], int rev) {
     layer_5(bs, cond[ block ]);
     block += inc;
 
-    transpose_64x64(bs);
+    MC_transpose_64x64(bs);
 
     layer_0(bs, cond[ block ]);
     block += inc;
@@ -263,7 +264,7 @@ void benes(uint64_t *r, uint64_t cond[][32], int rev) {
     layer_0(bs, cond[ block ]);
     block += inc;
 
-    transpose_64x64(bs);
+    MC_transpose_64x64(bs);
 
     layer_5(bs, cond[ block ]);
     block += inc;
@@ -278,6 +279,6 @@ void benes(uint64_t *r, uint64_t cond[][32], int rev) {
     layer_0(bs, cond[ block ]);
     block += inc;
 
-    transpose_64x64(bs);
+    MC_transpose_64x64(bs);
 }
 

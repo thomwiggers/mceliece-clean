@@ -2,10 +2,10 @@
 
 #include <stdint.h>
 
-extern void vec_mul_asm(uint64_t *, const uint64_t *, const uint64_t *, int);
+extern void MC_vec_mul_asm(uint64_t *, const uint64_t *, const uint64_t *, int);
 
 static inline void vec_mul(uint64_t *h, const uint64_t *f, const uint64_t *g) {
-    vec_mul_asm(h, f, g, 8);
+    MC_vec_mul_asm(h, f, g, 8);
 }
 
 static inline void vec_add(uint64_t *h, uint64_t *f, uint64_t *g) {

@@ -6,7 +6,7 @@
 #include "vec128.h"
 
 /* bitsliced field squarings */
-void vec128_sq(vec128 *out, vec128 *in) {
+void MC_vec128_sq(vec128 *out, vec128 *in) {
     int i;
     vec128 result[GFBITS];
 
@@ -29,32 +29,32 @@ void vec128_sq(vec128 *out, vec128 *in) {
 }
 
 /* bitsliced field inverses */
-void vec128_inv(vec128 *out, vec128 *in) {
+void MC_vec128_inv(vec128 *out, vec128 *in) {
     vec128 tmp_11[ GFBITS ];
     vec128 tmp_1111[ GFBITS ];
 
     vec128_copy(out, in);
 
-    vec128_sq(out, out);
+    MC_vec128_sq(out, out);
     vec128_mul(tmp_11, out, in); // 11
 
-    vec128_sq(out, tmp_11);
-    vec128_sq(out, out);
+    MC_vec128_sq(out, tmp_11);
+    MC_vec128_sq(out, out);
     vec128_mul(tmp_1111, out, tmp_11); // 1111
 
-    vec128_sq(out, tmp_1111);
-    vec128_sq(out, out);
-    vec128_sq(out, out);
-    vec128_sq(out, out);
+    MC_vec128_sq(out, tmp_1111);
+    MC_vec128_sq(out, out);
+    MC_vec128_sq(out, out);
+    MC_vec128_sq(out, out);
     vec128_mul(out, out, tmp_1111); // 11111111
 
-    vec128_sq(out, out);
-    vec128_sq(out, out);
+    MC_vec128_sq(out, out);
+    MC_vec128_sq(out, out);
     vec128_mul(out, out, tmp_11); // 1111111111
 
-    vec128_sq(out, out);
+    MC_vec128_sq(out, out);
     vec128_mul(out, out, in); // 11111111111
 
-    vec128_sq(out, out); // 111111111110
+    MC_vec128_sq(out, out); // 111111111110
 }
 
