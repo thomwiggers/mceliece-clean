@@ -77,7 +77,7 @@ int MC_genpoly_gen(gf *out, gf *f) {
 /* input: permutation p represented as a list of 32-bit intergers */
 /* output: -1 if some interger repeats in p */
 /*          0 otherwise */
-int MC_perm_check(uint32_t *p) {
+int MC_perm_check(const uint32_t *p) {
     int i;
     uint64_t list[1 << GFBITS];
 
@@ -87,10 +87,11 @@ int MC_perm_check(uint32_t *p) {
 
     MC_sort_63b(1 << GFBITS, list);
 
-    for (i = 1; i < (1 << GFBITS); i++)
+    for (i = 1; i < (1 << GFBITS); i++) {
         if (list[i - 1] == list[i]) {
             return -1;
         }
+    }
 
     return 0;
 }

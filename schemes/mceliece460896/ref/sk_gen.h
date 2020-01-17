@@ -10,7 +10,7 @@
 #include <stdint.h>
 
 int MC_genpoly_gen(gf *, gf *);
-int MC_perm_check(uint32_t *);
+int MC_perm_check(const uint32_t *);
 
 #endif
 

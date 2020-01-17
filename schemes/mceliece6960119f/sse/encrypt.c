@@ -17,13 +17,15 @@
 
 /* input: public key pk, error vector e */
 /* output: syndrome s */
-extern void syndrome_asm(unsigned char *s, const unsigned char *pk, unsigned char *e);
+extern void MC_syndrome_asm(unsigned char *s, const unsigned char *pk, unsigned char *e);
 
 /* output: e, an error vector of weight t */
 static void gen_e(unsigned char *e) {
-    int i, j, eq, count;
+    size_t i, j;
+    int eq, count;
 
     uint16_t ind[ SYS_T * 2 ];
+    uint8_t *ind8 = (uint8_t *)ind;
     uint32_t ind32[ SYS_T * 2 ];
     uint64_t e_int[ (SYS_N + 63) / 64 ];
     uint64_t one = 1;
@@ -31,7 +33,10 @@ static void gen_e(unsigned char *e) {
     uint64_t val[ SYS_T ];
 
     while (1) {
-        randombytes((unsigned char *) ind, sizeof(ind));
+        randombytes(ind8, sizeof(ind));
+        for (i = 0; i < sizeof(ind); i += 2) {
+            ind[i / 2] = (uint16_t)ind8[i + 1] << 8 | ind8[i];
+        }
 
         for (i = 0; i < SYS_T * 2; i++) {
             ind[i] &= GFMASK;
@@ -81,7 +86,7 @@ static void gen_e(unsigned char *e) {
     }
 
     for (i = 0; i < (SYS_N + 63) / 64 - 1; i++) {
-        store8(e, e_int[i]);
+        MC_store8(e, e_int[i]);
         e += 8;
     }
 
@@ -92,21 +97,9 @@ static void gen_e(unsigned char *e) {
 
 /* input: public key pk */
 /* output: error vector e, syndrome s */
-void encrypt(unsigned char *s, const unsigned char *pk, unsigned char *e) {
+void MC_encrypt(unsigned char *s, unsigned char *e, const unsigned char *pk) {
     gen_e(e);
 
-    #ifdef KAT
-    {
-        int k;
-        printf("encrypt e: positions");
-        for (k = 0; k < SYS_N; ++k)
-            if (e[k / 8] & (1 << (k & 7))) {
-                printf(" %d", k);
-            }
-        printf("\n");
-    }
-    #endif
-
-    syndrome_asm(s, pk, e);
+    MC_syndrome_asm(s, pk, e);
 }
 

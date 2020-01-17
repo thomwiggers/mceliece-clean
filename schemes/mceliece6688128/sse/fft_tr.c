@@ -43,7 +43,7 @@ static void radix_conversions_tr(vec128 in[][ GFBITS ]) {
     };
 
     const vec128 s[6][2][GFBITS] = {
-#include "scalars_4x.data"
+#include "scalars_4x.inc"
     };
 
     //
@@ -111,7 +111,7 @@ static void butterflies_tr(vec128 out[][ GFBITS ], vec128 in[][ GFBITS ]) {
     vec128 buf[ 64 ];
 
     const vec128 consts[ 64 ][ GFBITS ] = {
-#include "consts.data"
+#include "consts.inc"
     };
 
     uint64_t consts_ptr = 64;
@@ -176,138 +176,135 @@ static void butterflies_tr(vec128 out[][ GFBITS ], vec128 in[][ GFBITS ]) {
             buf[k] = in[ reversal[k] ][i];
         }
 
-        transpose_64x128_sp(buf);
-
-#define xor vec128_xor
+        MC_transpose_64x128_sp(buf);
 
         pre[0][i] = buf[32];
-        buf[33] = xor(buf[33], buf[32]);
+        buf[33] = vec128_xor(buf[33], buf[32]);
         pre[1][i] = buf[33];
-        buf[35] = xor(buf[35], buf[33]);
-        pre[0][i] = xor(pre[0][i], buf[35]);
-        buf[34] = xor(buf[34], buf[35]);
+        buf[35] = vec128_xor(buf[35], buf[33]);
+        pre[0][i] = vec128_xor(pre[0][i], buf[35]);
+        buf[34] = vec128_xor(buf[34], buf[35]);
         pre[2][i] = buf[34];
-        buf[38] = xor(buf[38], buf[34]);
-        pre[0][i] = xor(pre[0][i], buf[38]);
-        buf[39] = xor(buf[39], buf[38]);
-        pre[1][i] = xor(pre[1][i], buf[39]);
-        buf[37] = xor(buf[37], buf[39]);
-        pre[0][i] = xor(pre[0][i], buf[37]);
-        buf[36] = xor(buf[36], buf[37]);
+        buf[38] = vec128_xor(buf[38], buf[34]);
+        pre[0][i] = vec128_xor(pre[0][i], buf[38]);
+        buf[39] = vec128_xor(buf[39], buf[38]);
+        pre[1][i] = vec128_xor(pre[1][i], buf[39]);
+        buf[37] = vec128_xor(buf[37], buf[39]);
+        pre[0][i] = vec128_xor(pre[0][i], buf[37]);
+        buf[36] = vec128_xor(buf[36], buf[37]);
         pre[3][i] = buf[36];
-        buf[44] = xor(buf[44], buf[36]);
-        pre[0][i] = xor(pre[0][i], buf[44]);
-        buf[45] = xor(buf[45], buf[44]);
-        pre[1][i] = xor(pre[1][i], buf[45]);
-        buf[47] = xor(buf[47], buf[45]);
-        pre[0][i] = xor(pre[0][i], buf[47]);
-        buf[46] = xor(buf[46], buf[47]);
-        pre[2][i] = xor(pre[2][i], buf[46]);
-        buf[42] = xor(buf[42], buf[46]);
-        pre[0][i] = xor(pre[0][i], buf[42]);
-        buf[43] = xor(buf[43], buf[42]);
-        pre[1][i] = xor(pre[1][i], buf[43]);
-        buf[41] = xor(buf[41], buf[43]);
-        pre[0][i] = xor(pre[0][i], buf[41]);
-        buf[40] = xor(buf[40], buf[41]);
+        buf[44] = vec128_xor(buf[44], buf[36]);
+        pre[0][i] = vec128_xor(pre[0][i], buf[44]);
+        buf[45] = vec128_xor(buf[45], buf[44]);
+        pre[1][i] = vec128_xor(pre[1][i], buf[45]);
+        buf[47] = vec128_xor(buf[47], buf[45]);
+        pre[0][i] = vec128_xor(pre[0][i], buf[47]);
+        buf[46] = vec128_xor(buf[46], buf[47]);
+        pre[2][i] = vec128_xor(pre[2][i], buf[46]);
+        buf[42] = vec128_xor(buf[42], buf[46]);
+        pre[0][i] = vec128_xor(pre[0][i], buf[42]);
+        buf[43] = vec128_xor(buf[43], buf[42]);
+        pre[1][i] = vec128_xor(pre[1][i], buf[43]);
+        buf[41] = vec128_xor(buf[41], buf[43]);
+        pre[0][i] = vec128_xor(pre[0][i], buf[41]);
+        buf[40] = vec128_xor(buf[40], buf[41]);
         pre[4][i] = buf[40];
-        buf[56] = xor(buf[56], buf[40]);
-        pre[0][i] = xor(pre[0][i], buf[56]);
-        buf[57] = xor(buf[57], buf[56]);
-        pre[1][i] = xor(pre[1][i], buf[57]);
-        buf[59] = xor(buf[59], buf[57]);
-        pre[0][i] = xor(pre[0][i], buf[59]);
-        buf[58] = xor(buf[58], buf[59]);
-        pre[2][i] = xor(pre[2][i], buf[58]);
-        buf[62] = xor(buf[62], buf[58]);
-        pre[0][i] = xor(pre[0][i], buf[62]);
-        buf[63] = xor(buf[63], buf[62]);
-        pre[1][i] = xor(pre[1][i], buf[63]);
-        buf[61] = xor(buf[61], buf[63]);
-        pre[0][i] = xor(pre[0][i], buf[61]);
-        buf[60] = xor(buf[60], buf[61]);
-        pre[3][i] = xor(pre[3][i], buf[60]);
-        buf[52] = xor(buf[52], buf[60]);
-        pre[0][i] = xor(pre[0][i], buf[52]);
-        buf[53] = xor(buf[53], buf[52]);
-        pre[1][i] = xor(pre[1][i], buf[53]);
-        buf[55] = xor(buf[55], buf[53]);
-        pre[0][i] = xor(pre[0][i], buf[55]);
-        buf[54] = xor(buf[54], buf[55]);
-        pre[2][i] = xor(pre[2][i], buf[54]);
-        buf[50] = xor(buf[50], buf[54]);
-        pre[0][i] = xor(pre[0][i], buf[50]);
-        buf[51] = xor(buf[51], buf[50]);
-        pre[1][i] = xor(pre[1][i], buf[51]);
-        buf[49] = xor(buf[49], buf[51]);
-        pre[0][i] = xor(pre[0][i], buf[49]);
-        buf[48] = xor(buf[48], buf[49]);
+        buf[56] = vec128_xor(buf[56], buf[40]);
+        pre[0][i] = vec128_xor(pre[0][i], buf[56]);
+        buf[57] = vec128_xor(buf[57], buf[56]);
+        pre[1][i] = vec128_xor(pre[1][i], buf[57]);
+        buf[59] = vec128_xor(buf[59], buf[57]);
+        pre[0][i] = vec128_xor(pre[0][i], buf[59]);
+        buf[58] = vec128_xor(buf[58], buf[59]);
+        pre[2][i] = vec128_xor(pre[2][i], buf[58]);
+        buf[62] = vec128_xor(buf[62], buf[58]);
+        pre[0][i] = vec128_xor(pre[0][i], buf[62]);
+        buf[63] = vec128_xor(buf[63], buf[62]);
+        pre[1][i] = vec128_xor(pre[1][i], buf[63]);
+        buf[61] = vec128_xor(buf[61], buf[63]);
+        pre[0][i] = vec128_xor(pre[0][i], buf[61]);
+        buf[60] = vec128_xor(buf[60], buf[61]);
+        pre[3][i] = vec128_xor(pre[3][i], buf[60]);
+        buf[52] = vec128_xor(buf[52], buf[60]);
+        pre[0][i] = vec128_xor(pre[0][i], buf[52]);
+        buf[53] = vec128_xor(buf[53], buf[52]);
+        pre[1][i] = vec128_xor(pre[1][i], buf[53]);
+        buf[55] = vec128_xor(buf[55], buf[53]);
+        pre[0][i] = vec128_xor(pre[0][i], buf[55]);
+        buf[54] = vec128_xor(buf[54], buf[55]);
+        pre[2][i] = vec128_xor(pre[2][i], buf[54]);
+        buf[50] = vec128_xor(buf[50], buf[54]);
+        pre[0][i] = vec128_xor(pre[0][i], buf[50]);
+        buf[51] = vec128_xor(buf[51], buf[50]);
+        pre[1][i] = vec128_xor(pre[1][i], buf[51]);
+        buf[49] = vec128_xor(buf[49], buf[51]);
+        pre[0][i] = vec128_xor(pre[0][i], buf[49]);
+        buf[48] = vec128_xor(buf[48], buf[49]);
         pre[5][i] = buf[48];
-        buf[16] = xor(buf[16], buf[48]);
-        pre[0][i] = xor(pre[0][i], buf[16]);
-        buf[17] = xor(buf[17], buf[16]);
-        pre[1][i] = xor(pre[1][i], buf[17]);
-        buf[19] = xor(buf[19], buf[17]);
-        pre[0][i] = xor(pre[0][i], buf[19]);
-        buf[18] = xor(buf[18], buf[19]);
-        pre[2][i] = xor(pre[2][i], buf[18]);
-        buf[22] = xor(buf[22], buf[18]);
-        pre[0][i] = xor(pre[0][i], buf[22]);
-        buf[23] = xor(buf[23], buf[22]);
-        pre[1][i] = xor(pre[1][i], buf[23]);
-        buf[21] = xor(buf[21], buf[23]);
-        pre[0][i] = xor(pre[0][i], buf[21]);
-        buf[20] = xor(buf[20], buf[21]);
-        pre[3][i] = xor(pre[3][i], buf[20]);
-        buf[28] = xor(buf[28], buf[20]);
-        pre[0][i] = xor(pre[0][i], buf[28]);
-        buf[29] = xor(buf[29], buf[28]);
-        pre[1][i] = xor(pre[1][i], buf[29]);
-        buf[31] = xor(buf[31], buf[29]);
-        pre[0][i] = xor(pre[0][i], buf[31]);
-        buf[30] = xor(buf[30], buf[31]);
-        pre[2][i] = xor(pre[2][i], buf[30]);
-        buf[26] = xor(buf[26], buf[30]);
-        pre[0][i] = xor(pre[0][i], buf[26]);
-        buf[27] = xor(buf[27], buf[26]);
-        pre[1][i] = xor(pre[1][i], buf[27]);
-        buf[25] = xor(buf[25], buf[27]);
-        pre[0][i] = xor(pre[0][i], buf[25]);
-        buf[24] = xor(buf[24], buf[25]);
-        pre[4][i] = xor(pre[4][i], buf[24]);
-        buf[8] = xor(buf[8], buf[24]);
-        pre[0][i] = xor(pre[0][i], buf[8]);
-        buf[9] = xor(buf[9], buf[8]);
-        pre[1][i] = xor(pre[1][i], buf[9]);
-        buf[11] = xor(buf[11], buf[9]);
-        pre[0][i] = xor(pre[0][i], buf[11]);
-        buf[10] = xor(buf[10], buf[11]);
-        pre[2][i] = xor(pre[2][i], buf[10]);
-        buf[14] = xor(buf[14], buf[10]);
-        pre[0][i] = xor(pre[0][i], buf[14]);
-        buf[15] = xor(buf[15], buf[14]);
-        pre[1][i] = xor(pre[1][i], buf[15]);
-        buf[13] = xor(buf[13], buf[15]);
-        pre[0][i] = xor(pre[0][i], buf[13]);
-        buf[12] = xor(buf[12], buf[13]);
-        pre[3][i] = xor(pre[3][i], buf[12]);
-        buf[4] = xor(buf[4], buf[12]);
-        pre[0][i] = xor(pre[0][i], buf[4]);
-        buf[5] = xor(buf[5], buf[4]);
-        pre[1][i] = xor(pre[1][i], buf[5]);
-        buf[7] = xor(buf[7], buf[5]);
-        pre[0][i] = xor(pre[0][i], buf[7]);
-        buf[6] = xor(buf[6], buf[7]);
-        pre[2][i] = xor(pre[2][i], buf[6]);
-        buf[2] = xor(buf[2], buf[6]);
-        pre[0][i] = xor(pre[0][i], buf[2]);
-        buf[3] = xor(buf[3], buf[2]);
-        pre[1][i] = xor(pre[1][i], buf[3]);
-        buf[1] = xor(buf[1], buf[3]);
+        buf[16] = vec128_xor(buf[16], buf[48]);
+        pre[0][i] = vec128_xor(pre[0][i], buf[16]);
+        buf[17] = vec128_xor(buf[17], buf[16]);
+        pre[1][i] = vec128_xor(pre[1][i], buf[17]);
+        buf[19] = vec128_xor(buf[19], buf[17]);
+        pre[0][i] = vec128_xor(pre[0][i], buf[19]);
+        buf[18] = vec128_xor(buf[18], buf[19]);
+        pre[2][i] = vec128_xor(pre[2][i], buf[18]);
+        buf[22] = vec128_xor(buf[22], buf[18]);
+        pre[0][i] = vec128_xor(pre[0][i], buf[22]);
+        buf[23] = vec128_xor(buf[23], buf[22]);
+        pre[1][i] = vec128_xor(pre[1][i], buf[23]);
+        buf[21] = vec128_xor(buf[21], buf[23]);
+        pre[0][i] = vec128_xor(pre[0][i], buf[21]);
+        buf[20] = vec128_xor(buf[20], buf[21]);
+        pre[3][i] = vec128_xor(pre[3][i], buf[20]);
+        buf[28] = vec128_xor(buf[28], buf[20]);
+        pre[0][i] = vec128_xor(pre[0][i], buf[28]);
+        buf[29] = vec128_xor(buf[29], buf[28]);
+        pre[1][i] = vec128_xor(pre[1][i], buf[29]);
+        buf[31] = vec128_xor(buf[31], buf[29]);
+        pre[0][i] = vec128_xor(pre[0][i], buf[31]);
+        buf[30] = vec128_xor(buf[30], buf[31]);
+        pre[2][i] = vec128_xor(pre[2][i], buf[30]);
+        buf[26] = vec128_xor(buf[26], buf[30]);
+        pre[0][i] = vec128_xor(pre[0][i], buf[26]);
+        buf[27] = vec128_xor(buf[27], buf[26]);
+        pre[1][i] = vec128_xor(pre[1][i], buf[27]);
+        buf[25] = vec128_xor(buf[25], buf[27]);
+        pre[0][i] = vec128_xor(pre[0][i], buf[25]);
+        buf[24] = vec128_xor(buf[24], buf[25]);
+        pre[4][i] = vec128_xor(pre[4][i], buf[24]);
+        buf[8] = vec128_xor(buf[8], buf[24]);
+        pre[0][i] = vec128_xor(pre[0][i], buf[8]);
+        buf[9] = vec128_xor(buf[9], buf[8]);
+        pre[1][i] = vec128_xor(pre[1][i], buf[9]);
+        buf[11] = vec128_xor(buf[11], buf[9]);
+        pre[0][i] = vec128_xor(pre[0][i], buf[11]);
+        buf[10] = vec128_xor(buf[10], buf[11]);
+        pre[2][i] = vec128_xor(pre[2][i], buf[10]);
+        buf[14] = vec128_xor(buf[14], buf[10]);
+        pre[0][i] = vec128_xor(pre[0][i], buf[14]);
+        buf[15] = vec128_xor(buf[15], buf[14]);
+        pre[1][i] = vec128_xor(pre[1][i], buf[15]);
+        buf[13] = vec128_xor(buf[13], buf[15]);
+        pre[0][i] = vec128_xor(pre[0][i], buf[13]);
+        buf[12] = vec128_xor(buf[12], buf[13]);
+        pre[3][i] = vec128_xor(pre[3][i], buf[12]);
+        buf[4] = vec128_xor(buf[4], buf[12]);
+        pre[0][i] = vec128_xor(pre[0][i], buf[4]);
+        buf[5] = vec128_xor(buf[5], buf[4]);
+        pre[1][i] = vec128_xor(pre[1][i], buf[5]);
+        buf[7] = vec128_xor(buf[7], buf[5]);
+        pre[0][i] = vec128_xor(pre[0][i], buf[7]);
+        buf[6] = vec128_xor(buf[6], buf[7]);
+        pre[2][i] = vec128_xor(pre[2][i], buf[6]);
+        buf[2] = vec128_xor(buf[2], buf[6]);
+        pre[0][i] = vec128_xor(pre[0][i], buf[2]);
+        buf[3] = vec128_xor(buf[3], buf[2]);
+        pre[1][i] = vec128_xor(pre[1][i], buf[3]);
+        buf[1] = vec128_xor(buf[1], buf[3]);
 
-        pre[0][i] = xor(pre[0][i], buf[1]);
-        out[0][i] = xor(buf[0], buf[1]);
-#undef xor
+        pre[0][i] = vec128_xor(pre[0][i], buf[1]);
+        out[0][i] = vec128_xor(buf[0], buf[1]);
 
     }
 
@@ -330,7 +327,7 @@ static void butterflies_tr(vec128 out[][ GFBITS ], vec128 in[][ GFBITS ]) {
     }
 }
 
-void fft_tr(vec128 out[][GFBITS], vec128 in[][ GFBITS ]) {
+void MC_fft_tr(vec128 out[][GFBITS], vec128 in[][ GFBITS ]) {
     butterflies_tr(out, in);
 
     radix_conversions_tr(out);
