@@ -17,7 +17,7 @@ OBJECTS = aes256ctr.o benes.o bm.o controlbits.o decrypt.o encrypt.o fft.o \
 		  consts.o syndrome_asm.o transpose_64x128_sp_asm.o \
 		  update_asm.o vec128_mul_asm.o vec_reduce_asm.o
 
-CFLAGS  = -O3 -std=c99 -mpopcnt -msse4.1 -Wall -Wextra -pedantic -Werror -Wpedantic \
+CFLAGS  = -O3 -std=c99 -mbmi -mpopcnt -msse4.1 -Wall -Wextra -pedantic -Werror -Wpedantic \
 		  -Wredundant-decls -Wvla -Wcast-align -Wmissing-prototypes \
 		  -I../../../common/ $(EXTRAFLAGS)
 

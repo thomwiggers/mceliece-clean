@@ -199,18 +199,6 @@ int MC_decrypt(unsigned char *e, const unsigned char *sk, const unsigned char *s
 
     check_weight = weight_check(e, error);
 
-    #ifdef KAT
-    {
-        int k;
-        printf("decrypt e: positions");
-        for (k = 0; k < SYS_N; ++k)
-            if (e[k / 8] & (1 << (k & 7))) {
-                printf(" %d", k);
-            }
-        printf("\n");
-    }
-    #endif
-
     return 1 - (check_synd & check_weight);
 }
 
