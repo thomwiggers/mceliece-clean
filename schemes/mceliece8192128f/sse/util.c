@@ -1,9 +1,7 @@
 /*
   This file is for loading/storing data in a little-endian fashion
 */
-
-#ifndef UTIL_H
-#define UTIL_H
+#include "util.h"
 
 #include "vec128.h"
 
@@ -84,13 +82,10 @@ uint64_t MC_load8(const unsigned char *in) {
 }
 
 vec128 MC_load16(const unsigned char *in) {
-    return vec128_set2x( load8(in), load8(in + 8) );
+    return vec128_set2x( MC_load8(in), MC_load8(in + 8) );
 }
 
 void MC_store16(unsigned char *out, vec128 in) {
     MC_store8(out + 0, vec128_extract(in, 0));
     MC_store8(out + 8, vec128_extract(in, 1));
 }
-
-#endif
-

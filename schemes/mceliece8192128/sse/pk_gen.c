@@ -12,7 +12,7 @@
 
 #include <stdint.h>
 
-static void de_bitslicing(uint64_t *out, const vec128 in[][GFBITS]) {
+static void de_bitslicing(uint64_t *out, vec128 in[][GFBITS]) {
     int i, j, r;
     uint64_t u = 0;
 
@@ -38,7 +38,7 @@ static void de_bitslicing(uint64_t *out, const vec128 in[][GFBITS]) {
 
 static void to_bitslicing_2x(vec128 out0[][GFBITS], vec128 out1[][GFBITS], const uint64_t *in) {
     int i, j, k, r;
-    uint64_t u[2];
+    uint64_t u[2] = {0};
 
     for (i = 0; i < 64; i++) {
         for (j = GFBITS - 1; j >= 0; j--) {
@@ -63,7 +63,7 @@ static void to_bitslicing_2x(vec128 out0[][GFBITS], vec128 out1[][GFBITS], const
     }
 }
 
-int pk_gen(unsigned char *pk, const unsigned char *irr, uint32_t *perm) {
+int MC_pk_gen(unsigned char *pk, uint32_t *perm, const unsigned char *sk) {
     int i, j, k;
     int row, c, d;
 
@@ -84,9 +84,9 @@ int pk_gen(unsigned char *pk, const unsigned char *irr, uint32_t *perm) {
 
     // compute the inverses
 
-    irr_load(irr_int, irr);
+    MC_irr_load(irr_int, sk);
 
-    fft(eval, irr_int);
+    MC_fft(eval, irr_int);
 
     vec128_copy(prod[0], eval[0]);
 
@@ -94,7 +94,7 @@ int pk_gen(unsigned char *pk, const unsigned char *irr, uint32_t *perm) {
         vec128_mul(prod[i], prod[i - 1], eval[i]);
     }
 
-    vec128_inv(tmp, prod[63]);
+    MC_vec128_inv(tmp, prod[63]);
 
     for (i = 62; i >= 0; i--) {
         vec128_mul(prod[i + 1], prod[i], tmp);
@@ -113,7 +113,7 @@ int pk_gen(unsigned char *pk, const unsigned char *irr, uint32_t *perm) {
         list[i] |= ((uint64_t) perm[i]) << 31;
     }
 
-    sort_63b(1 << GFBITS, list);
+    MC_sort_63b(1 << GFBITS, list);
 
     to_bitslicing_2x(consts, prod, list);
 
@@ -244,7 +244,7 @@ int pk_gen(unsigned char *pk, const unsigned char *irr, uint32_t *perm) {
                 }
 
             for (k = 0; k < (SYS_N - GFBITS * SYS_T) / 64; k++) {
-                store8(pk, one_row[ k ]);
+                MC_store8(pk, one_row[ k ]);
                 pk += 8;
             }
         }

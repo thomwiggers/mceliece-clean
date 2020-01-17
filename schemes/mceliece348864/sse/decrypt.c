@@ -106,12 +106,12 @@ static uint16_t weight_check(unsigned char *e, vec128 *error) {
     uint16_t check;
 
     for (i = 0; i < 32; i++) {
-        w0 += __builtin_popcountll( vec128_extract(error[i], 0) );
-        w0 += __builtin_popcountll( vec128_extract(error[i], 1) );
+        w0 += _mm_popcnt_u64( vec128_extract(error[i], 0) );
+        w0 += _mm_popcnt_u64( vec128_extract(error[i], 1) );
     }
 
     for (i = 0; i < SYS_N / 8; i++) {
-        w1 += __builtin_popcountll( e[i] );
+        w1 += _mm_popcnt_u32( e[i] );
     }
 
     check = (w0 ^ SYS_T) | (w1 ^ SYS_T);

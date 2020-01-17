@@ -9,12 +9,12 @@
 
 #include <stdint.h>
 
-static inline void store2(unsigned char *dest, uint16_t a) {
+void MC_store2(unsigned char *dest, uint16_t a) {
     dest[0] = a & 0xFF;
     dest[1] = a >> 8;
 }
 
-static inline uint16_t load2(const unsigned char *src) {
+uint16_t MC_load2(const unsigned char *src) {
     uint16_t a;
 
     a = src[1];
@@ -24,7 +24,7 @@ static inline uint16_t load2(const unsigned char *src) {
     return a & GFMASK;
 }
 
-static inline uint32_t load4(const unsigned char *src) {
+uint32_t MC_load4(const unsigned char *src) {
     uint32_t a;
 
     a  = src[3];
@@ -38,13 +38,13 @@ static inline uint32_t load4(const unsigned char *src) {
     return a;
 }
 
-static inline void irr_load(vec128 *out, const unsigned char *in) {
+void MC_irr_load(vec128 *out, const unsigned char *in) {
     int i, j;
     uint64_t v0 = 0, v1 = 0;
     uint16_t irr[ SYS_T ];
 
     for (i = 0; i < SYS_T; i++) {
-        irr[i] = load2(in + i * 2);
+        irr[i] = MC_load2(in + i * 2);
         irr[i] &= GFMASK;
     }
 
@@ -60,7 +60,7 @@ static inline void irr_load(vec128 *out, const unsigned char *in) {
     }
 }
 
-static inline void store8(unsigned char *out, uint64_t in) {
+void MC_store8(unsigned char *out, uint64_t in) {
     out[0] = (in >> 0x00) & 0xFF;
     out[1] = (in >> 0x08) & 0xFF;
     out[2] = (in >> 0x10) & 0xFF;
@@ -71,7 +71,7 @@ static inline void store8(unsigned char *out, uint64_t in) {
     out[7] = (in >> 0x38) & 0xFF;
 }
 
-static inline uint64_t load8(const unsigned char *in) {
+uint64_t MC_load8(const unsigned char *in) {
     int i;
     uint64_t ret = in[7];
 
@@ -83,13 +83,13 @@ static inline uint64_t load8(const unsigned char *in) {
     return ret;
 }
 
-static inline vec128 load16(const unsigned char *in) {
+vec128 MC_load16(const unsigned char *in) {
     return vec128_set2x( load8(in), load8(in + 8) );
 }
 
-static inline void store16(unsigned char *out, vec128 in) {
-    store8(out + 0, vec128_extract(in, 0));
-    store8(out + 8, vec128_extract(in, 1));
+void MC_store16(unsigned char *out, vec128 in) {
+    MC_store8(out + 0, vec128_extract(in, 0));
+    MC_store8(out + 8, vec128_extract(in, 1));
 }
 
 #endif

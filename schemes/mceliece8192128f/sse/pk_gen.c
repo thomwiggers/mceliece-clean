@@ -14,7 +14,7 @@
 
 #define min(a, b) ((a < b) ? a : b)
 
-static void de_bitslicing(uint64_t *out, const vec128 in[][GFBITS]) {
+static void de_bitslicing(uint64_t *out, vec128 in[][GFBITS]) {
     int i, j, r;
     uint64_t u = 0;
 
@@ -40,7 +40,7 @@ static void de_bitslicing(uint64_t *out, const vec128 in[][GFBITS]) {
 
 static void to_bitslicing_2x(vec128 out0[][GFBITS], vec128 out1[][GFBITS], const uint64_t *in) {
     int i, j, k, r;
-    uint64_t u[2];
+    uint64_t u[2] = {0};
 
     for (i = 0; i < 64; i++) {
         for (j = GFBITS - 1; j >= 0; j--) {
@@ -65,7 +65,7 @@ static void to_bitslicing_2x(vec128 out0[][GFBITS], vec128 out1[][GFBITS], const
     }
 }
 
-static void transpose_64x64(uint64_t *out, uint64_t *in) {
+static void transpose_64x64(uint64_t *out, const uint64_t *in) {
     int i, j, s, d;
 
     uint64_t x, y;
@@ -98,7 +98,7 @@ static void transpose_64x64(uint64_t *out, uint64_t *in) {
 
 /* return number of trailing zeros of the non-zero input in */
 static inline int ctz(uint64_t in) {
-    return __builtin_ctzll(in);
+    return (int)_tzcnt_u64(in);
 }
 
 static inline uint64_t same_mask(uint16_t x, uint16_t y) {
@@ -197,9 +197,9 @@ static int mov_columns(uint64_t mat[][ 128 ], uint32_t *perm) {
 }
 
 
-int pk_gen(unsigned char *pk, const unsigned char *irr, uint32_t *perm) {
-    const int nBlocks_H = (SYS_N + 127) / 128;
-    const int nblocks_I = (GFBITS * SYS_T + 63) / 64;
+#define NBLOCKS_H ((SYS_N + 127) / 128)
+#define NBLOCKS_I ((GFBITS * SYS_T + 63) / 64)
+int MC_pk_gen(unsigned char *pk, uint32_t *perm, const unsigned char *irr) {
 
     int i, j, k;
     int row, c;
@@ -219,9 +219,9 @@ int pk_gen(unsigned char *pk, const unsigned char *irr, uint32_t *perm) {
 
     // compute the inverses
 
-    irr_load(irr_int, irr);
+    MC_irr_load(irr_int, irr);
 
-    fft(eval, irr_int);
+    MC_fft(eval, irr_int);
 
     vec128_copy(prod[0], eval[0]);
 
@@ -229,7 +229,7 @@ int pk_gen(unsigned char *pk, const unsigned char *irr, uint32_t *perm) {
         vec128_mul(prod[i], prod[i - 1], eval[i]);
     }
 
-    vec128_inv(tmp, prod[63]);
+    MC_vec128_inv(tmp, prod[63]);
 
     for (i = 62; i >= 0; i--) {
         vec128_mul(prod[i + 1], prod[i], tmp);
@@ -248,7 +248,7 @@ int pk_gen(unsigned char *pk, const unsigned char *irr, uint32_t *perm) {
         list[i] |= ((uint64_t) perm[i]) << 31;
     }
 
-    sort_63b(1 << GFBITS, list);
+    MC_sort_63b(1 << GFBITS, list);
 
     to_bitslicing_2x(consts, prod, list);
 
@@ -256,14 +256,14 @@ int pk_gen(unsigned char *pk, const unsigned char *irr, uint32_t *perm) {
         perm[i] = list[i] & GFMASK;
     }
 
-    for (j = 0; j < nBlocks_H; j++)
+    for (j = 0; j < NBLOCKS_H; j++)
         for (k = 0; k < GFBITS; k++) {
             mat[ k ][ 2 * j + 0 ] = vec128_extract(prod[ j ][ k ], 0);
             mat[ k ][ 2 * j + 1 ] = vec128_extract(prod[ j ][ k ], 1);
         }
 
     for (i = 1; i < SYS_T; i++)
-        for (j = 0; j < nBlocks_H; j++) {
+        for (j = 0; j < NBLOCKS_H; j++) {
             vec128_mul(prod[j], prod[j], consts[j]);
 
             for (k = 0; k < GFBITS; k++) {
@@ -319,8 +319,8 @@ int pk_gen(unsigned char *pk, const unsigned char *irr, uint32_t *perm) {
         }
 
     for (i = 0; i < GFBITS * SYS_T; i++)
-        for (j = nblocks_I; j < 128; j++) {
-            store8(pk, mat[i][j]);
+        for (j = NBLOCKS_I; j < 128; j++) {
+            MC_store8(pk, mat[i][j]);
             pk += 8;
         }
 
