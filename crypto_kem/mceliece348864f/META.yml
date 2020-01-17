@@ -36,3 +36,4 @@ implementations:
           required_flags:
             - sse4_1
             - bmi1
+            - popcnt
