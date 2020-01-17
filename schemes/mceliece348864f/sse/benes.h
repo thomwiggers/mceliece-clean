@@ -6,9 +6,10 @@
 
 
 #include "gf.h"
+#include "vec128.h"
 
-void MC_load_bits(uint64_t [][32], const unsigned char *);
-void MC_benes(uint64_t *, uint64_t [][32], int);
+void MC_load_bits(vec128 [][32], const unsigned char *);
+void MC_benes(vec128 *, vec128 [][32], int);
 
 #endif
 

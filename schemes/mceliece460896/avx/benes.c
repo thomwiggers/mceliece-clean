@@ -4,9 +4,9 @@
 
 #include "benes.h"
 
-#include "util.h"
-#include "transpose.h"
 #include "params.h"
+#include "transpose.h"
+#include "util.h"
 
 static void layer_x(vec128 *data, vec128 *bits) {
     int i;
@@ -179,7 +179,7 @@ static void layer_5(vec128 *bs, vec128 *cond) {
 
 /* input: bits, control bits as array of bytes */
 /* output: bits_int, control bits as array of 128-bit vectors */
-void load_bits(vec128 bits_int[][32], const unsigned char *bits) {
+void MC_load_bits(vec128 bits_int[][32], const unsigned char *bits) {
     int i, j;
     const unsigned char *ptr = bits;
 
@@ -187,11 +187,11 @@ void load_bits(vec128 bits_int[][32], const unsigned char *bits) {
 
     for (i = 0; i <= 5; i += 2) {
         for (j = 0; j < 64; j++) {
-            buf[j] = vec128_set2x(load8(ptr), load8(ptr + 512));
+            buf[j] = vec128_set2x(MC_load8(ptr), MC_load8(ptr + 512));
             ptr += 8;
         }
 
-        transpose_64x128_sp( buf );
+        MC_transpose_64x128_sp( buf );
 
         for (j = 0; j < 32; j++) {
             bits_int[i + 0][j] = vec128_unpack_low(buf[j], buf[j + 32]);
@@ -203,17 +203,17 @@ void load_bits(vec128 bits_int[][32], const unsigned char *bits) {
 
     for (i = 6; i <= 18; i++)
         for (j = 0; j < 32; j++) {
-            bits_int[i][j] = load16(ptr);
+            bits_int[i][j] = MC_load16(ptr);
             ptr += 16;
         }
 
     for (i = 19; i < 25; i += 2) {
         for (j = 0; j < 64; j++) {
-            buf[j] = vec128_set2x(load8(ptr), load8(ptr + 512));
+            buf[j] = vec128_set2x(MC_load8(ptr), MC_load8(ptr + 512));
             ptr += 8;
         }
 
-        transpose_64x128_sp( buf );
+        MC_transpose_64x128_sp( buf );
 
         for (j = 0; j < 32; j++) {
             bits_int[i + 0][j] = vec128_unpack_low(buf[j], buf[j + 32]);
@@ -228,10 +228,10 @@ void load_bits(vec128 bits_int[][32], const unsigned char *bits) {
 /*        b, control bits as array of 128-bit vectors  */
 /*        rev, 0 for normal application; !0 for inverse */
 /* output: r, permuted bits */
-void benes(vec128 *r, vec128 b[][32], int rev) {
+void MC_benes(vec128 *r, vec128 b[][32], int rev) {
     int inc;
 
-    vec128 *b_ptr = b[0];
+    vec128 *b_ptr;
 
     if (rev == 0) {
         inc =  32;
@@ -243,7 +243,7 @@ void benes(vec128 *r, vec128 b[][32], int rev) {
 
     //
 
-    transpose_64x128_sp( r );
+    MC_transpose_64x128_sp( r );
 
     layer_0(r, b_ptr);
     b_ptr += inc;
@@ -258,7 +258,7 @@ void benes(vec128 *r, vec128 b[][32], int rev) {
     layer_5(r, b_ptr);
     b_ptr += inc;
 
-    transpose_64x128_sp( r );
+    MC_transpose_64x128_sp( r );
 
     layer_x(r, b_ptr);
     b_ptr += inc;
@@ -287,7 +287,7 @@ void benes(vec128 *r, vec128 b[][32], int rev) {
     layer_x(r, b_ptr);
     b_ptr += inc;
 
-    transpose_64x128_sp( r );
+    MC_transpose_64x128_sp( r );
 
     layer_5(r, b_ptr);
     b_ptr += inc;
@@ -300,8 +300,8 @@ void benes(vec128 *r, vec128 b[][32], int rev) {
     layer_1(r, b_ptr);
     b_ptr += inc;
     layer_0(r, b_ptr);
-    b_ptr += inc;
+    //b_ptr += inc;
 
-    transpose_64x128_sp( r );
+    MC_transpose_64x128_sp( r );
 }
 
