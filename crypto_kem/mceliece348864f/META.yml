@@ -35,4 +35,4 @@ implementations:
             - Darwin
           required_flags:
             - sse4_1
-            - abm
+            - bmi1

@@ -12,6 +12,7 @@
 #include "bm.h"
 
 #include <stdio.h>
+#include <immintrin.h>
 
 static void scaling(vec128 out[][GFBITS], vec128 inv[][GFBITS], const unsigned char *sk, vec128 *recv) {
     int i, j;
@@ -22,12 +23,12 @@ static void scaling(vec128 out[][GFBITS], vec128 inv[][GFBITS], const unsigned c
 
     //
 
-    irr_load(irr_int, sk);
+    MC_irr_load(irr_int, sk);
 
-    fft(eval, irr_int);
+    MC_fft(eval, irr_int);
 
     for (i = 0; i < 64; i++) {
-        vec128_sq(eval[i], eval[i]);
+        MC_vec128_sq(eval[i], eval[i]);
     }
 
     vec128_copy(inv[0], eval[0]);
@@ -36,7 +37,7 @@ static void scaling(vec128 out[][GFBITS], vec128 inv[][GFBITS], const unsigned c
         vec128_mul(inv[i], inv[i - 1], eval[i]);
     }
 
-    vec128_inv(tmp, inv[63]);
+    MC_vec128_inv(tmp, inv[63]);
 
     for (i = 62; i >= 0; i--) {
         vec128_mul(inv[i + 1], tmp, inv[i]);
@@ -68,7 +69,7 @@ static void preprocess(vec128 *recv, const unsigned char *s) {
     }
 
     for (i = 0; i < 64; i++) {
-        recv[i] = load16(r + i * 16);
+        recv[i] = MC_load16(r + i * 16);
     }
 }
 
@@ -81,8 +82,8 @@ static void postprocess(unsigned char *e, vec128 *err) {
         v[0] = vec128_extract(err[i], 0);
         v[1] = vec128_extract(err[i], 1);
 
-        store8(error8 + i * 16 + 0, v[0]);
-        store8(error8 + i * 16 + 8, v[1]);
+        MC_store8(error8 + i * 16 + 0, v[0]);
+        MC_store8(error8 + i * 16 + 8, v[1]);
     }
 
     for (i = 0; i < SYS_N / 8; i++) {
@@ -99,19 +100,19 @@ static void scaling_inv(vec128 out[][GFBITS], vec128 inv[][GFBITS], vec128 *recv
         }
 }
 
-static int weight_check(unsigned char *e, vec128 *error) {
+static uint16_t weight_check(unsigned char *e, vec128 *error) {
     int i;
     uint16_t w0 = 0;
     uint16_t w1 = 0;
     uint16_t check;
 
     for (i = 0; i < 64; i++) {
-        w0 += __builtin_popcountll( vec128_extract(error[i], 0) );
-        w0 += __builtin_popcountll( vec128_extract(error[i], 1) );
+        w0 += _mm_popcnt_u64(vec128_extract(error[i], 0) );
+        w0 += _mm_popcnt_u64( vec128_extract(error[i], 1) );
     }
 
     for (i = 0; i < SYS_N / 8; i++) {
-        w1 += __builtin_popcountll( e[i] );
+        w1 += _mm_popcnt_u32( e[i] );
     }
 
     check = (w0 ^ SYS_T) | (w1 ^ SYS_T);
@@ -121,7 +122,7 @@ static int weight_check(unsigned char *e, vec128 *error) {
     return check;
 }
 
-static uint64_t synd_cmp(vec128 s0[][ GFBITS ], vec128 s1[][ GFBITS ]) {
+static uint16_t synd_cmp(vec128 s0[][ GFBITS ], vec128 s1[][ GFBITS ]) {
     int i, j;
     vec128 diff;
 
@@ -133,7 +134,7 @@ static uint64_t synd_cmp(vec128 s0[][ GFBITS ], vec128 s1[][ GFBITS ]) {
             diff = vec128_or(diff, vec128_xor(s0[i][j], s1[i][j]));
         }
 
-    return vec128_testz(diff);
+    return (uint16_t)vec128_testz(diff);
 }
 
 /* Niederreiter decryption with the Berlekamp decoder */
@@ -141,7 +142,7 @@ static uint64_t synd_cmp(vec128 s0[][ GFBITS ], vec128 s1[][ GFBITS ]) {
 /*         s, ciphertext (syndrome) */
 /* output: e, error vector */
 /* return: 0 for success; 1 for failure */
-int decrypt(unsigned char *e, const unsigned char *sk, const unsigned char *s) {
+int MC_decrypt(unsigned char *e, const unsigned char *sk, const unsigned char *s) {
     int i;
 
     uint16_t check_synd;
@@ -167,14 +168,14 @@ int decrypt(unsigned char *e, const unsigned char *sk, const unsigned char *s) {
 
     preprocess(recv, s);
 
-    load_bits(bits_int, sk + IRR_BYTES);
-    benes(recv, bits_int, 1);
+    MC_load_bits(bits_int, sk + IRR_BYTES);
+    MC_benes(recv, bits_int, 1);
 
     scaling(scaled, inv, sk, recv);
-    fft_tr(s_priv, scaled);
-    bm(locator, s_priv);
+    MC_fft_tr(s_priv, scaled);
+    MC_bm(locator, s_priv);
 
-    fft(eval, locator);
+    MC_fft(eval, locator);
 
     // reencryption and weight check
 
@@ -186,13 +187,13 @@ int decrypt(unsigned char *e, const unsigned char *sk, const unsigned char *s) {
     }
 
     scaling_inv(scaled, inv, error);
-    fft_tr(s_priv_cmp, scaled);
+    MC_fft_tr(s_priv_cmp, scaled);
 
     check_synd = synd_cmp(s_priv, s_priv_cmp);
 
     //
 
-    benes(error, bits_int, 0);
+    MC_benes(error, bits_int, 0);
 
     postprocess(e, error);
 
