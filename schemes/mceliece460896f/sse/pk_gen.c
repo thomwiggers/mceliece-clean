@@ -99,7 +99,7 @@ static void transpose_64x64(uint64_t *out, uint64_t *in) {
 
 /* return number of trailing zeros of the non-zero input in */
 static inline int ctz(uint64_t in) {
-    return (int)_lzcnt_u64(in);
+    return (int)_tzcnt_u64(in);
 }
 
 static inline uint64_t same_mask(uint16_t x, uint16_t y) {
