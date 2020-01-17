@@ -3,11 +3,11 @@
 */
 #include "benes.h"
 
-#include "util.h"
-#include "transpose.h"
 #include "params.h"
+#include "transpose.h"
+#include "util.h"
 
-static void layer_0(uint64_t *bs, uint64_t *cond) {
+static void layer_0(uint64_t *bs, const uint64_t *cond) {
     int x;
     uint64_t diff;
 
@@ -19,7 +19,7 @@ static void layer_0(uint64_t *bs, uint64_t *cond) {
     }
 }
 
-static void layer_1(uint64_t *bs, uint64_t *cond) {
+static void layer_1(uint64_t *bs, const uint64_t *cond) {
     int x;
     uint64_t diff;
 
@@ -38,7 +38,7 @@ static void layer_1(uint64_t *bs, uint64_t *cond) {
     }
 }
 
-static void layer_2(uint64_t *bs, uint64_t *cond) {
+static void layer_2(uint64_t *bs, const uint64_t *cond) {
     int x;
     uint64_t diff;
 
@@ -67,7 +67,7 @@ static void layer_2(uint64_t *bs, uint64_t *cond) {
     }
 }
 
-static void layer_3(uint64_t *bs, uint64_t *cond) {
+static void layer_3(uint64_t *bs, const uint64_t *cond) {
     int x, s;
     uint64_t diff;
 
@@ -127,7 +127,7 @@ static void layer_4(uint64_t *bs, uint64_t *cond) {
         }
 }
 
-static void layer_5(uint64_t *bs, uint64_t *cond) {
+static void layer_5(uint64_t *bs, const uint64_t *cond) {
     int x, s;
     uint64_t diff;
 

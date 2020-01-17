@@ -16,6 +16,7 @@ IMPLEMENTATIONS = [
     ("mceliece348864", "sse", "sse"),
     ("mceliece348864f", "ref", "clean"),
     ("mceliece348864f", "vec", "vec"),
+    ("mceliece348864f", "sse", "sse"),
     ("mceliece460896", "ref", "clean"),
     ("mceliece460896", "vec", "vec"),
     ("mceliece460896f", "ref", "clean"),
@@ -46,6 +47,8 @@ def astyle(*paths):
 
 
 for (scheme, impl, dst) in IMPLEMENTATIONS:
+    if impl != 'sse':
+        continue
     print(f"{scheme} {impl} -> {dst}")
     namespace = f"PQCLEAN_{scheme}_{dst}_".upper()
     src_dir = os.path.join("schemes", scheme, impl)
