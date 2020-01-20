@@ -22,12 +22,12 @@ static void scaling(vec256 out[][GFBITS], vec256 inv[][GFBITS], const unsigned c
 
     // computing inverses
 
-    irr_load(sk_int, sk);
+    MC_irr_load(sk_int, sk);
 
-    fft(eval, sk_int);
+    MC_fft(eval, sk_int);
 
     for (i = 0; i < 32; i++) {
-        vec256_sq(eval[i], eval[i]);
+        MC_vec256_sq(eval[i], eval[i]);
     }
 
     vec256_copy(inv[0], eval[0]);
@@ -36,7 +36,7 @@ static void scaling(vec256 out[][GFBITS], vec256 inv[][GFBITS], const unsigned c
         vec256_mul(inv[i], inv[i - 1], eval[i]);
     }
 
-    vec256_inv(tmp, inv[31]);
+    MC_vec256_inv(tmp, inv[31]);
 
     for (i = 30; i >= 0; i--) {
         vec256_mul(inv[i + 1], tmp, inv[i]);
@@ -68,7 +68,7 @@ static void preprocess(vec128 *recv, const unsigned char *s) {
     }
 
     for (i = 0; i < 64; i++) {
-        recv[i] = load16(r + i * 16);
+        recv[i] = MC_load16(r + i * 16);
     }
 }
 
@@ -81,8 +81,8 @@ static void postprocess(unsigned char *e, vec128 *err) {
         v[0] = vec128_extract(err[i], 0);
         v[1] = vec128_extract(err[i], 1);
 
-        store8(error8 + i * 16 + 0, v[0]);
-        store8(error8 + i * 16 + 8, v[1]);
+        MC_store8(error8 + i * 16 + 0, v[0]);
+        MC_store8(error8 + i * 16 + 8, v[1]);
     }
 
     for (i = 0; i < SYS_N / 8; i++) {
@@ -99,19 +99,19 @@ static void scaling_inv(vec256 out[][GFBITS], vec256 inv[][GFBITS], vec256 *recv
         }
 }
 
-static int weight_check(unsigned char *e, vec128 *error) {
+static uint16_t weight_check(unsigned char *e, vec128 *error) {
     int i;
     uint16_t w0 = 0;
     uint16_t w1 = 0;
     uint16_t check;
 
     for (i = 0; i < 64; i++) {
-        w0 += __builtin_popcountll( vec128_extract(error[i], 0) );
-        w0 += __builtin_popcountll( vec128_extract(error[i], 1) );
+        w0 += _mm_popcnt_u64( vec128_extract(error[i], 0) );
+        w0 += _mm_popcnt_u64( vec128_extract(error[i], 1) );
     }
 
     for (i = 0; i < SYS_N / 8; i++) {
-        w1 += __builtin_popcountll( e[i] );
+        w1 += _mm_popcnt_u64( e[i] );
     }
 
     check = (w0 ^ SYS_T) | (w1 ^ SYS_T);
@@ -121,7 +121,7 @@ static int weight_check(unsigned char *e, vec128 *error) {
     return check;
 }
 
-static uint64_t synd_cmp(vec256 *s0, vec256 *s1) {
+static uint16_t synd_cmp(vec256 *s0, vec256 *s1) {
     int i;
     vec256 diff;
 
@@ -131,7 +131,7 @@ static uint64_t synd_cmp(vec256 *s0, vec256 *s1) {
         diff = vec256_or(diff, vec256_xor(s0[i], s1[i]));
     }
 
-    return vec256_testz(diff);
+    return (uint16_t)vec256_testz(diff);
 }
 
 static void reformat_128to256(vec256 *out, vec128 *in) {
@@ -165,10 +165,10 @@ static void reformat_256to128(vec128 *out, vec256 *in) {
 
 /* Niederreiter decryption with the Berlekamp decoder */
 /* intput: sk, secret key */
-/*         s, ciphertext (syndrome) */
+/*         c, ciphertext (syndrome) */
 /* output: e, error vector */
 /* return: 0 for success; 1 for failure */
-int decrypt(unsigned char *e, const unsigned char *sk, const unsigned char *s) {
+int MC_decrypt(unsigned char *e, const unsigned char *sk, const unsigned char *c) {
     int i;
 
     uint16_t check_synd;
@@ -193,18 +193,18 @@ int decrypt(unsigned char *e, const unsigned char *sk, const unsigned char *s) {
 
     // Berlekamp decoder
 
-    preprocess(recv128, s);
+    preprocess(recv128, c);
 
-    load_bits(bits_int, sk + IRR_BYTES);
-    benes(recv128, bits_int, 1);
+    MC_load_bits(bits_int, sk + IRR_BYTES);
+    MC_benes(recv128, bits_int, 1);
 
     reformat_128to256(recv256, recv128);
 
     scaling(scaled, inv, sk, recv256);
-    fft_tr(s_priv, scaled);
-    bm(locator, s_priv);
+    MC_fft_tr(s_priv, scaled);
+    MC_bm(locator, s_priv);
 
-    fft(eval, locator);
+    MC_fft(eval, locator);
 
     // reencryption and weight check
 
@@ -216,30 +216,18 @@ int decrypt(unsigned char *e, const unsigned char *sk, const unsigned char *s) {
     }
 
     scaling_inv(scaled, inv, error256);
-    fft_tr(s_priv_cmp, scaled);
+    MC_fft_tr(s_priv_cmp, scaled);
 
     check_synd = synd_cmp(s_priv, s_priv_cmp);
 
     //
 
     reformat_256to128(error128, error256);
-    benes(error128, bits_int, 0);
+    MC_benes(error128, bits_int, 0);
 
     postprocess(e, error128);
 
     check_weight = weight_check(e, error128);
-
-    #ifdef KAT
-    {
-        int k;
-        printf("decrypt e: positions");
-        for (k = 0; k < SYS_N; ++k)
-            if (e[k / 8] & (1 << (k & 7))) {
-                printf(" %d", k);
-            }
-        printf("\n");
-    }
-    #endif
 
     return 1 - (check_synd & check_weight);
 }

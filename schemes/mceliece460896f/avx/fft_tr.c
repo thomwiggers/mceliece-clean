@@ -42,7 +42,7 @@ static void radix_conversions_tr(vec256 *in) {
     };
 
     const vec256 s[6][GFBITS] = {
-#include "scalars_4x.data"
+#include "scalars_4x.inc"
     };
 
     //
@@ -114,7 +114,7 @@ static void butterflies_tr(vec256 *out, vec256 in[][ GFBITS ]) {
     } buf;
 
     const vec256 consts[ 33 ][ GFBITS ] = {
-#include "consts.data"
+#include "consts.inc"
     };
 
     uint64_t v[4];
@@ -141,7 +141,7 @@ static void butterflies_tr(vec256 *out, vec256 in[][ GFBITS ]) {
 
         for (j = 0; j < 32; j += 2 * s)
             for (k = j; k < j + s; k++) {
-                vec256_ama_asm(in[k], in[k + s], consts[ consts_ptr + (k - j) ]);
+                MC_vec256_ama_asm(in[k], in[k + s], consts[ consts_ptr + (k - j) ]);
             }
 
     }
@@ -154,7 +154,7 @@ static void butterflies_tr(vec256 *out, vec256 in[][ GFBITS ]) {
             t1[b] = vec256_unpack_high(in[k][b], in[k + 1][b]);
         }
 
-        vec256_ama_asm(t0, t1, consts[1]);
+        MC_vec256_ama_asm(t0, t1, consts[1]);
 
         for (b = 0; b < GFBITS; b++) {
             in[k][b] = vec256_unpack_low(t0[b], t1[b]);
@@ -170,7 +170,7 @@ static void butterflies_tr(vec256 *out, vec256 in[][ GFBITS ]) {
             t1[b] = vec256_unpack_high_2x(in[k][b], in[k + 1][b]);
         }
 
-        vec256_ama_asm(t0, t1, consts[0]);
+        MC_vec256_ama_asm(t0, t1, consts[0]);
 
         for (b = 0; b < GFBITS; b++) {
             in[k + 0][b] = vec256_unpack_low_2x(t0[b], t1[b]);
@@ -196,145 +196,142 @@ static void butterflies_tr(vec256 *out, vec256 in[][ GFBITS ]) {
             buf.v[ reversal[2 * k + 1] ][0] = vec256_extract2x(in[ k ][i + 0], 1);
         }
 
-        transpose_64x256_sp(buf.V);
+        MC_transpose_64x256_sp(buf.V);
 
         //
 
-#define xor vec256_xor
-
         pre.V[0][i / 2] = buf.V[32];
-        buf.V[33] = xor(buf.V[33], buf.V[32]);
+        buf.V[33] = vec256_xor(buf.V[33], buf.V[32]);
         pre.V[1][i / 2] = buf.V[33];
-        buf.V[35] = xor(buf.V[35], buf.V[33]);
-        pre.V[0][i / 2] = xor(pre.V[0][i / 2], buf.V[35]);
-        buf.V[34] = xor(buf.V[34], buf.V[35]);
+        buf.V[35] = vec256_xor(buf.V[35], buf.V[33]);
+        pre.V[0][i / 2] = vec256_xor(pre.V[0][i / 2], buf.V[35]);
+        buf.V[34] = vec256_xor(buf.V[34], buf.V[35]);
         pre.V[2][i / 2] = buf.V[34];
-        buf.V[38] = xor(buf.V[38], buf.V[34]);
-        pre.V[0][i / 2] = xor(pre.V[0][i / 2], buf.V[38]);
-        buf.V[39] = xor(buf.V[39], buf.V[38]);
-        pre.V[1][i / 2] = xor(pre.V[1][i / 2], buf.V[39]);
-        buf.V[37] = xor(buf.V[37], buf.V[39]);
-        pre.V[0][i / 2] = xor(pre.V[0][i / 2], buf.V[37]);
-        buf.V[36] = xor(buf.V[36], buf.V[37]);
+        buf.V[38] = vec256_xor(buf.V[38], buf.V[34]);
+        pre.V[0][i / 2] = vec256_xor(pre.V[0][i / 2], buf.V[38]);
+        buf.V[39] = vec256_xor(buf.V[39], buf.V[38]);
+        pre.V[1][i / 2] = vec256_xor(pre.V[1][i / 2], buf.V[39]);
+        buf.V[37] = vec256_xor(buf.V[37], buf.V[39]);
+        pre.V[0][i / 2] = vec256_xor(pre.V[0][i / 2], buf.V[37]);
+        buf.V[36] = vec256_xor(buf.V[36], buf.V[37]);
         pre.V[3][i / 2] = buf.V[36];
-        buf.V[44] = xor(buf.V[44], buf.V[36]);
-        pre.V[0][i / 2] = xor(pre.V[0][i / 2], buf.V[44]);
-        buf.V[45] = xor(buf.V[45], buf.V[44]);
-        pre.V[1][i / 2] = xor(pre.V[1][i / 2], buf.V[45]);
-        buf.V[47] = xor(buf.V[47], buf.V[45]);
-        pre.V[0][i / 2] = xor(pre.V[0][i / 2], buf.V[47]);
-        buf.V[46] = xor(buf.V[46], buf.V[47]);
-        pre.V[2][i / 2] = xor(pre.V[2][i / 2], buf.V[46]);
-        buf.V[42] = xor(buf.V[42], buf.V[46]);
-        pre.V[0][i / 2] = xor(pre.V[0][i / 2], buf.V[42]);
-        buf.V[43] = xor(buf.V[43], buf.V[42]);
-        pre.V[1][i / 2] = xor(pre.V[1][i / 2], buf.V[43]);
-        buf.V[41] = xor(buf.V[41], buf.V[43]);
-        pre.V[0][i / 2] = xor(pre.V[0][i / 2], buf.V[41]);
-        buf.V[40] = xor(buf.V[40], buf.V[41]);
+        buf.V[44] = vec256_xor(buf.V[44], buf.V[36]);
+        pre.V[0][i / 2] = vec256_xor(pre.V[0][i / 2], buf.V[44]);
+        buf.V[45] = vec256_xor(buf.V[45], buf.V[44]);
+        pre.V[1][i / 2] = vec256_xor(pre.V[1][i / 2], buf.V[45]);
+        buf.V[47] = vec256_xor(buf.V[47], buf.V[45]);
+        pre.V[0][i / 2] = vec256_xor(pre.V[0][i / 2], buf.V[47]);
+        buf.V[46] = vec256_xor(buf.V[46], buf.V[47]);
+        pre.V[2][i / 2] = vec256_xor(pre.V[2][i / 2], buf.V[46]);
+        buf.V[42] = vec256_xor(buf.V[42], buf.V[46]);
+        pre.V[0][i / 2] = vec256_xor(pre.V[0][i / 2], buf.V[42]);
+        buf.V[43] = vec256_xor(buf.V[43], buf.V[42]);
+        pre.V[1][i / 2] = vec256_xor(pre.V[1][i / 2], buf.V[43]);
+        buf.V[41] = vec256_xor(buf.V[41], buf.V[43]);
+        pre.V[0][i / 2] = vec256_xor(pre.V[0][i / 2], buf.V[41]);
+        buf.V[40] = vec256_xor(buf.V[40], buf.V[41]);
         pre.V[4][i / 2] = buf.V[40];
-        buf.V[56] = xor(buf.V[56], buf.V[40]);
-        pre.V[0][i / 2] = xor(pre.V[0][i / 2], buf.V[56]);
-        buf.V[57] = xor(buf.V[57], buf.V[56]);
-        pre.V[1][i / 2] = xor(pre.V[1][i / 2], buf.V[57]);
-        buf.V[59] = xor(buf.V[59], buf.V[57]);
-        pre.V[0][i / 2] = xor(pre.V[0][i / 2], buf.V[59]);
-        buf.V[58] = xor(buf.V[58], buf.V[59]);
-        pre.V[2][i / 2] = xor(pre.V[2][i / 2], buf.V[58]);
-        buf.V[62] = xor(buf.V[62], buf.V[58]);
-        pre.V[0][i / 2] = xor(pre.V[0][i / 2], buf.V[62]);
-        buf.V[63] = xor(buf.V[63], buf.V[62]);
-        pre.V[1][i / 2] = xor(pre.V[1][i / 2], buf.V[63]);
-        buf.V[61] = xor(buf.V[61], buf.V[63]);
-        pre.V[0][i / 2] = xor(pre.V[0][i / 2], buf.V[61]);
-        buf.V[60] = xor(buf.V[60], buf.V[61]);
-        pre.V[3][i / 2] = xor(pre.V[3][i / 2], buf.V[60]);
-        buf.V[52] = xor(buf.V[52], buf.V[60]);
-        pre.V[0][i / 2] = xor(pre.V[0][i / 2], buf.V[52]);
-        buf.V[53] = xor(buf.V[53], buf.V[52]);
-        pre.V[1][i / 2] = xor(pre.V[1][i / 2], buf.V[53]);
-        buf.V[55] = xor(buf.V[55], buf.V[53]);
-        pre.V[0][i / 2] = xor(pre.V[0][i / 2], buf.V[55]);
-        buf.V[54] = xor(buf.V[54], buf.V[55]);
-        pre.V[2][i / 2] = xor(pre.V[2][i / 2], buf.V[54]);
-        buf.V[50] = xor(buf.V[50], buf.V[54]);
-        pre.V[0][i / 2] = xor(pre.V[0][i / 2], buf.V[50]);
-        buf.V[51] = xor(buf.V[51], buf.V[50]);
-        pre.V[1][i / 2] = xor(pre.V[1][i / 2], buf.V[51]);
-        buf.V[49] = xor(buf.V[49], buf.V[51]);
-        pre.V[0][i / 2] = xor(pre.V[0][i / 2], buf.V[49]);
-        buf.V[48] = xor(buf.V[48], buf.V[49]);
+        buf.V[56] = vec256_xor(buf.V[56], buf.V[40]);
+        pre.V[0][i / 2] = vec256_xor(pre.V[0][i / 2], buf.V[56]);
+        buf.V[57] = vec256_xor(buf.V[57], buf.V[56]);
+        pre.V[1][i / 2] = vec256_xor(pre.V[1][i / 2], buf.V[57]);
+        buf.V[59] = vec256_xor(buf.V[59], buf.V[57]);
+        pre.V[0][i / 2] = vec256_xor(pre.V[0][i / 2], buf.V[59]);
+        buf.V[58] = vec256_xor(buf.V[58], buf.V[59]);
+        pre.V[2][i / 2] = vec256_xor(pre.V[2][i / 2], buf.V[58]);
+        buf.V[62] = vec256_xor(buf.V[62], buf.V[58]);
+        pre.V[0][i / 2] = vec256_xor(pre.V[0][i / 2], buf.V[62]);
+        buf.V[63] = vec256_xor(buf.V[63], buf.V[62]);
+        pre.V[1][i / 2] = vec256_xor(pre.V[1][i / 2], buf.V[63]);
+        buf.V[61] = vec256_xor(buf.V[61], buf.V[63]);
+        pre.V[0][i / 2] = vec256_xor(pre.V[0][i / 2], buf.V[61]);
+        buf.V[60] = vec256_xor(buf.V[60], buf.V[61]);
+        pre.V[3][i / 2] = vec256_xor(pre.V[3][i / 2], buf.V[60]);
+        buf.V[52] = vec256_xor(buf.V[52], buf.V[60]);
+        pre.V[0][i / 2] = vec256_xor(pre.V[0][i / 2], buf.V[52]);
+        buf.V[53] = vec256_xor(buf.V[53], buf.V[52]);
+        pre.V[1][i / 2] = vec256_xor(pre.V[1][i / 2], buf.V[53]);
+        buf.V[55] = vec256_xor(buf.V[55], buf.V[53]);
+        pre.V[0][i / 2] = vec256_xor(pre.V[0][i / 2], buf.V[55]);
+        buf.V[54] = vec256_xor(buf.V[54], buf.V[55]);
+        pre.V[2][i / 2] = vec256_xor(pre.V[2][i / 2], buf.V[54]);
+        buf.V[50] = vec256_xor(buf.V[50], buf.V[54]);
+        pre.V[0][i / 2] = vec256_xor(pre.V[0][i / 2], buf.V[50]);
+        buf.V[51] = vec256_xor(buf.V[51], buf.V[50]);
+        pre.V[1][i / 2] = vec256_xor(pre.V[1][i / 2], buf.V[51]);
+        buf.V[49] = vec256_xor(buf.V[49], buf.V[51]);
+        pre.V[0][i / 2] = vec256_xor(pre.V[0][i / 2], buf.V[49]);
+        buf.V[48] = vec256_xor(buf.V[48], buf.V[49]);
         pre.V[5][i / 2] = buf.V[48];
-        buf.V[16] = xor(buf.V[16], buf.V[48]);
-        pre.V[0][i / 2] = xor(pre.V[0][i / 2], buf.V[16]);
-        buf.V[17] = xor(buf.V[17], buf.V[16]);
-        pre.V[1][i / 2] = xor(pre.V[1][i / 2], buf.V[17]);
-        buf.V[19] = xor(buf.V[19], buf.V[17]);
-        pre.V[0][i / 2] = xor(pre.V[0][i / 2], buf.V[19]);
-        buf.V[18] = xor(buf.V[18], buf.V[19]);
-        pre.V[2][i / 2] = xor(pre.V[2][i / 2], buf.V[18]);
-        buf.V[22] = xor(buf.V[22], buf.V[18]);
-        pre.V[0][i / 2] = xor(pre.V[0][i / 2], buf.V[22]);
-        buf.V[23] = xor(buf.V[23], buf.V[22]);
-        pre.V[1][i / 2] = xor(pre.V[1][i / 2], buf.V[23]);
-        buf.V[21] = xor(buf.V[21], buf.V[23]);
-        pre.V[0][i / 2] = xor(pre.V[0][i / 2], buf.V[21]);
-        buf.V[20] = xor(buf.V[20], buf.V[21]);
-        pre.V[3][i / 2] = xor(pre.V[3][i / 2], buf.V[20]);
-        buf.V[28] = xor(buf.V[28], buf.V[20]);
-        pre.V[0][i / 2] = xor(pre.V[0][i / 2], buf.V[28]);
-        buf.V[29] = xor(buf.V[29], buf.V[28]);
-        pre.V[1][i / 2] = xor(pre.V[1][i / 2], buf.V[29]);
-        buf.V[31] = xor(buf.V[31], buf.V[29]);
-        pre.V[0][i / 2] = xor(pre.V[0][i / 2], buf.V[31]);
-        buf.V[30] = xor(buf.V[30], buf.V[31]);
-        pre.V[2][i / 2] = xor(pre.V[2][i / 2], buf.V[30]);
-        buf.V[26] = xor(buf.V[26], buf.V[30]);
-        pre.V[0][i / 2] = xor(pre.V[0][i / 2], buf.V[26]);
-        buf.V[27] = xor(buf.V[27], buf.V[26]);
-        pre.V[1][i / 2] = xor(pre.V[1][i / 2], buf.V[27]);
-        buf.V[25] = xor(buf.V[25], buf.V[27]);
-        pre.V[0][i / 2] = xor(pre.V[0][i / 2], buf.V[25]);
-        buf.V[24] = xor(buf.V[24], buf.V[25]);
-        pre.V[4][i / 2] = xor(pre.V[4][i / 2], buf.V[24]);
-        buf.V[8] = xor(buf.V[8], buf.V[24]);
-        pre.V[0][i / 2] = xor(pre.V[0][i / 2], buf.V[8]);
-        buf.V[9] = xor(buf.V[9], buf.V[8]);
-        pre.V[1][i / 2] = xor(pre.V[1][i / 2], buf.V[9]);
-        buf.V[11] = xor(buf.V[11], buf.V[9]);
-        pre.V[0][i / 2] = xor(pre.V[0][i / 2], buf.V[11]);
-        buf.V[10] = xor(buf.V[10], buf.V[11]);
-        pre.V[2][i / 2] = xor(pre.V[2][i / 2], buf.V[10]);
-        buf.V[14] = xor(buf.V[14], buf.V[10]);
-        pre.V[0][i / 2] = xor(pre.V[0][i / 2], buf.V[14]);
-        buf.V[15] = xor(buf.V[15], buf.V[14]);
-        pre.V[1][i / 2] = xor(pre.V[1][i / 2], buf.V[15]);
-        buf.V[13] = xor(buf.V[13], buf.V[15]);
-        pre.V[0][i / 2] = xor(pre.V[0][i / 2], buf.V[13]);
-        buf.V[12] = xor(buf.V[12], buf.V[13]);
-        pre.V[3][i / 2] = xor(pre.V[3][i / 2], buf.V[12]);
-        buf.V[4] = xor(buf.V[4], buf.V[12]);
-        pre.V[0][i / 2] = xor(pre.V[0][i / 2], buf.V[4]);
-        buf.V[5] = xor(buf.V[5], buf.V[4]);
-        pre.V[1][i / 2] = xor(pre.V[1][i / 2], buf.V[5]);
-        buf.V[7] = xor(buf.V[7], buf.V[5]);
-        pre.V[0][i / 2] = xor(pre.V[0][i / 2], buf.V[7]);
-        buf.V[6] = xor(buf.V[6], buf.V[7]);
-        pre.V[2][i / 2] = xor(pre.V[2][i / 2], buf.V[6]);
-        buf.V[2] = xor(buf.V[2], buf.V[6]);
-        pre.V[0][i / 2] = xor(pre.V[0][i / 2], buf.V[2]);
-        buf.V[3] = xor(buf.V[3], buf.V[2]);
-        pre.V[1][i / 2] = xor(pre.V[1][i / 2], buf.V[3]);
-        buf.V[1] = xor(buf.V[1], buf.V[3]);
+        buf.V[16] = vec256_xor(buf.V[16], buf.V[48]);
+        pre.V[0][i / 2] = vec256_xor(pre.V[0][i / 2], buf.V[16]);
+        buf.V[17] = vec256_xor(buf.V[17], buf.V[16]);
+        pre.V[1][i / 2] = vec256_xor(pre.V[1][i / 2], buf.V[17]);
+        buf.V[19] = vec256_xor(buf.V[19], buf.V[17]);
+        pre.V[0][i / 2] = vec256_xor(pre.V[0][i / 2], buf.V[19]);
+        buf.V[18] = vec256_xor(buf.V[18], buf.V[19]);
+        pre.V[2][i / 2] = vec256_xor(pre.V[2][i / 2], buf.V[18]);
+        buf.V[22] = vec256_xor(buf.V[22], buf.V[18]);
+        pre.V[0][i / 2] = vec256_xor(pre.V[0][i / 2], buf.V[22]);
+        buf.V[23] = vec256_xor(buf.V[23], buf.V[22]);
+        pre.V[1][i / 2] = vec256_xor(pre.V[1][i / 2], buf.V[23]);
+        buf.V[21] = vec256_xor(buf.V[21], buf.V[23]);
+        pre.V[0][i / 2] = vec256_xor(pre.V[0][i / 2], buf.V[21]);
+        buf.V[20] = vec256_xor(buf.V[20], buf.V[21]);
+        pre.V[3][i / 2] = vec256_xor(pre.V[3][i / 2], buf.V[20]);
+        buf.V[28] = vec256_xor(buf.V[28], buf.V[20]);
+        pre.V[0][i / 2] = vec256_xor(pre.V[0][i / 2], buf.V[28]);
+        buf.V[29] = vec256_xor(buf.V[29], buf.V[28]);
+        pre.V[1][i / 2] = vec256_xor(pre.V[1][i / 2], buf.V[29]);
+        buf.V[31] = vec256_xor(buf.V[31], buf.V[29]);
+        pre.V[0][i / 2] = vec256_xor(pre.V[0][i / 2], buf.V[31]);
+        buf.V[30] = vec256_xor(buf.V[30], buf.V[31]);
+        pre.V[2][i / 2] = vec256_xor(pre.V[2][i / 2], buf.V[30]);
+        buf.V[26] = vec256_xor(buf.V[26], buf.V[30]);
+        pre.V[0][i / 2] = vec256_xor(pre.V[0][i / 2], buf.V[26]);
+        buf.V[27] = vec256_xor(buf.V[27], buf.V[26]);
+        pre.V[1][i / 2] = vec256_xor(pre.V[1][i / 2], buf.V[27]);
+        buf.V[25] = vec256_xor(buf.V[25], buf.V[27]);
+        pre.V[0][i / 2] = vec256_xor(pre.V[0][i / 2], buf.V[25]);
+        buf.V[24] = vec256_xor(buf.V[24], buf.V[25]);
+        pre.V[4][i / 2] = vec256_xor(pre.V[4][i / 2], buf.V[24]);
+        buf.V[8] = vec256_xor(buf.V[8], buf.V[24]);
+        pre.V[0][i / 2] = vec256_xor(pre.V[0][i / 2], buf.V[8]);
+        buf.V[9] = vec256_xor(buf.V[9], buf.V[8]);
+        pre.V[1][i / 2] = vec256_xor(pre.V[1][i / 2], buf.V[9]);
+        buf.V[11] = vec256_xor(buf.V[11], buf.V[9]);
+        pre.V[0][i / 2] = vec256_xor(pre.V[0][i / 2], buf.V[11]);
+        buf.V[10] = vec256_xor(buf.V[10], buf.V[11]);
+        pre.V[2][i / 2] = vec256_xor(pre.V[2][i / 2], buf.V[10]);
+        buf.V[14] = vec256_xor(buf.V[14], buf.V[10]);
+        pre.V[0][i / 2] = vec256_xor(pre.V[0][i / 2], buf.V[14]);
+        buf.V[15] = vec256_xor(buf.V[15], buf.V[14]);
+        pre.V[1][i / 2] = vec256_xor(pre.V[1][i / 2], buf.V[15]);
+        buf.V[13] = vec256_xor(buf.V[13], buf.V[15]);
+        pre.V[0][i / 2] = vec256_xor(pre.V[0][i / 2], buf.V[13]);
+        buf.V[12] = vec256_xor(buf.V[12], buf.V[13]);
+        pre.V[3][i / 2] = vec256_xor(pre.V[3][i / 2], buf.V[12]);
+        buf.V[4] = vec256_xor(buf.V[4], buf.V[12]);
+        pre.V[0][i / 2] = vec256_xor(pre.V[0][i / 2], buf.V[4]);
+        buf.V[5] = vec256_xor(buf.V[5], buf.V[4]);
+        pre.V[1][i / 2] = vec256_xor(pre.V[1][i / 2], buf.V[5]);
+        buf.V[7] = vec256_xor(buf.V[7], buf.V[5]);
+        pre.V[0][i / 2] = vec256_xor(pre.V[0][i / 2], buf.V[7]);
+        buf.V[6] = vec256_xor(buf.V[6], buf.V[7]);
+        pre.V[2][i / 2] = vec256_xor(pre.V[2][i / 2], buf.V[6]);
+        buf.V[2] = vec256_xor(buf.V[2], buf.V[6]);
+        pre.V[0][i / 2] = vec256_xor(pre.V[0][i / 2], buf.V[2]);
+        buf.V[3] = vec256_xor(buf.V[3], buf.V[2]);
+        pre.V[1][i / 2] = vec256_xor(pre.V[1][i / 2], buf.V[3]);
+        buf.V[1] = vec256_xor(buf.V[1], buf.V[3]);
 
-        pre.V[0][i / 2] = xor(pre.V[0][i / 2], buf.V[1]);
-        t = xor(buf.V[0], buf.V[1]);
+        pre.V[0][i / 2] = vec256_xor(pre.V[0][i / 2], buf.V[1]);
+        t = vec256_xor(buf.V[0], buf.V[1]);
 
         if (i != GFBITS - 1) {
             out128[i + 1][0] = vec256_extract2x(t, 1);
         }
         out128[i + 0][0] = vec256_extract2x(t, 0);
-#undef xor
 
     }
 
@@ -389,7 +386,7 @@ static void postprocess(vec256 *out) {
     }
 }
 
-void fft_tr(vec256 *out, vec256 in[][ GFBITS ]) {
+void MC_fft_tr(vec256 *out, vec256 in[][ GFBITS ]) {
     butterflies_tr(out, in);
     radix_conversions_tr(out);
 

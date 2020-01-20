@@ -47,7 +47,7 @@ def duplicates_of_file(inodes, filename, scheme, src_impl):
 
 def render_duplicates_file(duplicates):
     items = []
-    for scheme, details in duplicates.items():
+    for scheme, details in sorted(duplicates.items()):
         for implementation, files in details.items():
             items.append(
                 {

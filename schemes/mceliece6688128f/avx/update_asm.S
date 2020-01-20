@@ -37,12 +37,12 @@
 
 # qhasm: enter update_asm
 .p2align 5
-.hidden _update_asm
-.hidden update_asm
-.global _update_asm
-.global update_asm
-_update_asm:
-update_asm:
+.hidden _MC_update_asm
+.hidden MC_update_asm
+.global _MC_update_asm
+.global MC_update_asm
+_MC_update_asm:
+MC_update_asm:
 mov %rsp,%r11
 and $31,%r11
 add $0,%r11

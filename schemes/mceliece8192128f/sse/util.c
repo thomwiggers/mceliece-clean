@@ -7,6 +7,12 @@
 
 #include <stdint.h>
 
+void MC_store_i(unsigned char *out, uint64_t in, int i) {
+    for (int j = 0; j < i; j++) {
+        out[j] = (in >> (j*8)) & 0xFF;
+    }
+}
+
 void MC_store2(unsigned char *dest, uint16_t a) {
     dest[0] = a & 0xFF;
     dest[1] = a >> 8;

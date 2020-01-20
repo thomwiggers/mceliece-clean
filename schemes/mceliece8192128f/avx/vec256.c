@@ -6,7 +6,7 @@
 #include "vec256.h"
 
 /* bitsliced field squarings */
-void vec256_sq(vec256 *out, vec256 *in) {
+void MC_vec256_sq(vec256 *out, vec256 *in) {
     int i;
     vec256 result[GFBITS], t;
 
@@ -38,30 +38,30 @@ void vec256_sq(vec256 *out, vec256 *in) {
 }
 
 /* bitsliced field inverses */
-void vec256_inv(vec256 *out, vec256 *in) {
+void MC_vec256_inv(vec256 *out, vec256 *in) {
     vec256 tmp_11[ GFBITS ];
     vec256 tmp_1111[ GFBITS ];
 
     vec256_copy(out, in);
 
-    vec256_sq(out, out);
+    MC_vec256_sq(out, out);
     vec256_mul(tmp_11, out, in); // ^11
 
-    vec256_sq(out, tmp_11);
-    vec256_sq(out, out);
+    MC_vec256_sq(out, tmp_11);
+    MC_vec256_sq(out, out);
     vec256_mul(tmp_1111, out, tmp_11); // ^1111
 
-    vec256_sq(out, tmp_1111);
-    vec256_sq(out, out);
-    vec256_sq(out, out);
-    vec256_sq(out, out);
+    MC_vec256_sq(out, tmp_1111);
+    MC_vec256_sq(out, out);
+    MC_vec256_sq(out, out);
+    MC_vec256_sq(out, out);
     vec256_mul(out, out, tmp_1111); // ^11111111
 
-    vec256_sq(out, out);
-    vec256_sq(out, out);
-    vec256_sq(out, out);
-    vec256_sq(out, out);
+    MC_vec256_sq(out, out);
+    MC_vec256_sq(out, out);
+    MC_vec256_sq(out, out);
+    MC_vec256_sq(out, out);
     vec256_mul(out, out, tmp_1111); // ^111111111111
 
-    vec256_sq(out, out); // ^1111111111110
+    MC_vec256_sq(out, out); // ^1111111111110
 }

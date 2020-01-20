@@ -12,12 +12,11 @@
 
 #include <stdint.h>
 #include <stdio.h>
-#include <assert.h>
 #include <string.h>
 
 /* input: public key pk, error vector e */
 /* output: syndrome s */
-extern void syndrome_asm(unsigned char *s, const unsigned char *pk, unsigned char *e);
+extern void MC_syndrome_asm(unsigned char *s, const unsigned char *pk, unsigned char *e);
 
 /* output: e, an error vector of weight t */
 static void gen_e(unsigned char *e) {
@@ -31,7 +30,7 @@ static void gen_e(unsigned char *e) {
     uint64_t val[ SYS_T ];
 
     while (1) {
-        randombytes((unsigned char *) ind, sizeof(ind));
+        randombytes((uint8_t *) ind, sizeof(ind));
 
         for (i = 0; i < SYS_T * 2; i++) {
             ind[i] &= GFMASK;
@@ -51,7 +50,7 @@ static void gen_e(unsigned char *e) {
 
         // check for repetition
 
-        int32_sort(ind32, SYS_T);
+        MC_int32_sort(ind32, SYS_T);
 
         eq = 0;
         for (i = 1; i < SYS_T; i++)
@@ -82,7 +81,7 @@ static void gen_e(unsigned char *e) {
     }
 
     for (i = 0; i < (SYS_N + 63) / 64 - 1; i++) {
-        store8(e, e_int[i]);
+        MC_store8(e, e_int[i]);
         e += 8;
     }
 
@@ -91,60 +90,8 @@ static void gen_e(unsigned char *e) {
     }
 }
 
-/* input: public key pk, error vector e */
-/* output: syndrome s */
-void syndrome(unsigned char *s, const unsigned char *pk, unsigned char *e) {
-    unsigned char b, row[SYS_N / 8];
-    const unsigned char *pk_ptr = pk;
-
-    int i, j;
-
-    for (i = 0; i < SYND_BYTES; i++) {
-        s[i] = 0;
-    }
-
-    for (i = 0; i < PK_NROWS; i++) {
-        for (j = 0; j < SYS_N / 8; j++) {
-            row[j] = 0;
-        }
-
-        for (j = 0; j < PK_ROW_BYTES; j++) {
-            row[ SYS_N / 8 - PK_ROW_BYTES + j ] = pk_ptr[j];
-        }
-
-        row[i / 8] |= 1 << (i % 8);
-
-        b = 0;
-        for (j = 0; j < SYS_N / 8; j++) {
-            b ^= row[j] & e[j];
-        }
-
-        b ^= b >> 4;
-        b ^= b >> 2;
-        b ^= b >> 1;
-        b &= 1;
-
-        s[ i / 8 ] |= (b << (i % 8));
-
-        pk_ptr += PK_ROW_BYTES;
-    }
-}
-
-void encrypt(unsigned char *s, const unsigned char *pk, unsigned char *e) {
+void MC_encrypt(unsigned char *s, unsigned char *e, const unsigned char *pk) {
     gen_e(e);
-
-    #ifdef KAT
-    {
-        int k;
-        printf("encrypt e: positions");
-        for (k = 0; k < SYS_N; ++k)
-            if (e[k / 8] & (1 << (k & 7))) {
-                printf(" %d", k);
-            }
-        printf("\n");
-    }
-    #endif
-
-    syndrome_asm(s, pk, e);
+    MC_syndrome_asm(s, pk, e);
 }
 

@@ -8,40 +8,14 @@ import os
 import contextlib
 import subprocess
 import sys
+import itertools
 
 
-IMPLEMENTATIONS = [
-    ("mceliece348864", "ref", "clean"),
-    ("mceliece348864", "vec", "vec"),
-    ("mceliece348864", "sse", "sse"),
-    ("mceliece348864f", "ref", "clean"),
-    ("mceliece348864f", "vec", "vec"),
-    ("mceliece348864f", "sse", "sse"),
-    ("mceliece460896", "ref", "clean"),
-    ("mceliece460896", "vec", "vec"),
-    ("mceliece460896", "sse", "sse"),
-    ("mceliece460896f", "ref", "clean"),
-    ("mceliece460896f", "vec", "vec"),
-    ("mceliece460896f", "sse", "sse"),
-    ("mceliece6688128", "ref", "clean"),
-    ("mceliece6688128", "vec", "vec"),
-    ("mceliece6688128", "sse", "sse"),
-    ("mceliece6688128f", "ref", "clean"),
-    ("mceliece6688128f", "vec", "vec"),
-    ("mceliece6688128f", "sse", "sse"),
-    ("mceliece6960119", "ref", "clean"),
-    ("mceliece6960119", "vec", "vec"),
-    ("mceliece6960119", "sse", "sse"),
-    ("mceliece6960119f", "ref", "clean"),
-    ("mceliece6960119f", "vec", "vec"),
-    ("mceliece6960119f", "sse", "sse"),
-    ("mceliece8192128", "ref", "clean"),
-    ("mceliece8192128", "vec", "vec"),
-    ("mceliece8192128", "sse", "sse"),
-    ("mceliece8192128f", "ref", "clean"),
-    ("mceliece8192128f", "vec", "vec"),
-    ("mceliece8192128f", "sse", "sse"),
-]
+IMPLEMENTATIONS = itertools.product(
+        ["mceliece348864", "mceliece460896", "mceliece6688128",
+         "mceliece6960119", "mceliece8192128"],
+        ('', 'f'),
+        [('ref', 'clean'), ('vec', 'vec'), ('sse', 'sse'), ('avx', 'avx')])
 
 
 def replace_in_file(path, text_to_search, replacement_text):
@@ -54,7 +28,8 @@ def astyle(*paths):
     subprocess.check_output(["astyle", f"--options=.astylerc", *paths])
 
 
-for (scheme, impl, dst) in IMPLEMENTATIONS:
+for (scheme, variant, (impl, dst)) in IMPLEMENTATIONS:
+    scheme = f"{scheme}{variant}"
     print(f"{scheme} {impl} -> {dst}")
     namespace = f"PQCLEAN_{scheme}_{dst}_".upper()
     src_dir = os.path.join("schemes", scheme, impl)
@@ -80,8 +55,8 @@ for (scheme, impl, dst) in IMPLEMENTATIONS:
         replace_in_file(dest_file, "MC_", namespace)
 
     astyle(*sourcefiles)
-    if len(sys.argv) > 1 and sys.argv[1] == 'tidy':
-        subprocess.run(
+    while len(sys.argv) > 1 and sys.argv[1] == 'tidy':
+        result = subprocess.run(
             [
                 "clang-tidy",
                 "-fix-errors",
@@ -94,9 +69,13 @@ for (scheme, impl, dst) in IMPLEMENTATIONS:
                 "-iquote",
                 dest_dir,
             ],
-            check=False,
-            capture_output=True,
+            check=False, capture_output=True,
         )
+        if result.returncode == -11:
+            print("Segfaulted while running clang-tidy, trying again")
+            # segfault, try again
+            continue
+        break
 
     astyle(*sourcefiles)
 
@@ -105,7 +84,7 @@ for (scheme, impl, dst) in IMPLEMENTATIONS:
         r"libmceliece_.*\.a",
         f"lib{scheme}_{dst}.a",
     )
-    if impl not in ('sse',):
+    if impl not in ('sse', 'avx'):
         replace_in_file(
             os.path.join(dest_dir, "Makefile.Microsoft_nmake"),
             r"libmceliece_.*\.lib",

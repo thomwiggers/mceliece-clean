@@ -12,7 +12,7 @@
 
 #include <stdint.h>
 
-static void de_bitslicing(uint64_t *out, const vec256 in[][GFBITS]) {
+static void de_bitslicing(uint64_t *out, vec256 in[][GFBITS]) {
     int i, j, r;
     uint64_t u = 0;
 
@@ -48,7 +48,7 @@ static void de_bitslicing(uint64_t *out, const vec256 in[][GFBITS]) {
 
 static void to_bitslicing_2x(vec256 out0[][GFBITS], vec256 out1[][GFBITS], const uint64_t *in) {
     int i, j, k, r;
-    uint64_t u[4];
+    uint64_t u[4] = {0};
 
     for (i = 0; i < 32; i++) {
         for (j = GFBITS - 1; j >= 0; j--) {
@@ -73,10 +73,9 @@ static void to_bitslicing_2x(vec256 out0[][GFBITS], vec256 out1[][GFBITS], const
     }
 }
 
-int pk_gen(unsigned char *pk, const unsigned char *irr, uint32_t *perm) {
-    const int nBlocks_H = (SYS_N + 255) / 256;
-    const int nBlocks_I = (GFBITS * SYS_T + 255) / 256;
-
+#define NBLOCKS2_H ((SYS_N + 255) / 256)
+#define NBLOCKS2_I ((GFBITS * SYS_T + 255) / 256)
+int MC_pk_gen(unsigned char *pk, uint32_t *perm, const unsigned char *sk) {
     int i, j, k;
     int row, c, d;
 
@@ -97,9 +96,9 @@ int pk_gen(unsigned char *pk, const unsigned char *irr, uint32_t *perm) {
 
     // compute the inverses
 
-    irr_load(sk_int, irr);
+    MC_irr_load(sk_int, sk);
 
-    fft(eval, sk_int);
+    MC_fft(eval, sk_int);
 
     vec256_copy(prod[0], eval[0]);
 
@@ -107,7 +106,7 @@ int pk_gen(unsigned char *pk, const unsigned char *irr, uint32_t *perm) {
         vec256_mul(prod[i], prod[i - 1], eval[i]);
     }
 
-    vec256_inv(tmp, prod[31]);
+    MC_vec256_inv(tmp, prod[31]);
 
     for (i = 30; i >= 0; i--) {
         vec256_mul(prod[i + 1], prod[i], tmp);
@@ -126,7 +125,7 @@ int pk_gen(unsigned char *pk, const unsigned char *irr, uint32_t *perm) {
         list[i] |= ((uint64_t) perm[i]) << 31;
     }
 
-    sort_63b(1 << GFBITS, list);
+    MC_sort_63b(1 << GFBITS, list);
 
     to_bitslicing_2x(consts, prod, list);
 
@@ -134,7 +133,7 @@ int pk_gen(unsigned char *pk, const unsigned char *irr, uint32_t *perm) {
         perm[i] = list[i] & GFMASK;
     }
 
-    for (j = 0; j < nBlocks_I; j++)
+    for (j = 0; j < NBLOCKS2_I; j++)
         for (k = 0; k < GFBITS; k++) {
             mat[ k ][ 4 * j + 0 ] = vec256_extract(prod[ j ][ k ], 0);
             mat[ k ][ 4 * j + 1 ] = vec256_extract(prod[ j ][ k ], 1);
@@ -143,7 +142,7 @@ int pk_gen(unsigned char *pk, const unsigned char *irr, uint32_t *perm) {
         }
 
     for (i = 1; i < SYS_T; i++)
-        for (j = 0; j < nBlocks_I; j++) {
+        for (j = 0; j < NBLOCKS2_I; j++) {
             vec256_mul(prod[j], prod[j], consts[j]);
 
             for (k = 0; k < GFBITS; k++) {
@@ -225,7 +224,7 @@ int pk_gen(unsigned char *pk, const unsigned char *irr, uint32_t *perm) {
 
     // apply the linear map to the non-systematic part
 
-    for (j = nBlocks_I; j < nBlocks_H; j++)
+    for (j = NBLOCKS2_I; j < NBLOCKS2_H; j++)
         for (k = 0; k < GFBITS; k++) {
             mat[ k ][ 4 * j + 0 ] = vec256_extract(prod[ j ][ k ], 0);
             mat[ k ][ 4 * j + 1 ] = vec256_extract(prod[ j ][ k ], 1);
@@ -234,7 +233,7 @@ int pk_gen(unsigned char *pk, const unsigned char *irr, uint32_t *perm) {
         }
 
     for (i = 1; i < SYS_T; i++)
-        for (j = nBlocks_I; j < nBlocks_H; j++) {
+        for (j = NBLOCKS2_I; j < NBLOCKS2_H; j++) {
             vec256_mul(prod[j], prod[j], consts[j]);
 
             for (k = 0; k < GFBITS; k++) {
@@ -265,7 +264,7 @@ int pk_gen(unsigned char *pk, const unsigned char *irr, uint32_t *perm) {
                 }
 
             for (k = 0; k < (SYS_N - GFBITS * SYS_T) / 64; k++) {
-                store8(pk, one_row[ k ]);
+                MC_store8(pk, one_row[ k ]);
                 pk += 8;
             }
         }

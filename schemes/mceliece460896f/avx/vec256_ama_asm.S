@@ -113,12 +113,12 @@
 
 # qhasm: enter vec256_ama_asm
 .p2align 5
-.hidden _vec256_ama_asm
-.hidden vec256_ama_asm
-.global _vec256_ama_asm
-.global vec256_ama_asm
-_vec256_ama_asm:
-vec256_ama_asm:
+.hidden _MC_vec256_ama_asm
+.hidden MC_vec256_ama_asm
+.global _MC_vec256_ama_asm
+.global MC_vec256_ama_asm
+_MC_vec256_ama_asm:
+MC_vec256_ama_asm:
 mov %rsp,%r11
 and $31,%r11
 add $0,%r11

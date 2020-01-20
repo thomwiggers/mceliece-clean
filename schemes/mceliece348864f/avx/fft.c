@@ -9,7 +9,7 @@
 
 /* input: in, polynomial in bitsliced form */
 /* output: in, result of applying the radix conversions on in */
-void radix_conversions(uint64_t *in) {
+static void radix_conversions(uint64_t *in) {
     int i, j, k;
 
     const uint64_t mask[5][2] = {
@@ -21,7 +21,7 @@ void radix_conversions(uint64_t *in) {
     };
 
     const uint64_t s[5][GFBITS] = {
-#include "scalars.data"
+#include "scalars.inc"
     };
 
     //
@@ -39,13 +39,13 @@ void radix_conversions(uint64_t *in) {
 
 /* input: in, result of applying the radix conversions to the input polynomial */
 /* output: out, evaluation results (by applying the FFT butterflies) */
-void butterflies(vec256 out[][ GFBITS ], uint64_t *in) {
+static void butterflies(vec256 out[][ GFBITS ], const uint64_t *in) {
     int i, j, k, s, b;
 
     uint64_t t0, t1, t2, t3;
 
     const vec256 consts[ 17 ][ GFBITS ] = {
-#include "consts.data"
+#include "consts.inc"
     };
 
     uint64_t consts_ptr = 0;
@@ -153,7 +153,7 @@ void butterflies(vec256 out[][ GFBITS ], uint64_t *in) {
     // adding the part contributed by x^64
 
     vec256 powers[16][GFBITS] = {
-#include "powers.data"
+#include "powers.inc"
     };
 
     for (i = 0; i < 16; i++)
@@ -162,7 +162,7 @@ void butterflies(vec256 out[][ GFBITS ], uint64_t *in) {
         }
 }
 
-void fft(vec256 out[][ GFBITS ], uint64_t *in) {
+void MC_fft(vec256 out[][ GFBITS ], uint64_t *in) {
     radix_conversions(in);
     butterflies(out, in);
 }

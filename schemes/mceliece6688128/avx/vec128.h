@@ -1,10 +1,10 @@
+#ifndef VEC128_H
+#define VEC128_H
 /*
   This file is for functions related to 128-bit vectors
   including functions for bitsliced field operations
 */
 
-#ifndef VEC128_H
-#define VEC128_H
 
 #include "params.h"
 
@@ -82,11 +82,11 @@ static inline vec128 vec128_or_reduce(vec128 *a) {
     return ret;
 }
 
-extern void vec128_mul_asm(vec128 *, vec128 *, const vec128 *, int);
+extern void MC_vec128_mul_asm(vec128 *, vec128 *, const vec128 *, int);
 
 /* bitsliced field multiplications */
 static inline void vec128_mul(vec128 *h, vec128 *f, const vec128 *g) {
-    vec128_mul_asm(h, f, g, 16);
+    MC_vec128_mul_asm(h, f, g, 16);
 }
 
 #endif

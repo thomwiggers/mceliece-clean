@@ -13,7 +13,7 @@
 
 /* input: public key pk, error vector e */
 /* output: syndrome s */
-extern void syndrome_asm(unsigned char *s, const unsigned char *pk, unsigned char *e);
+extern void MC_syndrome_asm(unsigned char *s, const unsigned char *pk, unsigned char *e);
 
 /* output: e, an error vector of weight t */
 static void gen_e(unsigned char *e) {
@@ -35,7 +35,7 @@ static void gen_e(unsigned char *e) {
 
         // check for repetition
 
-        int32_sort(ind32, SYS_T);
+        MC_int32_sort(ind32, SYS_T);
 
         eq = 0;
         for (i = 1; i < SYS_T; i++)
@@ -66,27 +66,14 @@ static void gen_e(unsigned char *e) {
     }
 
     for (i = 0; i < SYS_N / 64; i++) {
-        store8(e + i * 8, e_int[i]);
+        MC_store8(e + i * 8, e_int[i]);
     }
 }
 
 /* input: public key pk */
 /* output: error vector e, syndrome s */
-void encrypt(unsigned char *s, const unsigned char *pk, unsigned char *e) {
+void MC_encrypt(unsigned char *s, unsigned char *e, const unsigned char *pk) {
     gen_e(e);
-
-    #ifdef KAT
-    {
-        int k;
-        printf("encrypt e: positions");
-        for (k = 0; k < SYS_N; ++k)
-            if (e[k / 8] & (1 << (k & 7))) {
-                printf(" %d", k);
-            }
-        printf("\n");
-    }
-    #endif
-
-    syndrome_asm(s, pk, e);
+    MC_syndrome_asm(s, pk, e);
 }
 

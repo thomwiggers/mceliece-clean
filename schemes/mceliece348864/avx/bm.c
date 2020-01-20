@@ -11,10 +11,9 @@
 #include "gf.h"
 
 #include <stdint.h>
-#include <assert.h>
 
-extern void update_asm(void *, gf, int);
-extern gf vec_reduce_asm(uint64_t *);
+extern void MC_update_asm(void *, gf, int);
+extern gf MC_vec_reduce_asm(uint64_t *);
 
 static inline uint64_t mask_nonzero(gf a) {
     uint64_t ret = a;
@@ -63,7 +62,7 @@ static inline void interleave(vec128 *in, int idx0, int idx1, vec128 *mask, int 
 /* input: in, field elements in bitsliced form */
 /* output: out, field elements in non-bitsliced form */
 static inline void get_coefs(gf *out, vec128 *in) {
-    int i, j, k;
+    int i, k;
 
     vec128 mask[4][2];
     vec128 buf[16];
@@ -121,15 +120,15 @@ static inline void get_coefs(gf *out, vec128 *in) {
     interleave(buf, 14, 15, mask[0], 0);
 
     for (i = 0; i < 16; i++)
-        for (j = 0; j <  2; j++)
-            for (k = 0; k <  4; k++) {
-                out[ (4 * j + k) * 16 + i ] = (vec128_extract(buf[i], j) >> (k * 16)) & GFMASK;
-            }
+        for (k = 0; k <  4; k++) {
+            out[ (4 * 0 + k) * 16 + i ] = (vec128_extract(buf[i], 0) >> (k * 16)) & GFMASK;
+            out[ (4 * 1 + k) * 16 + i ] = (vec128_extract(buf[i], 1) >> (k * 16)) & GFMASK;
+        }
 }
 
 /* input: in, field elements in bitsliced form */
 /* output: out, field elements in non-bitsliced form */
-void bm(uint64_t out[ GFBITS ], vec128 in[ GFBITS ]) {
+void MC_bm(uint64_t out[ GFBITS ], vec128 in[ GFBITS ]) {
     uint16_t i;
     uint16_t N, L;
 
@@ -172,11 +171,11 @@ void bm(uint64_t out[ GFBITS ], vec128 in[ GFBITS ]) {
 
         vec_mul_sp(prod, in_tmp, &BC[0][0]);
 
-        update_asm(in_tmp, coefs[N], 8);
+        MC_update_asm(in_tmp, coefs[N], 8);
 
-        d = vec_reduce_asm(prod);
+        d = MC_vec_reduce_asm(prod);
 
-        t = gf_mul2(c0, coefs[N], b);
+        t = MC_gf_mul2(c0, coefs[N], b);
 
         d ^= t & 0xFFFFFFFF;
 
@@ -195,7 +194,7 @@ void bm(uint64_t out[ GFBITS ], vec128 in[ GFBITS ]) {
 
         vec_cmov(BC, mask);
 
-        update_asm(BC, mask & c0, 16);
+        MC_update_asm(BC, mask & c0, 16);
 
         for (i = 0; i < GFBITS; i++) {
             BC[i][1] = BC_tmp[i][0] ^ BC_tmp[i][1];
@@ -207,7 +206,7 @@ void bm(uint64_t out[ GFBITS ], vec128 in[ GFBITS ]) {
 
     }
 
-    c0 = gf_inv(c0);
+    c0 = MC_gf_inv(c0);
 
     for (i = 0; i < GFBITS; i++) {
         out[i] = (c0 >> i) & 1;

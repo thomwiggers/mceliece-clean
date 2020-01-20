@@ -1,10 +1,10 @@
+#ifndef VEC256_H
+#define VEC256_H
 /*
   This file is for functions related to 256-bit vectors
   including functions for bitsliced field operations
 */
 
-#ifndef VEC256_H
-#define VEC256_H
 
 #include "vec128.h"
 
@@ -82,18 +82,18 @@ static inline void vec256_copy(vec256 *dest, vec256 *src) {
     }
 }
 
-extern void vec256_mul_asm(vec256 *, vec256 *, const vec256 *);
+extern void MC_vec256_mul_asm(vec256 *, vec256 *, const vec256 *);
 
 /* bitsliced field multiplications */
 static inline void vec256_mul(vec256 *h, vec256 *f, const vec256 *g) {
-    vec256_mul_asm(h, f, g);
+    MC_vec256_mul_asm(h, f, g);
 }
 
-void vec256_sq(vec256 *, vec256 *);
-void vec256_inv(vec256 *, vec256 *);
+void MC_vec256_sq(vec256 *, vec256 *);
+void MC_vec256_inv(vec256 *, vec256 *);
 
-extern void vec256_maa_asm(vec256 *, vec256 *, const vec256 *);
-extern void vec256_ama_asm(vec256 *, vec256 *, const vec256 *);
+extern void MC_vec256_maa_asm(vec256 *, vec256 *, const vec256 *);
+extern void MC_vec256_ama_asm(vec256 *, vec256 *, const vec256 *);
 
 #endif
 

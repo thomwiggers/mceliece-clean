@@ -1,8 +1,9 @@
 #ifndef uint32_sort_h
 #define uint32_sort_h
 
-#include "crypto_sort_uint32.h"
+#include <stddef.h>
+#include <stdint.h>
 
-#define uint32_sort crypto_sort_uint32
+void MC_uint32_sort(uint32_t *x,size_t n);
 
 #endif

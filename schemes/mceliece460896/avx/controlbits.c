@@ -5,13 +5,13 @@
 
 #include "controlbits.h"
 
-#include "randombytes.h"
-#include "uint32_sort.h"
 #include "params.h"
 
 #include <stdint.h>
 
-typedef char bit;
+typedef uint8_t bit;
+
+#define N (1 << GFBITS)
 
 static bit is_smaller(uint32_t a, uint32_t b) {
     uint32_t ret = 0;
@@ -19,7 +19,7 @@ static bit is_smaller(uint32_t a, uint32_t b) {
     ret = a - b;
     ret >>= 31;
 
-    return ret;
+    return (bit)ret;
 }
 
 static bit is_smaller_63b(uint64_t a, uint64_t b) {
@@ -28,7 +28,7 @@ static bit is_smaller_63b(uint64_t a, uint64_t b) {
     ret = a - b;
     ret >>= 63;
 
-    return ret;
+    return (bit)ret;
 }
 
 static void cswap(uint32_t *x, uint32_t *y, bit swap) {
@@ -60,6 +60,13 @@ static void cswap_63b(uint64_t *x, uint64_t *y, bit swap) {
 /* output x = min(input x,input y) */
 /* output y = max(input x,input y) */
 
+static void minmax(uint32_t *x, uint32_t *y) {
+    bit m;
+
+    m = is_smaller(*y, *x);
+    cswap(x, y, m);
+}
+
 static void minmax_63b(uint64_t *x, uint64_t *y) {
     bit m;
 
@@ -70,7 +77,20 @@ static void minmax_63b(uint64_t *x, uint64_t *y) {
 /* merge first half of x[0],x[step],...,x[(2*n-1)*step] with second half */
 /* requires n to be a power of 2 */
 
-static void merge_63b(int n, uint64_t x[n], int step) {
+static void merge(int n, uint32_t *x, int step) {
+    int i;
+    if (n == 1) {
+        minmax(&x[0], &x[step]);
+    } else {
+        merge(n / 2, x, step * 2);
+        merge(n / 2, x + step, step * 2);
+        for (i = 1; i < 2 * n - 1; i += 2) {
+            minmax(&x[i * step], &x[(i + 1) * step]);
+        }
+    }
+}
+
+static void merge_63b(int n, uint64_t *x, int step) {
     int i;
     if (n == 1) {
         minmax_63b(&x[0], &x[step]);
@@ -86,25 +106,30 @@ static void merge_63b(int n, uint64_t x[n], int step) {
 /* sort x[0],x[1],...,x[n-1] in place */
 /* requires n to be a power of 2 */
 
-static void sort(int n, uint32_t x[n]) {
-    uint32_sort(x, n);
-}
-
-void sort_63b(int n, uint64_t x[n]) {
+static void sort(int n, uint32_t *x) {
     if (n <= 1) {
         return;
     }
-    sort_63b(n / 2, x);
-    sort_63b(n / 2, x + n / 2);
+    sort(n / 2, x);
+    sort(n / 2, x + n / 2);
+    merge(n / 2, x, 1);
+}
+
+void MC_sort_63b(int n, uint64_t *x) {
+    if (n <= 1) {
+        return;
+    }
+    MC_sort_63b(n / 2, x);
+    MC_sort_63b(n / 2, x + n / 2);
     merge_63b(n / 2, x, 1);
 }
 
 /* y[pi[i]] = x[i] */
 /* requires n = 2^w */
 /* requires pi to be a permutation */
-static void composeinv(int n, uint32_t y[n], uint32_t x[n], uint32_t pi[n]) { // NC
+static void composeinv(int n, uint32_t *y, const uint32_t *x, const uint32_t *pi) { // NC
     int i;
-    uint32_t t[n];
+    uint32_t t[2 * N];
 
     for (i = 0; i < n; ++i) {
         t[i] = x[i] | (pi[i] << 16);
@@ -120,7 +145,7 @@ static void composeinv(int n, uint32_t y[n], uint32_t x[n], uint32_t pi[n]) { //
 /* ip[i] = j iff pi[i] = j */
 /* requires n = 2^w */
 /* requires pi to be a permutation */
-static void invert(int n, uint32_t ip[n], uint32_t pi[n]) {
+static void invert(int n, uint32_t *ip, const uint32_t *pi) {
     int i;
 
     for (i = 0; i < n; i++) {
@@ -131,7 +156,7 @@ static void invert(int n, uint32_t ip[n], uint32_t pi[n]) {
 }
 
 
-static void flow(int w, uint32_t *x, uint32_t *y, const int t) {
+static void flow(int w, uint32_t *x, const uint32_t *y, int t) {
     bit m0;
     bit m1;
 
@@ -149,18 +174,18 @@ static void flow(int w, uint32_t *x, uint32_t *y, const int t) {
 /* input: permutation pi */
 /* output: (2w-1)n/2 (or 0 if n==1) control bits c[0],c[step],c[2*step],... */
 /* requires n = 2^w */
-static void controlbitsfrompermutation(int w, int n, int step, int off, unsigned char *c, uint32_t pi[n]) {
+static void controlbitsfrompermutation(int w, int n, int step, int off, unsigned char *c, const uint32_t *pi) {
     int i;
     int j;
     int k;
     int t;
-    uint32_t ip[n];
-    uint32_t I[2 * n];
-    uint32_t P[2 * n];
-    uint32_t PI[2 * n];
-    uint32_t T[2 * n];
-    uint32_t piflip[n];
-    uint32_t subpi[2][n / 2];
+    uint32_t ip[N] = {0};
+    uint32_t I[2 * N] = {0};
+    uint32_t P[2 * N] = {0};
+    uint32_t PI[2 * N] = {0};
+    uint32_t T[2 * N] = {0};
+    uint32_t piflip[N] = {0};
+    uint32_t subpi[2][N / 2] = {{0}};
 
     if (w == 1) {
         c[ off / 8 ] |= (pi[0] & 1) << (off % 8);
@@ -202,10 +227,11 @@ static void controlbitsfrompermutation(int w, int n, int step, int off, unsigned
         }
     }
 
-    for (i = 0; i < n; ++i)
+    for (i = 0; i < n; ++i) {
         for (j = 0; j < w; ++j) {
             piflip[i] = pi[i];
         }
+    }
 
     for (i = 0; i < n / 2; ++i) {
         c[ (off + i * step) / 8 ] |= ((P[i * 2] >> w) & 1) << ((off + i * step) % 8);
@@ -218,10 +244,11 @@ static void controlbitsfrompermutation(int w, int n, int step, int off, unsigned
         cswap(&piflip[i * 2], &piflip[i * 2 + 1], (P[n + i * 2] >> w) & 1);
     }
 
-    for (k = 0; k < 2; ++k)
+    for (k = 0; k < 2; ++k) {
         for (i = 0; i < n / 2; ++i) {
             subpi[k][i] = piflip[i * 2 + k] >> 1;
         }
+    }
 
     for (k = 0; k < 2; ++k) {
         controlbitsfrompermutation(w - 1, n / 2, step * 2, off + step * (n / 2 + k), c, subpi[k]);
@@ -230,7 +257,7 @@ static void controlbitsfrompermutation(int w, int n, int step, int off, unsigned
 
 /* input: pi, a permutation*/
 /* output: out, control bits w.r.t. pi */
-void controlbits(unsigned char *out, uint32_t *pi) {
+void MC_controlbits(unsigned char *out, const uint32_t *pi) {
     unsigned int i;
     unsigned char c[ (2 * GFBITS - 1) * (1 << GFBITS) / 16 ];
 
