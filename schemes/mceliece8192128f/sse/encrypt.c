@@ -12,7 +12,7 @@
 
 /* input: public key pk, error vector e */
 /* output: syndrome s */
-extern void syndrome_asm(unsigned char *s, const unsigned char *pk, unsigned char *e);
+extern void MC_syndrome_asm(unsigned char *s, const unsigned char *pk, unsigned char *e);
 
 /* output: e, an error vector of weight t */
 static void gen_e(unsigned char *e) {
@@ -80,6 +80,6 @@ static void gen_e(unsigned char *e) {
 /* output: error vector e, syndrome s */
 void MC_encrypt(unsigned char *s, unsigned char *e, const unsigned char *pk) {
     gen_e(e);
-    syndrome_asm(s, pk, e);
+    MC_syndrome_asm(s, pk, e);
 }
 
