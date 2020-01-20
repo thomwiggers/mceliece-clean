@@ -32,7 +32,7 @@ jobs:
       - name: Run tests
         run: |
           cd test
-          pytest -nauto
+          pytest -nauto -x
 
 
 # vim : set ts=2 sw=2 et :
