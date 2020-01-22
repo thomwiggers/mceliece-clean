@@ -181,8 +181,6 @@
 
 # qhasm: enter vec_mul_sp_asm
 .p2align 5
-.hidden _MC_vec_mul_sp_asm
-.hidden MC_vec_mul_sp_asm
 .global _MC_vec_mul_sp_asm
 .global MC_vec_mul_sp_asm
 _MC_vec_mul_sp_asm:

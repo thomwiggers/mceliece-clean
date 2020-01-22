@@ -73,8 +73,6 @@
 
 # qhasm: enter transpose_64x64_asm
 .p2align 5
-.hidden _MC_transpose_64x64_asm
-.hidden MC_transpose_64x64_asm
 .global _MC_transpose_64x64_asm
 .global MC_transpose_64x64_asm
 _MC_transpose_64x64_asm:

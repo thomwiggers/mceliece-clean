@@ -37,8 +37,6 @@
 
 # qhasm: enter update_asm
 .p2align 5
-.hidden _MC_update_asm
-.hidden MC_update_asm
 .global _MC_update_asm
 .global MC_update_asm
 _MC_update_asm:

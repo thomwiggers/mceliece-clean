@@ -37,8 +37,6 @@
 
 # qhasm: enter vec_reduce_asm
 .p2align 5
-.hidden _MC_vec_reduce_asm
-.hidden MC_vec_reduce_asm
 .global _MC_vec_reduce_asm
 .global MC_vec_reduce_asm
 _MC_vec_reduce_asm:

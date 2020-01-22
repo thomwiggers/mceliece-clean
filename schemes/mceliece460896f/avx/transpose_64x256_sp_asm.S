@@ -71,8 +71,6 @@
 
 # qhasm: enter transpose_64x256_sp_asm
 .p2align 5
-.hidden _MC_transpose_64x256_sp_asm
-.hidden MC_transpose_64x256_sp_asm
 .global _MC_transpose_64x256_sp_asm
 .global MC_transpose_64x256_sp_asm
 _MC_transpose_64x256_sp_asm:

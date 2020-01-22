@@ -59,8 +59,6 @@
 
 # qhasm: enter syndrome_asm
 .p2align 5
-.hidden _MC_syndrome_asm
-.hidden MC_syndrome_asm
 .global _MC_syndrome_asm
 .global MC_syndrome_asm
 _MC_syndrome_asm:
