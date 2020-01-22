@@ -17,7 +17,7 @@ matrix:
           export CC=\"ccache ${CC}\" &&
           apt update -qq && apt install -qqy rmlint &&
           pip3 install -r requirements.txt &&
-          python generate.py tidy &&
+          python3 generate.py tidy &&
           rm test/test_duplicate_consistency.py &&
           cd test && python3 -m pytest --verbose --junitxml=test-results/pytest/results.xml --numprocesses=auto"
       services:
@@ -35,7 +35,7 @@ matrix:
           export CC=\"ccache ${CC}\" &&
           pip3 install -r requirements.txt &&
           apt update -qq && apt install -qqy rmlint &&
-          python generate.py tidy &&
+          python3 generate.py tidy &&
           rm test/test_duplicate_consistency.py &&
           cd test && python3 -m pytest --verbose --junitxml=test-results/pytest/results.xml --numprocesses=auto"
       services:
@@ -52,7 +52,7 @@ matrix:
         - export CCACHE_SLOPPINESS=include_file_mtime
         - export PATH="/usr/local/opt/ccache/libexec:$PATH"
       script:
-        - python generate.py tidy
+        - python3 generate.py tidy
         - rm test/test_duplicate_consistency.py
         # Use travis-wait to allow slower tests to run
         - "cd test && travis_wait 60 python3 -m pytest --numprocesses=auto"
@@ -83,7 +83,7 @@ matrix:
       script:
         # Use travis-wait to allow slower tests to run
         - rm test/test_duplicate_consistency.py
-        - python generate.py tidy
+        - python3 generate.py tidy
         - "cd test && travis_wait 60 python3 -m pytest --numprocesses=auto"
 
 cache:
