@@ -1,19 +1,7 @@
 .data
-.section .rodata
 
-.hidden MC_MASK0_0
-.hidden MC_MASK0_1
-.hidden MC_MASK1_0
-.hidden MC_MASK1_1
-.hidden MC_MASK2_0
-.hidden MC_MASK2_1
-.hidden MC_MASK3_0
-.hidden MC_MASK3_1
-.hidden MC_MASK4_0
-.hidden MC_MASK4_1
-.hidden MC_MASK5_0
-.hidden MC_MASK5_1
-
+# not supported on macos
+#.section .rodata
 .globl MC_MASK0_0
 .globl MC_MASK0_1
 .globl MC_MASK1_0
