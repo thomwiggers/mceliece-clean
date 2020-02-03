@@ -1,5 +1,5 @@
-#ifndef PK_GEN_H
-#define PK_GEN_H
+#ifndef MC_PK_GEN_H
+#define MC_PK_GEN_H
 /*
   This file is for public-key generation
 */

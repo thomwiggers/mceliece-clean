@@ -1,5 +1,5 @@
-#ifndef BENES_H
-#define BENES_H
+#ifndef MC_BENES_H
+#define MC_BENES_H
 /*
   This file is for Benes network related functions
 */

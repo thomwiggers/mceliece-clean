@@ -1,5 +1,5 @@
-#ifndef TRANSPOSE_H
-#define TRANSPOSE_H
+#ifndef MC_TRANSPOSE_H
+#define MC_TRANSPOSE_H
 /*
   This file is for matrix transposition
 */

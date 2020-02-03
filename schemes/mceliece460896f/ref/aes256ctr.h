@@ -1,5 +1,5 @@
-#ifndef MC_aes256ctr_H
-#define MC_aes256ctr_H
+#ifndef MC_AES256CTR_H
+#define MC_AES256CTR_H
 
 #include <stddef.h>
 #include <stdint.h>

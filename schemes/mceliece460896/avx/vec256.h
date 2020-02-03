@@ -1,5 +1,5 @@
-#ifndef VEC256_H
-#define VEC256_H
+#ifndef MC_VEC256_H
+#define MC_VEC256_H
 /*
   This file is for functions related to 256-bit vectors
   including functions for bitsliced field operations

@@ -1,5 +1,5 @@
-#ifndef MC_vec_H
-#define MC_vec_H
+#ifndef MC_VEC_H
+#define MC_VEC_H
 
 #include "params.h"
 

@@ -1,5 +1,5 @@
-#ifndef ENCRYPT_H
-#define ENCRYPT_H
+#ifndef MC_ENCRYPT_H
+#define MC_ENCRYPT_H
 /*
   This file is for Niederreiter encryption
 */

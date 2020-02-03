@@ -1,5 +1,5 @@
-#ifndef ROOT_H
-#define ROOT_H
+#ifndef MC_ROOT_H
+#define MC_ROOT_H
 /*
   This file is for evaluating a polynomial at one or more field elements
 */

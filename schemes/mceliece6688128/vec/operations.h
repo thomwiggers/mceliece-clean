@@ -1,5 +1,5 @@
-#ifndef OPERATIONS_H
-#define OPERATIONS_H
+#ifndef MC_OPERATIONS_H
+#define MC_OPERATIONS_H
 
 #include "api.h"
 

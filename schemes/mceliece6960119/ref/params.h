@@ -1,5 +1,5 @@
-#ifndef PARAMS_H
-#define PARAMS_H
+#ifndef MC_PARAMS_H
+#define MC_PARAMS_H
 
 #define GFBITS 13
 #define SYS_N 6960
