@@ -30,26 +30,26 @@ static void scaling(vec128 out[][GFBITS], vec128 inv[][GFBITS], const unsigned c
         MC_vec128_sq(eval[i], eval[i]);
     }
 
-    vec128_copy(inv[0], eval[0]);
+    MC_vec128_copy(inv[0], eval[0]);
 
     for (i = 1; i < 64; i++) {
-        vec128_mul(inv[i], inv[i - 1], eval[i]);
+        MC_vec128_mul(inv[i], inv[i - 1], eval[i]);
     }
 
     MC_vec128_inv(tmp, inv[63]);
 
     for (i = 62; i >= 0; i--) {
-        vec128_mul(inv[i + 1], tmp, inv[i]);
-        vec128_mul(tmp, tmp, eval[i + 1]);
+        MC_vec128_mul(inv[i + 1], tmp, inv[i]);
+        MC_vec128_mul(tmp, tmp, eval[i + 1]);
     }
 
-    vec128_copy(inv[0], tmp);
+    MC_vec128_copy(inv[0], tmp);
 
     //
 
     for (i = 0; i < 64; i++)
         for (j = 0; j < GFBITS; j++) {
-            out[i][j] = vec128_and(inv[i][j], recv[i]);
+            out[i][j] = MC_vec128_and(inv[i][j], recv[i]);
         }
 }
 
@@ -58,14 +58,14 @@ static void scaling_inv(vec128 out[][GFBITS], vec128 inv[][GFBITS], vec128 *recv
 
     for (i = 0; i < 64; i++)
         for (j = 0; j < GFBITS; j++) {
-            out[i][j] = vec128_and(inv[i][j], recv[i]);
+            out[i][j] = MC_vec128_and(inv[i][j], recv[i]);
         }
 }
 
 static void preprocess(vec128 *recv, const unsigned char *s) {
     int i;
 
-    recv[0] = vec128_setbits(0);
+    recv[0] = MC_vec128_setbits(0);
 
     for (i = 1; i < 64; i++) {
         recv[i] = recv[0];
@@ -80,8 +80,8 @@ static uint16_t weight(vec128 *v) {
     uint16_t i, w = 0;
 
     for (i = 0; i < 64; i++) {
-        w += (uint16_t)_mm_popcnt_u64(vec128_extract(v[i], 0) );
-        w += (uint16_t)_mm_popcnt_u64( vec128_extract(v[i], 1) );
+        w += (uint16_t)_mm_popcnt_u64(MC_vec128_extract(v[i], 0) );
+        w += (uint16_t)_mm_popcnt_u64( MC_vec128_extract(v[i], 1) );
     }
 
     return w;
@@ -91,15 +91,15 @@ static uint16_t synd_cmp(vec128 s0[][ GFBITS ], vec128 s1[][ GFBITS ]) {
     int i, j;
     vec128 diff;
 
-    diff = vec128_or(vec128_xor(s0[0][0], s1[0][0]),
-                     vec128_xor(s0[1][0], s1[1][0]));
+    diff = MC_vec128_or(MC_vec128_xor(s0[0][0], s1[0][0]),
+                     MC_vec128_xor(s0[1][0], s1[1][0]));
 
     for (i = 0; i < 2; i++)
         for (j = 1; j < GFBITS; j++) {
-            diff = vec128_or(diff, vec128_xor(s0[i][j], s1[i][j]));
+            diff = MC_vec128_or(diff, MC_vec128_xor(s0[i][j], s1[i][j]));
         }
 
-    return (uint16_t)vec128_testz(diff);
+    return (uint16_t)MC_vec128_testz(diff);
 }
 
 /* Niederreiter decryption with the Berlekamp decoder */
@@ -143,11 +143,11 @@ int MC_decrypt(unsigned char *e, const unsigned char *sk, const unsigned char *c
 
     // reencryption and weight check
 
-    allone = vec128_setbits(1);
+    allone = MC_vec128_setbits(1);
 
     for (i = 0; i < 64; i++) {
-        error[i] = vec128_or_reduce(eval[i]);
-        error[i] = vec128_xor(error[i], allone);
+        error[i] = MC_vec128_or_reduce(eval[i]);
+        error[i] = MC_vec128_xor(error[i], allone);
     }
 
     check_weight = weight(error) ^ SYS_T;

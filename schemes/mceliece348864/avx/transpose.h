@@ -9,17 +9,9 @@
 
 #include <stdint.h>
 
-extern void MC_transpose_64x64_asm(uint64_t *);
 
-static inline void MC_transpose_64x64(uint64_t *in) {
-    MC_transpose_64x64_asm(in);
-}
-
-extern void MC_transpose_64x256_sp_asm(vec256 *);
-
-static inline void MC_transpose_64x256_sp(vec256 *in) {
-    MC_transpose_64x256_sp_asm(in);
-}
+void MC_transpose_64x64(uint64_t *in);
+void MC_transpose_64x256_sp(vec256 *in);
 
 #endif
 

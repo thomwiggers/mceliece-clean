@@ -21,7 +21,6 @@ consistency_checks:
   - gf.c
   - gf.h
   - operations.c
-  - operations.h
   - params.h
   - pk_gen.h
   - powers.inc
@@ -46,7 +45,6 @@ consistency_checks:
   - decrypt.h
   - encrypt.h
   - operations.c
-  - operations.h
   - params.h
   - pk_gen.h
   - sk_gen.c
@@ -64,7 +62,6 @@ consistency_checks:
   - decrypt.h
   - encrypt.h
   - operations.c
-  - operations.h
   - params.h
   - pk_gen.h
   - sk_gen.c
@@ -83,12 +80,12 @@ consistency_checks:
   - encrypt.h
   - fft_tr.h
   - operations.c
-  - operations.h
   - pk_gen.h
   - sk_gen.c
   - sk_gen.h
   - transpose.c
   - transpose.h
+  - vec.h
   source:
     implementation: vec
     scheme: mceliece460896
@@ -101,7 +98,6 @@ consistency_checks:
   - decrypt.h
   - encrypt.h
   - operations.c
-  - operations.h
   - pk_gen.h
   - sk_gen.c
   - sk_gen.h
@@ -119,12 +115,12 @@ consistency_checks:
   - encrypt.h
   - fft_tr.h
   - operations.c
-  - operations.h
   - pk_gen.h
   - sk_gen.c
   - sk_gen.h
   - transpose.c
   - transpose.h
+  - vec.h
   source:
     implementation: vec
     scheme: mceliece460896f
@@ -137,7 +133,6 @@ consistency_checks:
   - decrypt.h
   - encrypt.h
   - operations.c
-  - operations.h
   - pk_gen.h
   - sk_gen.c
   - sk_gen.h
@@ -155,7 +150,6 @@ consistency_checks:
   - encrypt.h
   - fft_tr.h
   - operations.c
-  - operations.h
   - pk_gen.h
   - sk_gen.c
   - sk_gen.h
@@ -174,7 +168,6 @@ consistency_checks:
   - decrypt.h
   - encrypt.h
   - operations.c
-  - operations.h
   - pk_gen.h
   - sk_gen.c
   - sk_gen.h
@@ -192,7 +185,6 @@ consistency_checks:
   - encrypt.h
   - fft_tr.h
   - operations.c
-  - operations.h
   - pk_gen.h
   - sk_gen.c
   - sk_gen.h
@@ -211,7 +203,6 @@ consistency_checks:
   - decrypt.h
   - encrypt.h
   - operations.c
-  - operations.h
   - pk_gen.h
   - sk_gen.c
   - sk_gen.h
@@ -229,7 +220,6 @@ consistency_checks:
   - encrypt.h
   - fft_tr.h
   - operations.c
-  - operations.h
   - sk_gen.c
   - sk_gen.h
   - transpose.c
@@ -247,7 +237,6 @@ consistency_checks:
   - decrypt.h
   - encrypt.h
   - operations.c
-  - operations.h
   - pk_gen.h
   - sk_gen.c
   - sk_gen.h
@@ -265,7 +254,6 @@ consistency_checks:
   - encrypt.h
   - fft_tr.h
   - operations.c
-  - operations.h
   - sk_gen.c
   - sk_gen.h
   - transpose.c
@@ -283,7 +271,6 @@ consistency_checks:
   - decrypt.h
   - encrypt.h
   - operations.c
-  - operations.h
   - pk_gen.h
   - sk_gen.c
   - sk_gen.h
@@ -300,7 +287,6 @@ consistency_checks:
   - decrypt.h
   - encrypt.h
   - operations.c
-  - operations.h
   - sk_gen.c
   - sk_gen.h
   - transpose.c
@@ -318,7 +304,6 @@ consistency_checks:
   - decrypt.h
   - encrypt.h
   - operations.c
-  - operations.h
   - pk_gen.h
   - sk_gen.c
   - sk_gen.h
@@ -335,7 +320,6 @@ consistency_checks:
   - decrypt.h
   - encrypt.h
   - operations.c
-  - operations.h
   - sk_gen.c
   - sk_gen.h
   - transpose.c
@@ -353,7 +337,6 @@ consistency_checks:
   - decrypt.h
   - encrypt.h
   - operations.c
-  - operations.h
   - pk_gen.h
   - sk_gen.c
   - sk_gen.h

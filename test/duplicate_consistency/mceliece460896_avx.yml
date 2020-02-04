@@ -8,7 +8,6 @@ consistency_checks:
   - decrypt.h
   - encrypt.h
   - operations.c
-  - operations.h
   - sk_gen.c
   - sk_gen.h
   source:
@@ -23,7 +22,6 @@ consistency_checks:
   - decrypt.h
   - encrypt.h
   - operations.c
-  - operations.h
   - sk_gen.c
   - sk_gen.h
   source:
@@ -38,7 +36,6 @@ consistency_checks:
   - decrypt.h
   - encrypt.h
   - operations.c
-  - operations.h
   - sk_gen.c
   - sk_gen.h
   source:
@@ -53,7 +50,6 @@ consistency_checks:
   - decrypt.h
   - encrypt.h
   - operations.c
-  - operations.h
   - sk_gen.c
   - sk_gen.h
   source:
@@ -68,15 +64,12 @@ consistency_checks:
   - crypto_hash.h
   - decrypt.h
   - encrypt.h
-  - gf.c
-  - gf.h
   - operations.c
-  - operations.h
   - params.h
   - sk_gen.c
   - sk_gen.h
   source:
-    implementation: vec
+    implementation: clean
     scheme: mceliece460896
 - files:
   - aes256ctr.c
@@ -87,13 +80,14 @@ consistency_checks:
   - crypto_hash.h
   - decrypt.h
   - encrypt.h
+  - gf.c
+  - gf.h
   - operations.c
-  - operations.h
   - params.h
   - sk_gen.c
   - sk_gen.h
   source:
-    implementation: clean
+    implementation: vec
     scheme: mceliece460896
 - files:
   - aes256ctr.c
@@ -106,7 +100,6 @@ consistency_checks:
   - gf.c
   - gf.h
   - operations.c
-  - operations.h
   - params.h
   - sk_gen.c
   - sk_gen.h
@@ -122,7 +115,6 @@ consistency_checks:
   - decrypt.h
   - encrypt.h
   - operations.c
-  - operations.h
   - params.h
   - sk_gen.c
   - sk_gen.h
@@ -139,7 +131,6 @@ consistency_checks:
   - encrypt.h
   - gf.h
   - operations.c
-  - operations.h
   - sk_gen.c
   - sk_gen.h
   source:
@@ -154,7 +145,6 @@ consistency_checks:
   - decrypt.h
   - encrypt.h
   - operations.c
-  - operations.h
   - sk_gen.c
   - sk_gen.h
   source:
@@ -170,7 +160,6 @@ consistency_checks:
   - encrypt.h
   - gf.h
   - operations.c
-  - operations.h
   - sk_gen.c
   - sk_gen.h
   source:
@@ -185,7 +174,6 @@ consistency_checks:
   - decrypt.h
   - encrypt.h
   - operations.c
-  - operations.h
   - sk_gen.c
   - sk_gen.h
   source:
@@ -200,7 +188,20 @@ consistency_checks:
   - decrypt.h
   - encrypt.h
   - operations.c
-  - operations.h
+  - sk_gen.c
+  - sk_gen.h
+  source:
+    implementation: clean
+    scheme: mceliece6960119
+- files:
+  - aes256ctr.c
+  - aes256ctr.h
+  - controlbits.c
+  - controlbits.h
+  - crypto_hash.h
+  - decrypt.h
+  - encrypt.h
+  - operations.c
   - pk_gen.h
   - sk_gen.c
   - sk_gen.h
@@ -216,12 +217,11 @@ consistency_checks:
   - decrypt.h
   - encrypt.h
   - operations.c
-  - operations.h
   - sk_gen.c
   - sk_gen.h
   source:
     implementation: clean
-    scheme: mceliece6960119
+    scheme: mceliece6960119f
 - files:
   - aes256ctr.c
   - aes256ctr.h
@@ -231,7 +231,6 @@ consistency_checks:
   - decrypt.h
   - encrypt.h
   - operations.c
-  - operations.h
   - pk_gen.h
   - sk_gen.c
   - sk_gen.h
@@ -247,12 +246,11 @@ consistency_checks:
   - decrypt.h
   - encrypt.h
   - operations.c
-  - operations.h
   - sk_gen.c
   - sk_gen.h
   source:
     implementation: clean
-    scheme: mceliece6960119f
+    scheme: mceliece8192128
 - files:
   - aes256ctr.c
   - aes256ctr.h
@@ -262,7 +260,6 @@ consistency_checks:
   - decrypt.h
   - encrypt.h
   - operations.c
-  - operations.h
   - pk_gen.h
   - sk_gen.c
   - sk_gen.h
@@ -278,27 +275,10 @@ consistency_checks:
   - decrypt.h
   - encrypt.h
   - operations.c
-  - operations.h
   - sk_gen.c
   - sk_gen.h
   source:
     implementation: clean
-    scheme: mceliece8192128
-- files:
-  - aes256ctr.c
-  - aes256ctr.h
-  - controlbits.c
-  - controlbits.h
-  - crypto_hash.h
-  - decrypt.h
-  - encrypt.h
-  - operations.c
-  - operations.h
-  - pk_gen.h
-  - sk_gen.c
-  - sk_gen.h
-  source:
-    implementation: vec
     scheme: mceliece8192128f
 - files:
   - aes256ctr.c
@@ -309,9 +289,9 @@ consistency_checks:
   - decrypt.h
   - encrypt.h
   - operations.c
-  - operations.h
+  - pk_gen.h
   - sk_gen.c
   - sk_gen.h
   source:
-    implementation: clean
+    implementation: vec
     scheme: mceliece8192128f
