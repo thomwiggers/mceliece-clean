@@ -32,14 +32,15 @@ def test_makefile_dependencies(implementation, impl_path, test_dir,
     sfiles = glob.glob(os.path.join(impl_path, '*.[sS]'))
     incfiles = glob.glob(os.path.join(impl_path, '*.inc'))
     hfiles = glob.glob(os.path.join(impl_path, '*.h'))
-    try:
-        for file in (cfiles + hfiles + sfiles + incfiles):
+    affected_files = []
+    for file in (cfiles + hfiles + sfiles + incfiles):
+        try:
             check_makefile_dependencies(implementation, impl_path, file)
-    except Exception as e:
-        print("Affected file: {}".format(file))
-        raise e
-    finally:
-        destr()
+        except Exception:
+            affected_files.append(os.path.basename(file))
+    if affected_files:
+        raise AssertionError("Affected files:\n" + '\n'.join(affected_files))
+    destr()
 
 
 def touch(time, *files):
@@ -53,8 +54,11 @@ def make_check(path, expect_error=False):
     expected_returncode = 0
     if expect_error:
         expected_returncode = 1 if os.name != 'nt' else 255
-    helpers.make(makeflag, working_dir=path,
-                 expected_returncode=expected_returncode)
+    try:
+        helpers.make(makeflag, working_dir=path,
+                     expected_returncode=expected_returncode)
+    except:
+        print("Did not get expected returncode {}".format(expected_returncode))
 
 
 def check_makefile_dependencies(implementation, impl_path, file):
