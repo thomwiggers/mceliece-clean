@@ -161,8 +161,7 @@ class Implementation:
                 if (platform_['architecture'] == 'x86_64' and
                         platform.architecture()[0] == '32bit'):
                     continue
-                if all([flag in cpuinfo['flags']
-                        for flag in platform_['required_flags']]):
+                if set(platform_['required_flags']) <= cpuinfo['flags']:
                     return True
         return False
 

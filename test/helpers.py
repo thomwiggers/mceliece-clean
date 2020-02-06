@@ -287,7 +287,7 @@ def get_cpu_info():
 
         # CPUINFO is unreliable on Travis CI Macs
         if 'CI' in os.environ and sys.platform == 'darwin':
-            __CPUINFO['flags'] = [
+            __CPUINFO['flags'] = {
                 'aes', 'apic', 'avx1.0', 'clfsh', 'cmov', 'cx16', 'cx8', 'de',
                 'em64t', 'erms', 'f16c', 'fpu', 'fxsr', 'lahf', 'mca', 'mce',
                 'mmx', 'mon', 'msr', 'mtrr', 'osxsave', 'pae', 'pat', 'pcid',
@@ -295,6 +295,8 @@ def get_cpu_info():
                 'rdtscp', 'rdwrfsgs', 'sep', 'smep', 'ss', 'sse', 'sse2',
                 'sse3', 'sse4.1', 'sse4.2', 'ssse3', 'syscall', 'tsc',
                 'tsc_thread_offset', 'tsci', 'tsctmr', 'vme', 'vmm', 'x2apic',
-                'xd', 'xsave']
+                'xd', 'xsave'}
+        else:
+            __CPUINFO['flags'] = set(__CPUINFO['flags'])
 
     return __CPUINFO
