@@ -1,5 +1,8 @@
-#ifndef MC_VEC_H
-#define MC_VEC_H
+#ifndef VEC_H
+#define VEC_H
+#define vec_inv CRYPTO_NAMESPACE(vec_inv)
+#define vec_mul CRYPTO_NAMESPACE(vec_mul)
+#define vec_sq CRYPTO_NAMESPACE(vec_sq)
 
 #include "params.h"
 
@@ -7,19 +10,59 @@
 
 typedef uint64_t vec;
 
-vec MC_vec_setbits(vec b);
+static inline vec vec_setbits(vec b)
+{
+	vec ret = -b;
 
-vec MC_vec_set1_16b(uint16_t v);
+	return ret;
+}
 
-void MC_vec_copy(vec *out, const vec *in);
+static inline vec vec_set1_16b(uint16_t v)
+{
+	vec ret;
 
-vec MC_vec_or_reduce(const vec *a);
+	ret = v;
+	ret |= ret << 16;
+	ret |= ret << 32;
+	
+	return ret;
+}
 
-int MC_vec_testz(vec a);
+static inline void vec_copy(vec * out, vec * in)
+{
+	int i;
 
-void MC_vec_mul(vec *, const vec *, const vec *);
-void MC_vec_sq(vec *, const vec *);
-void MC_vec_inv(vec *, const vec *);
+	for (i = 0; i < GFBITS; i++)
+		out[i] = in[i];
+}
+
+static inline vec vec_or_reduce(vec * a) 
+{
+	int i;
+	vec ret;		
+
+	ret = a[0];
+	for (i = 1; i < GFBITS; i++)
+		ret |= a[i];
+
+	return ret;
+}
+
+static inline int vec_testz(vec a) 
+{
+	a |= a >> 32;
+	a |= a >> 16;
+	a |= a >> 8;
+	a |= a >> 4;
+	a |= a >> 2;
+	a |= a >> 1;
+
+	return (a&1)^1;
+}
+
+void vec_mul(vec *, const vec *, const vec *);
+void vec_sq(vec *, vec *);
+void vec_inv(vec *, vec *);
 
 #endif
 

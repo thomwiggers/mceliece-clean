@@ -13,220 +13,236 @@
 
 #include <stdio.h>
 
-static void scaling(vec256 out[][GFBITS], vec256 inv[][GFBITS], const unsigned char *sk, vec256 *recv) {
-    int i, j;
+static void scaling(vec256 out[][GFBITS], vec256 inv[][GFBITS], const unsigned char *sk, vec256 *recv)
+{
+	int i, j;
 
-    uint64_t sk_int[ GFBITS ];
-    vec256 eval[16][ GFBITS ];
-    vec256 tmp[ GFBITS ];
+	uint64_t sk_int[ GFBITS ];
+	vec256 eval[16][ GFBITS ];
+	vec256 tmp[ GFBITS ];
 
-    // computing inverses
+	// computing inverses
 
-    MC_irr_load(sk_int, sk);
+	irr_load(sk_int, sk);
 
-    MC_fft(eval, sk_int);
+	fft(eval, sk_int);
 
-    for (i = 0; i < 16; i++) {
-        MC_vec256_sq(eval[i], eval[i]);
-    }
+	for (i = 0; i < 16; i++)
+		vec256_sq(eval[i], eval[i]);
 
-    MC_vec256_copy(inv[0], eval[0]);
+	vec256_copy(inv[0], eval[0]);
 
-    for (i = 1; i < 16; i++) {
-        MC_vec256_mul(inv[i], inv[i - 1], eval[i]);
-    }
+	for (i = 1; i < 16; i++)
+		vec256_mul(inv[i], inv[i-1], eval[i]);
 
-    MC_vec256_inv(tmp, inv[15]);
+	vec256_inv(tmp, inv[15]);
 
-    for (i = 14; i >= 0; i--) {
-        MC_vec256_mul(inv[i + 1], tmp, inv[i]);
-        MC_vec256_mul(tmp, tmp, eval[i + 1]);
-    }
+	for (i = 14; i >= 0; i--)
+	{
+		vec256_mul(inv[i+1], tmp, inv[i]);
+		vec256_mul(tmp, tmp, eval[i+1]);
+	}
 
-    MC_vec256_copy(inv[0], tmp);
+	vec256_copy(inv[0], tmp);
+	
+	//
 
-    //
-
-    for (i = 0; i < 16; i++)
-        for (j = 0; j < GFBITS; j++) {
-            out[i][j] = MC_vec256_and(inv[i][j], recv[i]);
-        }
+	for (i = 0; i < 16; i++)
+	for (j = 0; j < GFBITS; j++)
+		out[i][j] = vec256_and(inv[i][j], recv[i]);
 }
 
-static void preprocess(vec128 *recv, const unsigned char *s) {
-    int i;
-    unsigned char r[ 512 ];
+static void preprocess(vec128 *recv, const unsigned char *s)
+{
+	int i;
+	unsigned char r[ 512 ];
 
-    for (i = 0; i < SYND_BYTES; i++) {
-        r[i] = s[i];
-    }
+	for (i = 0; i < SYND_BYTES; i++)    
+		r[i] = s[i];
 
-    for (i = SYND_BYTES; i < 512; i++) {
-        r[i] = 0;
-    }
+	for (i = SYND_BYTES; i < 512; i++) 
+		r[i] = 0;
 
-    for (i = 0; i < 32; i++) {
-        recv[i] = MC_load16(r + i * 16);
-    }
+	for (i = 0; i < 32; i++)
+		recv[i] = load16(r + i*16);
 }
 
-static void postprocess(unsigned char *e, vec128 *err) {
-    int i;
-    unsigned char error8[ (1 << GFBITS) / 8 ];
-    uint64_t v[2];
+static void postprocess(unsigned char * e, vec128 * err)
+{
+	int i;
+	unsigned char error8[ (1 << GFBITS)/8 ];
+	uint64_t v[2];
 
-    for (i = 0; i < 32; i++) {
-        v[0] = MC_vec128_extract(err[i], 0);
-        v[1] = MC_vec128_extract(err[i], 1);
+	for (i = 0; i < 32; i++)
+	{
+		v[0] = vec128_extract(err[i], 0);
+		v[1] = vec128_extract(err[i], 1);
 
-        MC_store8(error8 + i * 16 + 0, v[0]);
-        MC_store8(error8 + i * 16 + 8, v[1]);
-    }
+		store8(error8 + i*16 + 0, v[0]);
+		store8(error8 + i*16 + 8, v[1]);
+	}
 
-    for (i = 0; i < SYS_N / 8; i++) {
-        e[i] = error8[i];
-    }
+	for (i = 0; i < SYS_N/8; i++)
+		e[i] = error8[i];
 }
 
-static void scaling_inv(vec256 out[][GFBITS], vec256 inv[][GFBITS], vec256 *recv) {
-    int i, j;
+static void scaling_inv(vec256 out[][GFBITS], vec256 inv[][GFBITS], vec256 *recv)
+{
+	int i, j;
 
-    for (i = 0; i < 16; i++)
-        for (j = 0; j < GFBITS; j++) {
-            out[i][j] = MC_vec256_and(inv[i][j], recv[i]);
-        }
+	for (i = 0; i < 16; i++)
+	for (j = 0; j < GFBITS; j++)
+		out[i][j] = vec256_and(inv[i][j], recv[i]);
 }
 
-static uint16_t weight_check(unsigned char *e, vec128 *error) {
-    int i;
-    uint16_t w0 = 0;
-    uint16_t w1 = 0;
-    uint16_t check;
+static int weight_check(unsigned char * e, vec128 * error)
+{
+	int i;
+	uint16_t w0 = 0;
+	uint16_t w1 = 0;
+	uint16_t check;
 
-    for (i = 0; i < 32; i++) {
-        w0 += _mm_popcnt_u64( MC_vec128_extract(error[i], 0) );
-        w0 += _mm_popcnt_u64( MC_vec128_extract(error[i], 1) );
-    }
+	for (i = 0; i < 32; i++)
+	{
+		w0 += __builtin_popcountll( vec128_extract(error[i], 0) );
+		w0 += __builtin_popcountll( vec128_extract(error[i], 1) );
+	}
 
-    for (i = 0; i < SYS_N / 8; i++) {
-        w1 += _mm_popcnt_u64( e[i] );
-    }
+	for (i = 0; i < SYS_N/8; i++)
+		w1 += __builtin_popcountll( e[i] );
 
-    check = (w0 ^ SYS_T) | (w1 ^ SYS_T);
-    check -= 1;
-    check >>= 15;
+	check = (w0 ^ SYS_T) | (w1 ^ SYS_T);
+	check -= 1;
+	check >>= 15;
 
-    return check;
+	return check;
 }
 
-static uint16_t synd_cmp(vec128 *s0, vec128 *s1) {
-    int i;
-    vec128 diff;
+static uint64_t synd_cmp(vec128 *s0 , vec128 *s1)
+{
+	int i;
+	vec128 diff;
 
-    diff = MC_vec128_xor(s0[0], s1[0]);
+	diff = vec128_xor(s0[0], s1[0]);
 
-    for (i = 1; i < GFBITS; i++) {
-        diff = MC_vec128_or(diff, MC_vec128_xor(s0[i], s1[i]));
-    }
-
-    return (uint16_t)MC_vec128_testz(diff);
+	for (i = 1; i < GFBITS; i++)
+		diff = vec128_or(diff, vec128_xor(s0[i], s1[i]));
+	
+	return vec128_testz(diff);
 }
 
-static void reformat_128to256(vec256 *out, vec128 *in) {
-    int i;
-    uint64_t v[4];
+static void reformat_128to256(vec256 * out, vec128 * in)
+{
+	int i;
+	uint64_t v[4];
 
-    for (i = 0; i < 16; i++) {
-        v[0] = MC_vec128_extract(in[2 * i + 0], 0);
-        v[1] = MC_vec128_extract(in[2 * i + 0], 1);
-        v[2] = MC_vec128_extract(in[2 * i + 1], 0);
-        v[3] = MC_vec128_extract(in[2 * i + 1], 1);
+	for (i = 0; i < 16; i++)
+	{
+		v[0] = vec128_extract(in[2*i+0], 0);
+		v[1] = vec128_extract(in[2*i+0], 1);
+		v[2] = vec128_extract(in[2*i+1], 0);
+		v[3] = vec128_extract(in[2*i+1], 1);
 
-        out[i] = MC_vec256_set4x(v[0], v[1], v[2], v[3]);
-    }
+		out[i] = vec256_set4x(v[0], v[1], v[2], v[3]);
+	}
 }
 
-static void reformat_256to128(vec128 *out, vec256 *in) {
-    int i;
-    uint64_t v[4];
+static void reformat_256to128(vec128 * out, vec256 * in)
+{
+	int i;
+	uint64_t v[4];
 
-    for (i = 0; i < 16; i++) {
-        v[0] = MC_vec256_extract(in[i], 0);
-        v[1] = MC_vec256_extract(in[i], 1);
-        v[2] = MC_vec256_extract(in[i], 2);
-        v[3] = MC_vec256_extract(in[i], 3);
+	for (i = 0; i < 16; i++)
+	{
+		v[0] = vec256_extract(in[i], 0);
+		v[1] = vec256_extract(in[i], 1);
+		v[2] = vec256_extract(in[i], 2);
+		v[3] = vec256_extract(in[i], 3);
 
-        out[2 * i + 0] = MC_vec128_set2x(v[0], v[1]);
-        out[2 * i + 1] = MC_vec128_set2x(v[2], v[3]);
-    }
+		out[2*i+0] = vec128_set2x(v[0], v[1]);
+		out[2*i+1] = vec128_set2x(v[2], v[3]);
+	}
 }
 
 /* Niederreiter decryption with the Berlekamp decoder */
 /* intput: sk, secret key */
-/*         c, ciphertext (syndrome) */
+/*         s, ciphertext (syndrome) */
 /* output: e, error vector */
 /* return: 0 for success; 1 for failure */
-int MC_decrypt(unsigned char *e, const unsigned char *sk, const unsigned char *c) {
-    int i;
+int decrypt(unsigned char *e, const unsigned char *sk, const unsigned char *s)
+{
+	int i; 
 
-    uint16_t check_synd;
-    uint16_t check_weight;
+	uint16_t check_synd;
+	uint16_t check_weight;
 
-    vec256 inv[ 16 ][ GFBITS ];
-    vec256 scaled[ 16 ][ GFBITS ];
-    vec256 eval[16][ GFBITS ];
+	vec256 inv[ 16 ][ GFBITS ];
+	vec256 scaled[ 16 ][ GFBITS ];
+	vec256 eval[16][ GFBITS ];
 
-    vec128 error128[ 32 ];
-    vec256 error256[ 16 ];
+	vec128 error128[ 32 ];
+	vec256 error256[ 16 ];
 
-    vec128 s_priv[ GFBITS ];
-    vec128 s_priv_cmp[ GFBITS ];
-    uint64_t locator[ GFBITS ];
+	vec128 s_priv[ GFBITS ];
+	vec128 s_priv_cmp[ GFBITS ];
+	uint64_t locator[ GFBITS ];
 
-    vec128 recv128[ 32 ];
-    vec256 recv256[ 16 ];
-    vec256 allone;
+	vec128 recv128[ 32 ];
+	vec256 recv256[ 16 ];
+	vec256 allone;
 
-    uint64_t bits_int[23][32];
+	uint64_t bits_int[23][32];
 
-    // Berlekamp decoder
+	// Berlekamp decoder
 
-    preprocess(recv128, c);
+	preprocess(recv128, s);
 
-    MC_load_bits(bits_int, sk + IRR_BYTES);
-    MC_benes((uint64_t *) recv128, bits_int, 1);
+	load_bits(bits_int, sk + IRR_BYTES);
+	benes((uint64_t *) recv128, bits_int, 1);
 
-    reformat_128to256(recv256, recv128);
+	reformat_128to256(recv256, recv128);
 
-    scaling(scaled, inv, sk, recv256);
-    MC_fft_tr(s_priv, scaled);
-    MC_bm(locator, s_priv);
+	scaling(scaled, inv, sk, recv256);
+	fft_tr(s_priv, scaled);
+	bm(locator, s_priv);
 
-    MC_fft(eval, locator);
+	fft(eval, locator);
 
-    // reencryption and weight check
+	// reencryption and weight check
 
-    allone = MC_vec256_set1_16b(0xFFFF);
+	allone = vec256_set1_16b(0xFFFF);
 
-    for (i = 0; i < 16; i++) {
-        error256[i] = MC_vec256_or_reduce(eval[i]);
-        error256[i] = MC_vec256_xor(error256[i], allone);
-    }
+	for (i = 0; i < 16; i++)
+	{
+		error256[i] = vec256_or_reduce(eval[i]);
+		error256[i] = vec256_xor(error256[i], allone);
+	}
 
-    scaling_inv(scaled, inv, error256);
-    MC_fft_tr(s_priv_cmp, scaled);
+	scaling_inv(scaled, inv, error256);
+	fft_tr(s_priv_cmp, scaled);
 
-    check_synd = synd_cmp(s_priv, s_priv_cmp);
+	check_synd = synd_cmp(s_priv, s_priv_cmp);
 
-    //
+	//
 
-    reformat_256to128(error128, error256);
-    MC_benes((uint64_t *) error128, bits_int, 0);
+	reformat_256to128(error128, error256);
+	benes((uint64_t *) error128, bits_int, 0);
 
-    postprocess(e, error128);
+	postprocess(e, error128);
 
-    check_weight = weight_check(e, error128);
+	check_weight = weight_check(e, error128);
 
-    return 1 - (check_synd & check_weight);
+#ifdef KAT
+  {
+    int k;
+    printf("decrypt e: positions");
+    for (k = 0;k < SYS_N;++k)
+      if (e[k/8] & (1 << (k&7)))
+        printf(" %d",k);
+    printf("\n");
+  }
+#endif
+
+	return 1 - (check_synd & check_weight);
 }
 

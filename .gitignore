@@ -1,6 +1,7 @@
 bin/
-crypto_kem/*/*
-!crypto_kem/*/META.yml
+crypto_kem/
+
+venv/
 
 *.o
 *.a
@@ -13,3 +14,6 @@ crypto_kem/*/*
 
 __pycache__
 testcases/
+
+*/.mypy_cache/*
+KAT/
