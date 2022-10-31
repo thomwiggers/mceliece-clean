@@ -24,7 +24,6 @@ auxiliary-submitters: []
 implementations:
     - name: clean
       version: {{ version }}
-{#
     - name: avx2
       version: {{version}}
       supported_platforms:
@@ -37,4 +36,3 @@ implementations:
             - popcnt{% if "f" in scheme %}
             - bmi1
 {% endif %}
-#}

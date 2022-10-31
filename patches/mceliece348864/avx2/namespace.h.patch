@@ -1,0 +1,9 @@
+--- a/namespace.h	
++++ b/namespace.h	
+@@ -4,4 +4,4 @@
+ #define CRYPTO_NAMESPACE(fun) PQCLEAN_MCELIECE348864_AVX2_ ## fun
+ #define _CRYPTO_NAMESPACE(fun) _PQCLEAN_MCELIECE348864_AVX2_ ## fun
+ 
+-#endif
+\ No newline at end of file
++#endif

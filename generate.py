@@ -23,17 +23,30 @@ JINJAENV = Environment(
 IMPLEMENTATIONS = itertools.product(
     [
         "348864",
-        "460896",
-        "6688128",
-        "6960119",
-        "8192128",
+        # "460896",
+        # "6688128",
+        # "6960119",
+        # "8192128",
     ],
     ("", "f"),
-    [
-        ("ref", "clean"),
-        # ("avx", "avx")
-    ],
+    [("ref", "clean"), ("avx", "avx2")],
 )
+
+
+def generate_sources(sourcefiles):
+    sources = sorted([
+        str(Path(s).name) for s in sourcefiles
+        if s.endswith(".c") or s.endswith(".S")
+    ])
+    headers = sorted([
+        str(Path(s).name) for s in sourcefiles if re.match(r".*\.([h])", s)
+    ])
+    objects = [s.replace(".c", ".o") for s in sources]
+    objects = [obj.replace(".S", ".o") for obj in objects]
+    result = {"sources": sources, "headers": headers, "objects": sorted(objects)}
+    assert all(x.endswith(".o") for x in objects)
+    assert all(x.endswith(".h") for x in headers)
+    return result
 
 
 def get_sizes(scheme):
@@ -110,6 +123,7 @@ def cleanup_file(filename, schemename, impl):
     if len(sys.argv) == 1 or (len(sys.argv) > 1 and sys.argv[1] != "unpatch"):
         apply_patches(filename, schemename, impl)
 
+
 def apply_patches(filename, schemename, impl):
     filename = Path(filename)
     patchdir = Path("patches") / schemename / impl
@@ -132,6 +146,8 @@ def astyle(*paths):
 
 def is_blacklisted(filename):
     if "goal-" in filename:
+        return True
+    if filename.endswith(".q"):
         return True
 
     return False
@@ -168,7 +184,7 @@ for (schemesize, variant, (impl, dst)) in IMPLEMENTATIONS:
         filename = os.path.basename(src_file)
         dest_file = os.path.join(dest_dir, filename)
         shutil.copy2(src_file, dest_dir)
-        if filename[-2:] in (".c", ".h"):
+        if filename[-2:] in (".c", ".h", ".S") or filename.endswith(".data"):
             sourcefiles.append(dest_file)
         cleanup_file(dest_file, scheme, dst)
 
@@ -194,7 +210,7 @@ for (schemesize, variant, (impl, dst)) in IMPLEMENTATIONS:
         dest_file = os.path.join(dest_dir, file)
         shutil.copy(src_file, dest_dir)
         sourcefiles.append(dest_file)
-        replace_in_file(dest_file, "MC_", namespace)
+        replace_in_file(dest_file, "MC_", f"{namespace}_")
 
     astyle(*sourcefiles)
     while len(sys.argv) > 1 and sys.argv[1] == "tidy":
@@ -221,6 +237,8 @@ for (schemesize, variant, (impl, dst)) in IMPLEMENTATIONS:
         break
 
     astyle(*sourcefiles)
+
+    template_vars.update(generate_sources(sourcefiles))
 
     # Render templates
     for tmpl in [f"{dst}/Makefile", "api.h", "crypto_kem.h", "namespace.h"]:

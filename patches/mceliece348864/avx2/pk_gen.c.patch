@@ -1,0 +1,20 @@
+--- a/pk_gen.c	
++++ b/pk_gen.c	
+@@ -121,7 +121,7 @@
+ }
+ 
+ /* extract numbers represented in bitsliced form */
+-static void de_bitslicing(uint64_t * out, const vec256 in[][GFBITS])
++static void de_bitslicing(uint64_t * out, vec256 in[][GFBITS])
+ {
+ 	int i, j, r;
+ 	uint64_t u = 0;
+@@ -209,7 +209,7 @@
+ /* return: 0 if pk is successfully generated, -1 otherwise */
+ int pk_gen(unsigned char * pk, const unsigned char * irr, uint32_t * perm, int16_t * pi)
+ {
+-	const int nBlocks_I = (PK_NROWS + 255) / 256;
++#define nBlocks_I  ((PK_NROWS + 255) / 256)
+ 
+ 	int i, j, k, b;
+ 	int row, c;

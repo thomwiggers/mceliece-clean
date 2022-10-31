@@ -1,0 +1,11 @@
+--- a/bm.h	
++++ b/bm.h	
+@@ -12,7 +12,7 @@
+ 
+ #include "vec128.h"
+ 
+-void bm(uint64_t *, vec128 *);
++void bm(uint64_t out[GFBITS], vec128 in[GFBITS]);
+ 
+ #endif
+ 
