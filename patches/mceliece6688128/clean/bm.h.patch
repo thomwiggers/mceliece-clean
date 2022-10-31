@@ -1,0 +1,15 @@
+--- a/bm.h	
++++ b/bm.h	
+@@ -7,10 +7,11 @@
+ 
+ 
+ #include "namespace.h"
++#include "gf.h"
+ 
+ #define bm CRYPTO_NAMESPACE(bm)
+ 
+-void bm(gf *, gf *);
++void bm(gf *out, gf *s);
+ 
+ #endif
+ 

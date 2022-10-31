@@ -1,0 +1,11 @@
+--- a/synd.h	
++++ b/synd.h	
+@@ -11,7 +11,7 @@
+ 
+ #include "gf.h"
+ 
+-void synd(gf *, gf *, gf *, unsigned char *);
++void synd(gf *out, gf *f, gf *L, const unsigned char *r);
+ 
+ #endif
+ 

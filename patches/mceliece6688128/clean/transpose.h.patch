@@ -1,0 +1,14 @@
+--- a/transpose.h	
++++ b/transpose.h	
+@@ -9,9 +9,9 @@
+ 
+ #define transpose_64x64 CRYPTO_NAMESPACE(transpose_64x64)
+ 
+-#include <stdint.h>
++#include <inttypes.h>
+ 
+-void transpose_64x64(uint64_t *, uint64_t *);
++void transpose_64x64(uint64_t *out, const uint64_t *in);
+ 
+ #endif
+ 

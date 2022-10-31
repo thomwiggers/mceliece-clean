@@ -7,12 +7,12 @@
 
 #define uint64_MINMAX(a,b) \
 do { \
-  uint64_t c = b - a; \
+  uint64_t c = (b) - (a); \
   c >>= 63; \
   c = -c; \
-  c &= a ^ b; \
-  a ^= c; \
-  b ^= c; \
+  c &= (a) ^ (b); \
+  (a) ^= c; \
+  (b) ^= c; \
 } while(0)
 
 static void uint64_sort(uint64_t *x,long long n)

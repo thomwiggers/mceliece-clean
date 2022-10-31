@@ -86,25 +86,33 @@ def cleanup_header(filename):
         fh.writelines(remainder[2:])
 
 
+def unifdef(filename):
+    subprocess.run(["unifdef", "-UKAT", f"-o{filename}", filename])
+
+
 @functools.lru_cache
 def get_nistkat(scheme):
     with (Path("KAT") / scheme / "kat_kem.rsp").open("rb") as katfh:
         kat = katfh.readlines()
         buf = io.BytesIO()
         buf.writelines(kat[2:8])
-        with open("/tmp/debug.rsp", "wb") as fh:
-            fh.write(buf.getvalue())
         sha = hashlib.sha256()
         sha.update(buf.getvalue())
         return sha.hexdigest()
 
 
-def cleanup_file(filename):
+def cleanup_file(filename, schemename, impl):
     if filename.endswith(".h"):
         cleanup_header(filename)
 
+    unifdef(filename)
+
+    if len(sys.argv) == 1 or (len(sys.argv) > 1 and sys.argv[1] != "unpatch"):
+        apply_patches(filename, schemename, impl)
+
+def apply_patches(filename, schemename, impl):
     filename = Path(filename)
-    patchdir = Path("patches") / filename.parent.name
+    patchdir = Path("patches") / schemename / impl
 
     if (patchfile := (patchdir / f"{filename.name}.patch")).exists():
         with patchfile.open() as fh:
@@ -118,7 +126,8 @@ def replace_in_file(path, text_to_search, replacement_text):
 
 
 def astyle(*paths):
-    subprocess.check_output(["astyle", f"--options=.astylerc", *paths])
+    if len(sys.argv) > 1 and sys.argv[1] == "tidy":
+        subprocess.check_output(["astyle", f"--options=.astylerc", *paths])
 
 
 def is_blacklisted(filename):
@@ -158,10 +167,10 @@ for (schemesize, variant, (impl, dst)) in IMPLEMENTATIONS:
             continue
         filename = os.path.basename(src_file)
         dest_file = os.path.join(dest_dir, filename)
-        shutil.copy(src_file, dest_dir)
+        shutil.copy2(src_file, dest_dir)
         if filename[-2:] in (".c", ".h"):
             sourcefiles.append(dest_file)
-        cleanup_file(dest_file)
+        cleanup_file(dest_file, scheme, dst)
 
     # Copy additional files
     for file in [

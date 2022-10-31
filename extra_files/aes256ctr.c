@@ -1,6 +1,6 @@
 #include "aes256ctr.h"
 
-void MC_aes256ctr(
+void aes256ctr(
     uint8_t *out,
     size_t outlen,
     const uint8_t nonce[AESCTR_NONCEBYTES],

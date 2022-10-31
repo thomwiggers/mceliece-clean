@@ -1,0 +1,11 @@
+--- a/transpose.c	2022-10-27 15:40:59.055810027 +0200
++++ b/transpose.c	
+@@ -8,7 +8,7 @@
+ 
+ /* input: in, a 64x64 matrix over GF(2) */
+ /* output: out, transpose of in */
+-void transpose_64x64(uint64_t * out, uint64_t * in)
++void transpose_64x64(uint64_t * out, const uint64_t * in)
+ {
+ 	int i, j, s, d;
+ 

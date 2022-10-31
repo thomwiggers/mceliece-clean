@@ -1,5 +1,5 @@
---- a/controlbits.c	2022-10-28 16:38:48.514819523 +0200
-+++ b/controlbits.c	2022-10-28 16:38:35.661322957 +0200
+--- a/controlbits.c	2022-10-27 15:40:59.039143156 +0200
++++ b/controlbits.c	
 @@ -3,6 +3,7 @@
  /* See also https://cr.yp.to/papers/controlbits-20200923.pdf */
  
@@ -72,7 +72,16 @@
    }
    /* B = (pi^(-1)<<16)+F */
  
-@@ -179,8 +180,9 @@
+@@ -154,7 +155,7 @@
+ static void layer(int16_t *p, const unsigned char *cb, int s, int n)
+ {
+   int i, j;
+-  int stride = 1 << s;
++  int stride = 1 << (uint8_t)s;
+   int index = 0;
+   int16_t d, m;
+ 
+@@ -179,11 +180,14 @@
  /* output position pos is by definition 1&(out[pos/8]>>(pos&7)) */
  void controlbitsfrompermutation(unsigned char *out,const int16 *pi,long long w,long long n)
  {
@@ -84,3 +93,8 @@
    int i;
    unsigned char *ptr;
  
++  memset(pi_test, 0, n);
++
+   while (1)
+   {
+     memset(out,0,(((2*w-1)*n/2)+7)/8);

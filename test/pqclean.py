@@ -1,6 +1,6 @@
 import glob
 import os
-from typing import Optional
+from typing import Optional, List
 from functools import lru_cache
 
 import yaml
@@ -67,7 +67,7 @@ class Scheme:
         return schemes
 
     @lru_cache(maxsize=None)
-    def metadata(self):
+    def metadata(self) -> Optional[dict]:
         metafile = os.path.join(self.path(), 'META.yml')
         try:
             with open(metafile, encoding='utf-8') as f:
@@ -101,13 +101,13 @@ class Implementation:
             return "lib{}_{}.lib".format(self.scheme.name, self.name)
         return "lib{}_{}.a".format(self.scheme.name, self.name)
 
-    def cfiles(self) -> [str]:
+    def cfiles(self) -> List[str]:
         return glob.glob(os.path.join(self.path(), '*.c'))
 
-    def hfiles(self) -> [str]:
+    def hfiles(self) -> List[str]:
         return glob.glob(os.path.join(self.path(), '*.h'))
 
-    def ofiles(self) -> [str]:
+    def ofiles(self) -> List[str]:
         return glob.glob(os.path.join(self.path(),
                          '*.o' if os.name != 'nt' else '*.obj'))
 
@@ -122,12 +122,8 @@ class Implementation:
 
     @staticmethod
     @lru_cache(maxsize=None)
-    def all_implementations(scheme: Scheme) -> list:
-        implementations = []
-        for d in os.listdir(scheme.path()):
-            if os.path.isdir(os.path.join(scheme.path(), d)):
-                implementations.append(Implementation(scheme, d))
-        return implementations
+    def all_implementations(scheme: Scheme) -> List['Implementation']:
+        return [Implementation(scheme, impl['name']) for impl in scheme.metadata()['implementations']]
 
     @staticmethod
     def all_supported_implementations(scheme: Scheme) -> list:
@@ -145,8 +141,10 @@ class Implementation:
         """
         if os is None:
             os = platform.system()
+        metadata = self.metadata()
+        assert metadata is not None
 
-        for platform_ in self.metadata().get('supported_platforms', []):
+        for platform_ in metadata.get('supported_platforms', []):
             if 'operating_systems' in platform_:
                 if os not in platform_['operating_systems']:
                     return False
@@ -155,7 +153,9 @@ class Implementation:
 
     @lru_cache(maxsize=10000)
     def supported_on_current_platform(self) -> bool:
-        if 'supported_platforms' not in self.metadata():
+        metadata = self.metadata()
+        assert metadata is not None, "Unable to find metadata to decide support"
+        if 'supported_platforms' not in metadata:
             return True
 
         if platform.machine() == 'ppc':
@@ -166,7 +166,7 @@ class Implementation:
 
         cpuinfo = helpers.get_cpu_info()
 
-        for platform_ in self.metadata()['supported_platforms']:
+        for platform_ in metadata['supported_platforms']:
             if platform_['architecture'] == cpuinfo['arch'].lower():
                 # Detect actually running on emulated i386
                 if (platform_['architecture'] == 'x86_64' and
