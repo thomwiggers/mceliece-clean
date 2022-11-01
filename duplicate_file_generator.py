@@ -3,10 +3,13 @@ import os
 import json
 import sys
 import yaml
+import glob
+from pathlib import Path
 
+SPECIAL_FILES = ["Makefile", "Makefile.Microsoft_nmake"]
 
-SPECIAL_FILES = ["Makefile", "Makefile.Microsoft_nmake", "LICENSE"]
-
+DUPLICATE_FILES = [Path(file).name for file in glob.glob("extra_files/*")]
+DUPLICATE_FILES += ["api.h", "crypto_kem.h", "namespace.h"]
 
 def path_to_impl(path):
     (implpath, filename) = os.path.split(path)
@@ -32,7 +35,10 @@ def load_duplicates():
 
 def get_scheme_files(scheme, impl, dest_impl):
     scheme_path = os.path.join("crypto_kem", scheme, dest_impl)
-    files = filter(lambda x: x not in SPECIAL_FILES, os.listdir(scheme_path))
+    files = filter(
+        lambda x: x not in SPECIAL_FILES and x not in DUPLICATE_FILES,
+        os.listdir(scheme_path),
+    )
     return list(files)
 
 
@@ -51,10 +57,14 @@ def render_duplicates_file(duplicates):
         for implementation, files in details.items():
             items.append(
                 {
-                    "source": {"scheme": scheme, "implementation": implementation,},
+                    "source": {
+                        "scheme": scheme,
+                        "implementation": implementation,
+                    },
                     "files": list(sorted(files)),
                 }
             )
+    assert len(items) > 0, "No duplicates?"
     return yaml.dump({"consistency_checks": items}, indent=2)
 
 
@@ -68,14 +78,15 @@ if __name__ == "__main__":
 
     inodes = load_duplicates()
     scheme_files = get_scheme_files(scheme, impl, dest_impl)
-    duplicates = defaultdict(lambda: defaultdict(list))
+    duplicates = defaultdict(lambda: defaultdict(lambda: list(DUPLICATE_FILES)))
     for filename in scheme_files:
-        dups = duplicates_of_file(inodes, filename, scheme, impl)
+        dups = list(duplicates_of_file(inodes, filename, scheme, impl))
+        print(f"{filename} has dups {dups}")
         for (dup_scheme, dup_impl) in dups:
             if dup_impl == "ref":
                 dup_impl = "clean"
-            if dup_impl not in ("clean", "vec"):
-                continue
+            if dup_impl == "avx":
+                dup_impl = "avx2"
             duplicates[dup_scheme][dup_impl].append(filename)
 
     with open(
