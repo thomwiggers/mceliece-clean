@@ -6,10 +6,10 @@ import yaml
 import glob
 from pathlib import Path
 
-SPECIAL_FILES = ["Makefile", "Makefile.Microsoft_nmake"]
+SPECIAL_FILES = ["Makefile", "Makefile.Microsoft_nmake", "gf.h"]
 
 DUPLICATE_FILES = [Path(file).name for file in glob.glob("extra_files/*")]
-DUPLICATE_FILES += ["api.h", "crypto_kem.h", "namespace.h"]
+DUPLICATE_FILES += ["namespace.h", "crypto_kem.h"]
 
 def path_to_impl(path):
     (implpath, filename) = os.path.split(path)
