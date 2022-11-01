@@ -22,14 +22,17 @@ JINJAENV = Environment(
 
 IMPLEMENTATIONS = itertools.product(
     [
-        "348864",
-        # "460896",
-        # "6688128",
-        # "6960119",
-        # "8192128",
+        #"348864",
+        #"460896",
+        #"6688128",
+        #"6960119",
+        "8192128",
     ],
     ("", "f"),
-    [("ref", "clean"), ("avx", "avx2")],
+    [
+        #("ref", "clean"),
+        ("avx", "avx2")
+    ],
 )
 
 
@@ -214,6 +217,7 @@ for (schemesize, variant, (impl, dst)) in IMPLEMENTATIONS:
 
     astyle(*sourcefiles)
     while len(sys.argv) > 1 and sys.argv[1] == "tidy":
+        print("Tidying up")
         result = subprocess.run(
             [
                 "clang-tidy",
@@ -238,14 +242,17 @@ for (schemesize, variant, (impl, dst)) in IMPLEMENTATIONS:
 
     astyle(*sourcefiles)
 
-    template_vars.update(generate_sources(sourcefiles))
-
     # Render templates
-    for tmpl in [f"{dst}/Makefile", "api.h", "crypto_kem.h", "namespace.h"]:
+    for tmpl in ["api.h", "crypto_kem.h", "namespace.h"]:
         basefilename = os.path.basename(tmpl)
         JINJAENV.get_template(f"{tmpl}.j2").stream(**template_vars).dump(
             f"{ dest_dir }/{basefilename}"
         )
+        sourcefiles.append(tmpl)
+
+    template_vars.update(generate_sources(sourcefiles))
+    JINJAENV.get_template(f"{dst}/Makefile.j2").stream(**template_vars).dump(
+            f"{dest_dir}/Makefile")
 
     # Update META file
     JINJAENV.get_template(f"META.yml.j2").stream(**template_vars).dump(

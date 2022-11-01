@@ -1,7 +1,7 @@
 --- a/pk_gen.c	
 +++ b/pk_gen.c	
-@@ -121,7 +121,7 @@
- }
+@@ -165,7 +165,7 @@
+ 
  
  /* extract numbers represented in bitsliced form */
 -static void de_bitslicing(uint64_t * out, const vec256 in[][GFBITS])
@@ -9,24 +9,21 @@
  {
  	int i, j, r;
  	uint64_t u = 0;
-@@ -162,7 +162,7 @@
+@@ -206,7 +206,7 @@
  static void to_bitslicing_2x(vec256 out0[][GFBITS], vec256 out1[][GFBITS], const uint64_t * in)
  {
  	int i, j, k, r;
 -	uint64_t u[2][4];
 +	uint64_t u[2][4] = {{0}};
  
- 	for (i = 0; i < 16; i++)
+ 	for (i = 0; i < 32; i++)
  	for (j = GFBITS-1; j >= 0; j--)
-@@ -207,9 +207,9 @@
- /*        pi, same permutation represented as an array of 16-bit numbers */
+@@ -316,7 +316,7 @@
  /* output: pk, the public key*/
+ /*         pivots, positions of pivots in the 32 x 64 matrix */
  /* return: 0 if pk is successfully generated, -1 otherwise */
--int pk_gen(unsigned char * pk, const unsigned char * irr, uint32_t * perm, int16_t * pi)
-+int pk_gen(unsigned char * pk, const unsigned char * irr, const uint32_t * perm, int16_t * pi)
+-int pk_gen(unsigned char * pk, const unsigned char * irr, uint32_t * perm, int16_t * pi, uint64_t * pivots)
++int pk_gen(unsigned char * pk, const unsigned char * irr, const uint32_t * perm, int16_t * pi, uint64_t * pivots)
  {
--	const int nBlocks_I = (PK_NROWS + 255) / 256;
-+#define nBlocks_I ((PK_NROWS + 255) / 256)
- 
  	int i, j, k, b;
  	int row, c;

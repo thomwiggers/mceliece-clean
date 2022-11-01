@@ -1,0 +1,11 @@
+--- a/benes.c	
++++ b/benes.c	
+@@ -258,7 +258,7 @@
+ 	layer_3(bs, cond[ block ]); block += inc;
+ 	layer_2(bs, cond[ block ]); block += inc;
+ 	layer_1(bs, cond[ block ]); block += inc;
+-	layer_0(bs, cond[ block ]); block += inc;
++	layer_0(bs, cond[ block ]);
+ 
+ 	transpose_64x64(bs);
+ }

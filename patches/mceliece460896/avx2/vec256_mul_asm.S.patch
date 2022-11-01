@@ -1,0 +1,8 @@
+--- a/vec256_mul_asm.S	
++++ b/vec256_mul_asm.S	
+@@ -1,3 +1,5 @@
++#include "namespace.h"
++
+ #define vec256_mul_asm CRYPTO_NAMESPACE(vec256_mul_asm)
+ #define _vec256_mul_asm _CRYPTO_NAMESPACE(vec256_mul_asm)
+ 

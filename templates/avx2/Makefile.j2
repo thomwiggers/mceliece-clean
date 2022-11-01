@@ -10,7 +10,7 @@ OBJECTS = {{ objects | join(" ") | wordwrap(wrapstring=" \\\n\t\t") }}
 
 
 CFLAGS  = -O3 -std=c99 -mpopcnt -mavx2 -Wall -Wextra -pedantic -Werror -Wpedantic \
-		  -Wredundant-decls -Wcast-align -Wmissing-prototypes \
+		  -fwrapv -Wredundant-decls -Wcast-align -Wmissing-prototypes \
 		  -I../../../common/ $(EXTRAFLAGS)
 
 all: $(LIB)

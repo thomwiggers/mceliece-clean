@@ -1,0 +1,11 @@
+--- a/fft.h	
++++ b/fft.h	
+@@ -15,7 +15,7 @@
+ #include "vec128.h"
+ #include "vec256.h"
+ 
+-void fft(vec256 [][GFBITS], vec128 *);
++void fft(vec256 out[][GFBITS], vec128 *in);
+ 
+ #endif
+ 
