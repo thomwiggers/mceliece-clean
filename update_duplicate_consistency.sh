@@ -2,6 +2,7 @@
 set -e
 rmlint -c sh:hardlink schemes/*/{ref,avx} >/dev/null
 ./rmlint.sh -d > /dev/null
+rmlint -c sh:hardlink schemes/*/{ref,avx} >/dev/null
 
 for scheme in schemes/*; do
     scheme=$(basename $scheme)
