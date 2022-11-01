@@ -1,0 +1,12 @@
+--- a/sk_gen.h	
++++ b/sk_gen.h	
+@@ -14,8 +14,7 @@
+ 
+ #include <stdint.h>
+ 
+-int genpoly_gen(gf *, gf *);
+-int perm_check(uint32_t *);
++int genpoly_gen(gf *out, gf *f);
+ 
+ #endif
+ 

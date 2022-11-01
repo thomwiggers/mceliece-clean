@@ -18,27 +18,12 @@
  
  	for (i = 0; i < 32; i++)
  	for (j = GFBITS-1; j >= 0; j--)
-@@ -319,7 +319,7 @@
+@@ -320,7 +320,7 @@
  /* output: pk, the public key*/
  /*         pivots, positions of pivots in the 32 x 64 matrix */
  /* return: 0 if pk is successfully generated, -1 otherwise */
 -int pk_gen(unsigned char * pk, const unsigned char * irr, uint32_t * perm, int16_t * pi, uint64_t * pivots)
 +int pk_gen(unsigned char * pk, const unsigned char * irr, const uint32_t * perm, int16_t * pi, uint64_t * pivots)
  {
- 	int i, j, k, b;
- 	int row, c;
-@@ -513,9 +513,12 @@
- 
- 		if (j + par_width < 27)
- 		{
--			for (row = 0; row < PK_NROWS; row++)
--			for (k = (j == 6)? 2 : 0; k < 28; k++)
-+			for (row = 0; row < PK_NROWS; row++) {
-+            if (j == 6) { k = 2; }
-+            else { k = 0; }
-+			for (; k < 28; k++)
- 				store8(pk + PK_ROW_BYTES * row + j*32 + k*8 - 13*16, par.w[row][k]);
-+            }
- 		}
- 		else
- 		{
+ //	const int nBlocks_I = (PK_NROWS + 255) / 256;
+ 	const int head = PK_NROWS % 64;

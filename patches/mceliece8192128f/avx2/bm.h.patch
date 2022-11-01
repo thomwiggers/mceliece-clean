@@ -1,0 +1,11 @@
+--- a/bm.h	
++++ b/bm.h	
+@@ -13,7 +13,7 @@
+ #include "vec128.h"
+ #include "vec256.h"
+ 
+-void bm(vec128 *, vec256 *);
++void bm(vec128 *out, vec256 *in);
+ 
+ #endif
+ 

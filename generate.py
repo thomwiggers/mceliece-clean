@@ -22,28 +22,24 @@ JINJAENV = Environment(
 
 IMPLEMENTATIONS = itertools.product(
     [
-        #"348864",
-        #"460896",
-        #"6688128",
-        #"6960119",
+        "348864",
+        "460896",
+        "6688128",
+        "6960119",
         "8192128",
     ],
     ("", "f"),
-    [
-        #("ref", "clean"),
-        ("avx", "avx2")
-    ],
+    [("ref", "clean"), ("avx", "avx2")],
 )
 
 
 def generate_sources(sourcefiles):
-    sources = sorted([
-        str(Path(s).name) for s in sourcefiles
-        if s.endswith(".c") or s.endswith(".S")
-    ])
-    headers = sorted([
-        str(Path(s).name) for s in sourcefiles if re.match(r".*\.([h])", s)
-    ])
+    sources = sorted(
+        [str(Path(s).name) for s in sourcefiles if s.endswith(".c") or s.endswith(".S")]
+    )
+    headers = sorted(
+        [str(Path(s).name) for s in sourcefiles if re.match(r".*\.([h])", s)]
+    )
     objects = [s.replace(".c", ".o") for s in sources]
     objects = [obj.replace(".S", ".o") for obj in objects]
     result = {"sources": sources, "headers": headers, "objects": sorted(objects)}
@@ -217,7 +213,7 @@ for (schemesize, variant, (impl, dst)) in IMPLEMENTATIONS:
 
     astyle(*sourcefiles)
     while len(sys.argv) > 1 and sys.argv[1] == "tidy":
-        print("Tidying up")
+        print(f"Tidying up {scheme} {dst}")
         result = subprocess.run(
             [
                 "clang-tidy",
@@ -252,7 +248,8 @@ for (schemesize, variant, (impl, dst)) in IMPLEMENTATIONS:
 
     template_vars.update(generate_sources(sourcefiles))
     JINJAENV.get_template(f"{dst}/Makefile.j2").stream(**template_vars).dump(
-            f"{dest_dir}/Makefile")
+        f"{dest_dir}/Makefile"
+    )
 
     # Update META file
     JINJAENV.get_template(f"META.yml.j2").stream(**template_vars).dump(

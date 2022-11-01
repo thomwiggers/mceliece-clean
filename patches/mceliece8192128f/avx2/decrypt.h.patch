@@ -1,0 +1,11 @@
+--- a/decrypt.h	
++++ b/decrypt.h	
+@@ -9,7 +9,7 @@
+ 
+ #define decrypt CRYPTO_NAMESPACE(decrypt)
+ 
+-int decrypt(unsigned char *, const unsigned char *, const unsigned char *);
++int decrypt(unsigned char *e, const unsigned char *sk, const unsigned char *s);
+ 
+ #endif
+ 

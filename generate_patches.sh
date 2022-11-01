@@ -1,5 +1,12 @@
 #!/bin/zsh
 
+# Using this script:
+# 1. ./generate.py, do not specify tidy!
+# 2. Copy the to-be-fixed scheme/$impl folder to scheme/$fixed
+# 3. Fix the files in scheme/$fixed
+# 4. ./generate_patches.sh $impl $fixed
+# 5. run tests, etc
+# 6. if not done yet, goto 3.
 
 if [[ "$2" == "" ]]; then
     echo "Usage $0 orig patched"
