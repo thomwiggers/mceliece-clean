@@ -129,7 +129,12 @@ def apply_patches(filename, schemename, impl):
 
     if (patchfile := (patchdir / f"{filename.name}.patch")).exists():
         with patchfile.open() as fh:
-            subprocess.run(["patch", "-p1"], cwd=filename.parent, stdin=fh, check=True)
+            subprocess.run(
+                ["patch", "--no-backup-if-mismatch", "-p1"],
+                cwd=filename.parent,
+                stdin=fh,
+                check=True,
+            )
 
 
 def replace_in_file(path, text_to_search, replacement_text):
