@@ -49,7 +49,7 @@ sed -i 's@[0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\} [0-9].*@@' patches/*/$src/*
 
 echo "Symlinking patch files"
 find patches -type l -exec sed -i '' \{\} \;
-rmlint -c sh:symlink --rank-by=p patches/*/clean patches/*/avx2 >/dev/null
+rmlint -o sh -c sh:cmd='echo "symlinking to original $2" && rm -rf "$1" && ln -s -r  "$2" "$1"' --rank-by=p patches/*/clean patches/*/avx2 >/dev/null
 ./rmlint.sh -d > /dev/null
 rm rmlint.json
 
