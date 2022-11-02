@@ -1,1 +1,11 @@
-/home/thom/git/mceliece-clean/patches/mceliece8192128f/avx2/vec128.h.patch
+--- a/vec128.h	
++++ b/vec128.h	
+@@ -143,7 +143,7 @@
+ 		out[i] = vec128_extract(z[i], 0);
+ }
+ 
+-void vec128_mul_GF(vec128 [], vec128 [], gf []);
++void vec128_mul_GF(vec128 out[GFBITS], vec128 v[GFBITS], gf a[SYS_T]);
+ 
+ #endif
+ 

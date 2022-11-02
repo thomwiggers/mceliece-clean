@@ -1,0 +1,77 @@
+--- a/bm.c	
++++ b/bm.c	
+@@ -155,9 +155,15 @@
+ 	vec128 prod[ GFBITS ];
+ 	vec128 interval[GFBITS];
+ 
+-	vec128 db[ GFBITS ][ 2 ];
+-	vec128 BC_tmp[ GFBITS ][ 2 ];
+-	vec128 BC[ GFBITS ][ 2 ];
++    typedef union {
++        vec128 v[GFBITS][2];
++        vec256 V[GFBITS];
++    } db_t;
++
++
++	db_t db;
++	db_t BC_tmp;
++	db_t BC;
+ 
+ 	gf d, b, c0 = 1;
+ 	gf coefs[256];
+@@ -166,11 +172,11 @@
+ 
+ 	get_coefs(coefs, in);
+ 
+-	BC[0][0] = vec128_set2x(0, one << 63);
+-	BC[0][1] = vec128_setzero();
++	BC.v[0][0] = vec128_set2x(0, one << 63);
++	BC.v[0][1] = vec128_setzero();
+ 
+ 	for (i = 1; i < GFBITS; i++)
+-		BC[i][0] = BC[i][1] = vec128_setzero();
++		BC.v[i][0] = BC.v[i][1] = vec128_setzero();
+ 
+ 	b = 1;
+ 	L = 0;
+@@ -182,7 +188,7 @@
+ 
+ 	for (N = 0; N < 256; N++)
+ 	{
+-		vec128_mul_asm(prod, interval, BC[0]+1, 32);
++		vec128_mul_asm(prod, interval, BC.v[0]+1, 32);
+ 		update_asm(interval, coefs[N], 16);
+ 
+ 		d = vec_reduce_asm(prod);
+@@ -194,17 +200,17 @@
+ 
+ 		for (i = 0; i < GFBITS; i++) 
+ 		{
+-			db[i][0] = vec128_setbits((d >> i) & 1);
+-			db[i][1] = vec128_setbits((b >> i) & 1);
++			db.v[i][0] = vec128_setbits((d >> i) & 1);
++			db.v[i][1] = vec128_setbits((b >> i) & 1);
+ 		}
+ 
+-		vec256_mul((vec256*) BC_tmp, (vec256*) db, (vec256*) BC);
++		vec256_mul((vec256*) BC_tmp.V, (vec256*) db.V, (vec256*) BC.V);
+ 
+-		vec128_cmov(BC, mask);
+-		update_asm(BC, c0 & mask, 32);
++		vec128_cmov(BC.v, mask);
++		update_asm(BC.v, c0 & mask, 32);
+ 
+ 		for (i = 0; i < GFBITS; i++) 
+-			BC[i][1] = vec128_xor(BC_tmp[i][0], BC_tmp[i][1]);
++			BC.v[i][1] = vec128_xor(BC_tmp.v[i][0], BC_tmp.v[i][1]);
+ 
+ 		c0 = t >> 32; 
+ 		b = (d & mask) | (b & ~mask);
+@@ -216,6 +222,6 @@
+ 	for (i = 0; i < GFBITS; i++) 
+ 		prod[i] = vec128_setbits((c0 >> i) & 1);
+ 
+-	vec128_mul_asm(out, prod, BC[0]+1, 32);
++	vec128_mul_asm(out, prod, BC.v[0]+1, 32);
+ }
+ 

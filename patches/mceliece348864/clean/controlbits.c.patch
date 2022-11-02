@@ -1,5 +1,5 @@
---- a/controlbits.c	
-+++ b/controlbits.c	
+--- avx2/controlbits.c	2022-11-01 14:18:00.878835159 +0100
++++ fixed/controlbits.c	2022-11-02 09:51:39.539135579 +0100
 @@ -3,6 +3,7 @@
  /* See also https://cr.yp.to/papers/controlbits-20200923.pdf */
  

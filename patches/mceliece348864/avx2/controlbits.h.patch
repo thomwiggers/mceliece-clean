@@ -1,1 +1,10 @@
-/home/thom/git/mceliece-clean/patches/mceliece348864/clean/controlbits.h.patch
+--- a/controlbits.h	
++++ b/controlbits.h	
+@@ -12,6 +12,6 @@
+ 
+ #include <inttypes.h>
+ 
+-extern void controlbitsfrompermutation(unsigned char *,const int16_t *,long long,long long);
++extern void controlbitsfrompermutation(unsigned char *out,const int16_t *pi,long long w,long long n);
+ 
+ #endif

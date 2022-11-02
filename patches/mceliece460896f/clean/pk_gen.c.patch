@@ -1,11 +1,1 @@
---- a/pk_gen.c	
-+++ b/pk_gen.c	
-@@ -128,7 +128,7 @@
- 
- /* input: secret key sk */
- /* output: public key pk */
--int pk_gen(unsigned char * pk, unsigned char * sk, uint32_t * perm, int16_t * pi, uint64_t * pivots)
-+int pk_gen(unsigned char * pk, unsigned char * sk, const uint32_t * perm, int16_t * pi, uint64_t * pivots)
- {
- 	int i, j, k;
- 	int row, c;
+/home/thom/git/mceliece-clean/patches/mceliece348864f/clean/pk_gen.c.patch

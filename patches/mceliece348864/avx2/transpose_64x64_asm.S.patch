@@ -1,1 +1,8 @@
-/home/thom/git/mceliece-clean/patches/mceliece8192128f/avx2/transpose_64x64_asm.S.patch
+--- a/transpose_64x64_asm.S	
++++ b/transpose_64x64_asm.S	
+@@ -1,3 +1,5 @@
++#include "namespace.h"
++
+ #define MASK0_0 CRYPTO_NAMESPACE(MASK0_0)
+ #define _MASK0_0 _CRYPTO_NAMESPACE(MASK0_0)
+ #define MASK0_1 CRYPTO_NAMESPACE(MASK0_1)

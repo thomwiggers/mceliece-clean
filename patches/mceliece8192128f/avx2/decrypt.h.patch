@@ -1,11 +1,1 @@
---- a/decrypt.h	
-+++ b/decrypt.h	
-@@ -9,7 +9,7 @@
- 
- #define decrypt CRYPTO_NAMESPACE(decrypt)
- 
--int decrypt(unsigned char *, const unsigned char *, const unsigned char *);
-+int decrypt(unsigned char *e, const unsigned char *sk, const unsigned char *s);
- 
- #endif
- 
+/home/thom/git/mceliece-clean/patches/mceliece348864/avx2/decrypt.h.patch

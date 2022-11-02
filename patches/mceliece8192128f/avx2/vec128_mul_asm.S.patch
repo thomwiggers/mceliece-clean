@@ -1,8 +1,1 @@
---- a/vec128_mul_asm.S	
-+++ b/vec128_mul_asm.S	
-@@ -1,3 +1,5 @@
-+#include "namespace.h"
-+
- #define vec128_mul_asm CRYPTO_NAMESPACE(vec128_mul_asm)
- #define _vec128_mul_asm _CRYPTO_NAMESPACE(vec128_mul_asm)
- 
+/home/thom/git/mceliece-clean/patches/mceliece348864/avx2/vec128_mul_asm.S.patch

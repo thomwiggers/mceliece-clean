@@ -31,11 +31,8 @@ for scheme in *; do
                 echo "$scheme/$f was patched"
                 patchfile=../../patches/"$scheme"/"$f".patch
                 echo "${output}" > $patchfile
-                sed -i 's@--- '"$f"'@--- '"${f/$src/a}"'@' $patchfile
-                sed -i 's@+++ '"${f/$src/$dst}"'@+++ '"${f/$src/b}"'@' $patchfile
                 # delete dates for rmdiff purposes
                 sed -i 's@[0-9]\{4\}-[0-9]\{2\}.*@@' $patchfile
-
             fi
         done
     else
@@ -45,7 +42,14 @@ for scheme in *; do
 done
 popd
 
-rmlint -c sh:symlink --rank-by=ap patches/*/clean patches/*/avx2 >/dev/null
+echo "Cleaning up patch files"
+sed -i 's@--- '${src}'/@--- a/@'                      patches/*/$src/*
+sed -i 's@\+\+\+ '${dst}'/@+++ b/@'                   patches/*/$src/*
+sed -i 's@[0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\} [0-9].*@@' patches/*/$src/*
+
+echo "Symlinking patch files"
+find patches -type l -exec sed -i '' \{\} \;
+rmlint -c sh:symlink --rank-by=p patches/*/clean patches/*/avx2 >/dev/null
 ./rmlint.sh -d > /dev/null
 rm rmlint.json
 

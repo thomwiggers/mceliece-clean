@@ -1,8 +1,1 @@
---- a/vec_reduce_asm.S	
-+++ b/vec_reduce_asm.S	
-@@ -1,3 +1,5 @@
-+#include "namespace.h"
-+
- #define vec_reduce_asm CRYPTO_NAMESPACE(vec_reduce_asm)
- #define _vec_reduce_asm _CRYPTO_NAMESPACE(vec_reduce_asm)
- 
+/home/thom/git/mceliece-clean/patches/mceliece348864/avx2/vec_reduce_asm.S.patch

@@ -1,1 +1,18 @@
-/home/thom/git/mceliece-clean/patches/mceliece348864/clean/sk_gen.h.patch
+--- a/sk_gen.h	
++++ b/sk_gen.h	
+@@ -8,14 +8,12 @@
+ #include "namespace.h"
+ 
+ #define genpoly_gen CRYPTO_NAMESPACE(genpoly_gen)
+-#define perm_check CRYPTO_NAMESPACE(perm_check)
+ 
+ #include "gf.h"
+ 
+ #include <stdint.h>
+ 
+-int genpoly_gen(gf *, gf *);
+-int perm_check(uint32_t *);
++int genpoly_gen(gf *out, gf *f);
+ 
+ #endif
+ 
