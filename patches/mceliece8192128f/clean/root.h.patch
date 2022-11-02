@@ -1,13 +1,1 @@
---- a/root.h	
-+++ b/root.h	
-@@ -12,8 +12,8 @@
- 
- #include "gf.h"
- 
--gf eval(gf *, gf);
--void root(gf *, gf *, gf *);
-+gf eval(gf *f, gf a);
-+void root(gf *out, gf *f, gf *L);
- 
- #endif
- 
+/home/thom/git/mceliece-clean/patches/mceliece348864/clean/root.h.patch

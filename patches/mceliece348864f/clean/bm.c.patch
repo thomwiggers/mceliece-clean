@@ -1,16 +1,1 @@
---- a/bm.c	
-+++ b/bm.c	
-@@ -3,11 +3,10 @@
-   see http://crypto.stanford.edu/~mironov/cs359/massey.pdf
- */
- 
--#include "params.h"
--#include "gf.h"
- #include "bm.h"
-+#include "params.h"
- 
--#define min(a, b) ((a < b) ? a : b)
-+#define min(a, b) (((a) < (b)) ? (a) : (b))
- 
- /* the Berlekamp-Massey algorithm */
- /* input: s, sequence of field elements */
+/home/thom/git/mceliece-clean/patches/mceliece348864/clean/bm.c.patch

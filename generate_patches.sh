@@ -45,4 +45,8 @@ for scheme in *; do
 done
 popd
 
+rmlint -c sh:symlink --rank-by=ap patches/*/clean patches/*/avx2 >/dev/null
+./rmlint.sh -d > /dev/null
+rm rmlint.json
+
 ./generate.py tidy

@@ -1,17 +1,1 @@
---- a/benes.h	
-+++ b/benes.h	
-@@ -9,12 +9,11 @@
- 
- #define benes CRYPTO_NAMESPACE(benes)
- #define load_bits CRYPTO_NAMESPACE(load_bits)
--#define support_gen CRYPTO_NAMESPACE(support_gen)
- 
- #include "vec128.h"
- 
--void load_bits(vec128 [][32], const unsigned char *);
--void benes(vec128 *, vec128 [][32], int);
-+void load_bits(vec128 bits_int[][32], const unsigned char *bits);
-+void benes(vec128 *r, vec128 b[][32], int rev);
- 
- #endif
- 
+/home/thom/git/mceliece-clean/patches/mceliece8192128f/avx2/benes.h.patch

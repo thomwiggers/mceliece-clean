@@ -1,13 +1,1 @@
---- a/benes.h	
-+++ b/benes.h	
-@@ -12,8 +12,8 @@
- 
- #include "gf.h"
- 
--void apply_benes(unsigned char *, const unsigned char *, int);
--void support_gen(gf *, const unsigned char *);
-+void apply_benes(unsigned char *r, const unsigned char *bits, int rev);
-+void support_gen(gf *s, const unsigned char *c);
- 
- #endif
- 
+/home/thom/git/mceliece-clean/patches/mceliece348864/clean/benes.h.patch

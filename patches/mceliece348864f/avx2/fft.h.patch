@@ -1,11 +1,1 @@
---- a/fft.h	
-+++ b/fft.h	
-@@ -15,7 +15,7 @@
- #include "vec128.h"
- #include "vec256.h"
- 
--void fft(vec256 [][GFBITS], uint64_t *);
-+void fft(vec256 out[][GFBITS], uint64_t *in);
- 
- #endif
- 
+/home/thom/git/mceliece-clean/patches/mceliece348864/avx2/fft.h.patch

@@ -1,8 +1,1 @@
---- a/consts.S	
-+++ b/consts.S	
-@@ -1,3 +1,5 @@
-+#include "namespace.h"
-+
- #define MASK0_0 CRYPTO_NAMESPACE(MASK0_0)
- #define _MASK0_0 _CRYPTO_NAMESPACE(MASK0_0)
- #define MASK0_1 CRYPTO_NAMESPACE(MASK0_1)
+/home/thom/git/mceliece-clean/patches/mceliece6688128f/avx2/consts.S.patch

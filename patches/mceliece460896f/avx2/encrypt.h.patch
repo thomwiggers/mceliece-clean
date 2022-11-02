@@ -1,11 +1,1 @@
---- a/encrypt.h	
-+++ b/encrypt.h	
-@@ -9,7 +9,7 @@
- 
- #define encrypt CRYPTO_NAMESPACE(encrypt)
- 
--void encrypt(unsigned char *, const unsigned char *, unsigned char *);
-+void encrypt(unsigned char *s, const unsigned char *pk, unsigned char *e);
- 
- #endif
- 
+/home/thom/git/mceliece-clean/patches/mceliece8192128f/avx2/encrypt.h.patch
