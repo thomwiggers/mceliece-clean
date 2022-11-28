@@ -42,7 +42,13 @@ def generate_sources(sourcefiles):
     )
     objects = [s.replace(".c", ".o") for s in sources]
     objects = [obj.replace(".S", ".o") for obj in objects]
-    result = {"sources": sources, "headers": headers, "objects": sorted(objects)}
+    objects_ms = [obj.replace(".o", ".obj") for obj in objects]
+    result = {
+        "sources": sources,
+        "headers": headers,
+        "objects": sorted(objects),
+        "objects_ms": sorted(objects_ms),
+    }
     assert all(x.endswith(".o") for x in objects)
     assert all(x.endswith(".h") for x in headers)
     return result

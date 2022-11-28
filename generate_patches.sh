@@ -56,6 +56,5 @@ echo "Symlinking patch files"
 find patches -type l -exec sed -i '' \{\} \;
 rmlint -o sh:rmlint.sh -c sh:cmd='echo "symlinking to original $2" && rm -rf "$1" && ln -s -r  "$2" "$1"' --rank-by=p patches/*/clean patches/*/avx2 > /dev/null
 ./rmlint.sh -d > /dev/null
-rm rmlint.json
 
 ./generate.py tidy

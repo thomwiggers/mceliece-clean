@@ -1,9 +1,8 @@
 # This Makefile can be used with GNU Make or BSD Make
 
-LIBRARY = lib{{scheme}}.lib
+LIBRARY = lib{{scheme}}_clean.lib
 
-OBJECTS = aes256ctr.obj benes.obj bm.obj controlbits.obj decrypt.obj encrypt.obj gf.obj \
-	  operations.obj pk_gen.obj root.obj sk_gen.obj synd.obj transpose.obj util.obj
+OBJECTS = {{ objects_ms | join(" ") | wordwrap(wrapstring=" \\\n\t\t") }}
 
 # Warning C4146 is raised when a unary minus operator is applied to an
 # unsigned type; this has nonetheless been standard and portable for as
