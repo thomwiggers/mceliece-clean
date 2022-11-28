@@ -1,0 +1,11 @@
+--- a/operations.c	
++++ b/operations.c	
+@@ -53,7 +53,7 @@
+ 
+ 	//
+ 
+-	ret_decrypt = decrypt(e, sk + 40, c);
++	ret_decrypt = (unsigned char)decrypt(e, sk + 40, c);
+ 
+ 	m = ret_decrypt;
+ 	m -= 1;

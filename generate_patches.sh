@@ -18,12 +18,15 @@ dst=$2
 
 ./generate.py unpatch
 
+echo "Unsymlinking patch files"
+find patches -type l -exec sed -i '' \{\} \;
+
 pushd crypto_kem
 for scheme in *; do
     pushd $scheme
     if [ -d $dst ]; then
         for f in ${src}/*; do
-            output="$(diff -u "$f" "${f/$src/$dst}")"
+            output="$(diff -Zu "$f" "${f/$src/$dst}")"
 
             if [[ "$output" == "" ]]; then
                 echo "$scheme/$f is unchanged"
@@ -32,7 +35,7 @@ for scheme in *; do
                 patchfile=../../patches/"$scheme"/"$f".patch
                 echo "${output}" > $patchfile
                 # delete dates for rmdiff purposes
-                sed -i 's@[0-9]\{4\}-[0-9]\{2\}.*@@' $patchfile
+                sed -i 's@ \+[0-9]\{4\}-[0-9]\{2\}.*@@' $patchfile
             fi
         done
     else
@@ -47,9 +50,11 @@ sed -i 's@--- '${src}'/@--- a/@'                      patches/*/$src/*
 sed -i 's@\+\+\+ '${dst}'/@+++ b/@'                   patches/*/$src/*
 sed -i 's@[0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\} [0-9].*@@' patches/*/$src/*
 
+set -e
+
 echo "Symlinking patch files"
 find patches -type l -exec sed -i '' \{\} \;
-rmlint -o sh -c sh:cmd='echo "symlinking to original $2" && rm -rf "$1" && ln -s -r  "$2" "$1"' --rank-by=p patches/*/clean patches/*/avx2 >/dev/null
+rmlint -o sh:rmlint.sh -c sh:cmd='echo "symlinking to original $2" && rm -rf "$1" && ln -s -r  "$2" "$1"' --rank-by=p patches/*/clean patches/*/avx2 > /dev/null
 ./rmlint.sh -d > /dev/null
 rm rmlint.json
 

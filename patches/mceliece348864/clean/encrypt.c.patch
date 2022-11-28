@@ -1,0 +1,11 @@
+--- a/encrypt.c	
++++ b/encrypt.c	
+@@ -97,7 +97,7 @@
+ 
+ 		for (j = 0; j < SYS_T; j++)
+ 		{
+-			mask = same_mask(i, (ind[j] >> 3));
++			mask = same_mask((uint16_t)i, ind[j] >> 3);
+ 
+ 			e[i] |= val[j] & mask;
+ 		}

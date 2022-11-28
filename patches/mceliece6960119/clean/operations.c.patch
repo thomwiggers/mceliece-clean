@@ -1,0 +1,29 @@
+--- a/operations.c	
++++ b/operations.c	
+@@ -55,7 +55,7 @@
+ 
+ 	// clear outputs (set to all 0's) if padding bits are not all zero
+ 
+-	mask = padding_ok;
++	mask = (unsigned char)padding_ok;
+ 	mask ^= 0xFF;
+ 
+ 	for (i = 0; i < SYND_BYTES; i++)
+@@ -103,7 +103,7 @@
+ 
+ 	padding_ok = check_c_padding(c);
+ 
+-	ret_decrypt = decrypt(e, sk + 40, c);
++	ret_decrypt = (unsigned char)decrypt(e, sk + 40, c);
+ 
+ 	m = ret_decrypt;
+ 	m -= 1;
+@@ -120,7 +120,7 @@
+ 
+ 	// clear outputs (set to all 1's) if padding bits are not all zero
+ 
+-	mask = padding_ok;
++	mask = (unsigned char)padding_ok;
+ 
+ 	for (i = 0; i < 32; i++)
+ 		key[i] |= mask;
