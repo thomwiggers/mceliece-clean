@@ -1,11 +1,1 @@
---- a/synd.c	2022-10-27 15:40:59.055810027 +0200
-+++ b/synd.c	
-@@ -11,7 +11,7 @@
- 
- /* input: Goppa polynomial f, support L, received word r */
- /* output: out, the syndrome of length 2t */
--void synd(gf *out, gf *f, gf *L, unsigned char *r)
-+void synd(gf *out, gf *f, gf *L, const unsigned char *r)
- {
- 	int i, j;
- 	gf e, e_inv, c;
+../../mceliece348864/clean/synd.c.patch

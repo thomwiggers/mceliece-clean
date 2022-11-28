@@ -1,1 +1,11 @@
-../../mceliece6688128/clean/pk_gen.c.patch
+--- a/pk_gen.c	
++++ b/pk_gen.c	
+@@ -33,7 +33,7 @@
+ 
+ /* input: secret key sk */
+ /* output: public key pk */
+-int pk_gen(unsigned char * pk, unsigned char * sk, uint32_t * perm, int16_t * pi)
++int pk_gen(unsigned char * pk, unsigned char * sk, const uint32_t * perm, int16_t * pi)
+ {
+ 	unsigned char *pk_ptr = pk;
+ 

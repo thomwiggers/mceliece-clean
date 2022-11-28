@@ -1,5 +1,5 @@
---- avx2/encrypt.h	2022-11-02 10:21:07.854039995 +0100
-+++ fixed/encrypt.h	2022-11-02 10:19:02.026787273 +0100
+--- a/encrypt.h	
++++ b/encrypt.h	
 @@ -9,7 +9,7 @@
  
  #define encrypt CRYPTO_NAMESPACE(encrypt)

@@ -1,5 +1,5 @@
---- avx2/controlbits.h	2022-11-02 10:21:07.820706507 +0100
-+++ fixed/controlbits.h	2022-11-02 10:19:02.026787273 +0100
+--- a/controlbits.h	
++++ b/controlbits.h	
 @@ -12,6 +12,6 @@
  
  #include <inttypes.h>
