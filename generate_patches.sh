@@ -16,7 +16,7 @@ fi
 src=$1
 dst=$2
 
-./generate.py unpatch
+python3 ./generate.py unpatch
 
 echo "Unsymlinking patch files"
 find patches -type l -exec sed -i '' \{\} \;
@@ -26,7 +26,7 @@ for scheme in *; do
     pushd $scheme
     if [ -d $dst ]; then
         for f in ${src}/*; do
-            output="$(diff -Zu "$f" "${f/$src/$dst}")"
+            output="$(diff -bu "$f" "${f/$src/$dst}")"
 
             if [[ "$output" == "" ]]; then
                 echo "$scheme/$f is unchanged"
@@ -54,7 +54,7 @@ set -e
 
 echo "Symlinking patch files"
 find patches -type l -exec sed -i '' \{\} \;
-rmlint -o sh:rmlint.sh -c sh:cmd='echo "symlinking to original $2" && rm -rf "$1" && ln -s -r  "$2" "$1"' --rank-by=p patches/*/clean patches/*/avx2 > /dev/null
+rmlint -o sh:rmlint.sh -c sh:cmd='echo "symlinking to original $2" && rm -rf "$1" && ln -s "$2" "$1"' --rank-by=p patches/*/clean patches/*/avx2 > /dev/null
 ./rmlint.sh -d > /dev/null
 
 ./generate.py tidy
