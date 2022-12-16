@@ -1,1 +1,17 @@
-../../mceliece348864/avx2/vec256_mul_asm.S.patch
+--- a/vec256_mul_asm.S	
++++ b/vec256_mul_asm.S	
+@@ -1,3 +1,5 @@
++#include "namespace.h"
++
+ #define vec256_mul_asm CRYPTO_NAMESPACE(vec256_mul_asm)
+ #define _vec256_mul_asm _CRYPTO_NAMESPACE(vec256_mul_asm)
+ 
+@@ -115,8 +117,6 @@
+ 
+ # qhasm: enter vec256_mul_asm
+ .p2align 5
+-.hidden _vec256_mul_asm
+-.hidden vec256_mul_asm
+ .global _vec256_mul_asm
+ .global vec256_mul_asm
+ _vec256_mul_asm:

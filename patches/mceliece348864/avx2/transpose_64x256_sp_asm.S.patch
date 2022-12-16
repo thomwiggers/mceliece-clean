@@ -6,3 +6,12 @@
  #define MASK0_0 CRYPTO_NAMESPACE(MASK0_0)
  #define _MASK0_0 _CRYPTO_NAMESPACE(MASK0_0)
  #define MASK0_1 CRYPTO_NAMESPACE(MASK0_1)
+@@ -97,8 +99,6 @@
+ 
+ # qhasm: enter transpose_64x256_sp_asm
+ .p2align 5
+-.hidden _transpose_64x256_sp_asm
+-.hidden transpose_64x256_sp_asm
+ .global _transpose_64x256_sp_asm
+ .global transpose_64x256_sp_asm
+ _transpose_64x256_sp_asm:

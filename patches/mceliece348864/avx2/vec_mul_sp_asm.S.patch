@@ -6,3 +6,12 @@
  #define vec_mul_sp_asm CRYPTO_NAMESPACE(vec_mul_sp_asm)
  #define _vec_mul_sp_asm _CRYPTO_NAMESPACE(vec_mul_sp_asm)
  
+@@ -183,8 +185,6 @@
+ 
+ # qhasm: enter vec_mul_sp_asm
+ .p2align 5
+-.hidden _vec_mul_sp_asm
+-.hidden vec_mul_sp_asm
+ .global _vec_mul_sp_asm
+ .global vec_mul_sp_asm
+ _vec_mul_sp_asm:

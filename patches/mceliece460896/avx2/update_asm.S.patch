@@ -1,1 +1,17 @@
-../../mceliece348864/avx2/update_asm.S.patch
+--- a/update_asm.S	
++++ b/update_asm.S	
+@@ -1,3 +1,5 @@
++#include "namespace.h"
++
+ #define update_asm CRYPTO_NAMESPACE(update_asm)
+ #define _update_asm _CRYPTO_NAMESPACE(update_asm)
+ 
+@@ -39,8 +41,6 @@
+ 
+ # qhasm: enter update_asm
+ .p2align 5
+-.hidden _update_asm
+-.hidden update_asm
+ .global _update_asm
+ .global update_asm
+ _update_asm:
