@@ -1,6 +1,24 @@
 --- a/operations.c	
 +++ b/operations.c	
-@@ -53,7 +53,7 @@
+@@ -3,7 +3,6 @@
+ #include "controlbits.h"
+ #include "randombytes.h"
+ #include "crypto_hash.h"
+-#include "encrypt.h"
+ #include "decrypt.h"
+ #include "params.h"
+ #include "sk_gen.h"
+@@ -13,6 +12,9 @@
+ #include <stdint.h>
+ #include <string.h>
+ 
++/* Include last because of issues with unistd.h's encrypt definition */
++#include "encrypt.h"
++
+ int crypto_kem_enc(
+        unsigned char *c,
+        unsigned char *key,
+@@ -53,7 +55,7 @@
  
  	//
  
