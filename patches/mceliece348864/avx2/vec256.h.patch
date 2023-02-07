@@ -1,5 +1,14 @@
 --- a/vec256.h	
 +++ b/vec256.h	
+@@ -30,7 +30,7 @@
+ 	return _mm256_set1_epi32(a);
+ }
+ 
+-static inline vec256 vec256_setzero()
++static inline vec256 vec256_setzero(void)
+ {
+ 	return  _mm256_setzero_si256();
+ }
 @@ -114,8 +114,8 @@
  	vec256_mul_asm(h, f, g);
  }

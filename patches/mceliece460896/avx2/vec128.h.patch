@@ -1,5 +1,14 @@
 --- a/vec128.h	
 +++ b/vec128.h	
+@@ -24,7 +24,7 @@
+ 	return _mm_set1_epi16(a);
+ }
+ 
+-static inline vec128 vec128_setzero() 
++static inline vec128 vec128_setzero(void) 
+ {
+ 	return _mm_setzero_si128();
+ }
 @@ -143,7 +143,7 @@
  		out[i] = vec128_extract(z[i], 0);
  }

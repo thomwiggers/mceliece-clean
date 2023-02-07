@@ -1,0 +1,11 @@
+--- a/vec128.h	
++++ b/vec128.h	
+@@ -23,7 +23,7 @@
+ 	return _mm_set1_epi16(a);
+ }
+ 
+-static inline vec128 vec128_setzero() 
++static inline vec128 vec128_setzero(void) 
+ {
+ 	return _mm_setzero_si128();
+ }
