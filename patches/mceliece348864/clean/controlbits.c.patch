@@ -120,7 +120,7 @@
  {
    int i, j;
 -  int stride = 1 << s;
-+  int stride = 1 << (uint8_t)s;
++  int stride = 1 << (uint8_t)(s & 0x1F);
    int index = 0;
    int16_t d, m;
  
