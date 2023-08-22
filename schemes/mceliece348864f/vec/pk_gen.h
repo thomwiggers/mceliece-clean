@@ -1,13 +1,14 @@
-#ifndef MC_PK_GEN_H
-#define MC_PK_GEN_H
 /*
   This file is for public-key generation
 */
 
+#ifndef PK_GEN_H
+#define PK_GEN_H
+#define pk_gen CRYPTO_NAMESPACE(pk_gen)
 
-#include <stdint.h>
+#include "gf.h"
 
-int MC_pk_gen(uint8_t *, uint32_t *, const uint8_t *);
+int pk_gen(unsigned char *, const unsigned char *, uint32_t *, int16_t *, uint64_t *);
 
 #endif
 

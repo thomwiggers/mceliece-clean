@@ -1,0 +1,20 @@
+--- a/pk_gen.c	
++++ b/pk_gen.c	
+@@ -99,7 +99,7 @@
+ 	for (k = j+1; k < 64; k++)
+ 	{
+ 			d = pi[ row + j ] ^ pi[ row + k ];
+-			d &= same_mask(k, ctz_list[j]);
++			d &= same_mask((uint16_t)k, (uint16_t)ctz_list[j]);
+ 			pi[ row + j ] ^= d;
+ 			pi[ row + k ] ^= d;
+ 	}
+@@ -128,7 +128,7 @@
+ 
+ /* input: secret key sk */
+ /* output: public key pk */
+-int pk_gen(unsigned char * pk, unsigned char * sk, uint32_t * perm, int16_t * pi, uint64_t * pivots)
++int pk_gen(unsigned char * pk, unsigned char * sk, const uint32_t * perm, int16_t * pi, uint64_t * pivots)
+ {
+ 	int i, j, k;
+ 	int row, c;

@@ -1,3 +1,29 @@
+#define MASK0_0 CRYPTO_NAMESPACE(MASK0_0)
+#define _MASK0_0 _CRYPTO_NAMESPACE(MASK0_0)
+#define MASK0_1 CRYPTO_NAMESPACE(MASK0_1)
+#define _MASK0_1 _CRYPTO_NAMESPACE(MASK0_1)
+#define MASK1_0 CRYPTO_NAMESPACE(MASK1_0)
+#define _MASK1_0 _CRYPTO_NAMESPACE(MASK1_0)
+#define MASK1_1 CRYPTO_NAMESPACE(MASK1_1)
+#define _MASK1_1 _CRYPTO_NAMESPACE(MASK1_1)
+#define MASK2_0 CRYPTO_NAMESPACE(MASK2_0)
+#define _MASK2_0 _CRYPTO_NAMESPACE(MASK2_0)
+#define MASK2_1 CRYPTO_NAMESPACE(MASK2_1)
+#define _MASK2_1 _CRYPTO_NAMESPACE(MASK2_1)
+#define MASK3_0 CRYPTO_NAMESPACE(MASK3_0)
+#define _MASK3_0 _CRYPTO_NAMESPACE(MASK3_0)
+#define MASK3_1 CRYPTO_NAMESPACE(MASK3_1)
+#define _MASK3_1 _CRYPTO_NAMESPACE(MASK3_1)
+#define MASK4_0 CRYPTO_NAMESPACE(MASK4_0)
+#define _MASK4_0 _CRYPTO_NAMESPACE(MASK4_0)
+#define MASK4_1 CRYPTO_NAMESPACE(MASK4_1)
+#define _MASK4_1 _CRYPTO_NAMESPACE(MASK4_1)
+#define MASK5_0 CRYPTO_NAMESPACE(MASK5_0)
+#define _MASK5_0 _CRYPTO_NAMESPACE(MASK5_0)
+#define MASK5_1 CRYPTO_NAMESPACE(MASK5_1)
+#define _MASK5_1 _CRYPTO_NAMESPACE(MASK5_1)
+#define transpose_64x256_sp_asm CRYPTO_NAMESPACE(transpose_64x256_sp_asm)
+#define _transpose_64x256_sp_asm _CRYPTO_NAMESPACE(transpose_64x256_sp_asm)
 
 # qhasm: int64 input_0
 
@@ -71,44 +97,46 @@
 
 # qhasm: enter transpose_64x256_sp_asm
 .p2align 5
-.global _MC_transpose_64x256_sp_asm
-.global MC_transpose_64x256_sp_asm
-_MC_transpose_64x256_sp_asm:
-MC_transpose_64x256_sp_asm:
+.hidden _transpose_64x256_sp_asm
+.hidden transpose_64x256_sp_asm
+.global _transpose_64x256_sp_asm
+.global transpose_64x256_sp_asm
+_transpose_64x256_sp_asm:
+transpose_64x256_sp_asm:
 mov %rsp,%r11
 and $31,%r11
 add $0,%r11
 sub %r11,%rsp
 
-# qhasm: mask0 aligned= mem256[ MC_MASK5_0 ]
-# asm 1: vmovapd MC_MASK5_0,>mask0=reg256#1
-# asm 2: vmovapd MC_MASK5_0,>mask0=%ymm0
-vmovapd MC_MASK5_0(%rip),%ymm0
+# qhasm: mask0 aligned= mem256[ MASK5_0 ]
+# asm 1: vmovapd MASK5_0(%rip),>mask0=reg256#1
+# asm 2: vmovapd MASK5_0(%rip),>mask0=%ymm0
+vmovapd MASK5_0(%rip),%ymm0
 
-# qhasm: mask1 aligned= mem256[ MC_MASK5_1 ]
-# asm 1: vmovapd MC_MASK5_1,>mask1=reg256#2
-# asm 2: vmovapd MC_MASK5_1,>mask1=%ymm1
-vmovapd MC_MASK5_1(%rip),%ymm1
+# qhasm: mask1 aligned= mem256[ MASK5_1 ]
+# asm 1: vmovapd MASK5_1(%rip),>mask1=reg256#2
+# asm 2: vmovapd MASK5_1(%rip),>mask1=%ymm1
+vmovapd MASK5_1(%rip),%ymm1
 
-# qhasm: mask2 aligned= mem256[ MC_MASK4_0 ]
-# asm 1: vmovapd MC_MASK4_0,>mask2=reg256#3
-# asm 2: vmovapd MC_MASK4_0,>mask2=%ymm2
-vmovapd MC_MASK4_0(%rip),%ymm2
+# qhasm: mask2 aligned= mem256[ MASK4_0 ]
+# asm 1: vmovapd MASK4_0(%rip),>mask2=reg256#3
+# asm 2: vmovapd MASK4_0(%rip),>mask2=%ymm2
+vmovapd MASK4_0(%rip),%ymm2
 
-# qhasm: mask3 aligned= mem256[ MC_MASK4_1 ]
-# asm 1: vmovapd MC_MASK4_1,>mask3=reg256#4
-# asm 2: vmovapd MC_MASK4_1,>mask3=%ymm3
-vmovapd MC_MASK4_1(%rip),%ymm3
+# qhasm: mask3 aligned= mem256[ MASK4_1 ]
+# asm 1: vmovapd MASK4_1(%rip),>mask3=reg256#4
+# asm 2: vmovapd MASK4_1(%rip),>mask3=%ymm3
+vmovapd MASK4_1(%rip),%ymm3
 
-# qhasm: mask4 aligned= mem256[ MC_MASK3_0 ]
-# asm 1: vmovapd MC_MASK3_0,>mask4=reg256#5
-# asm 2: vmovapd MC_MASK3_0,>mask4=%ymm4
-vmovapd MC_MASK3_0(%rip),%ymm4
+# qhasm: mask4 aligned= mem256[ MASK3_0 ]
+# asm 1: vmovapd MASK3_0(%rip),>mask4=reg256#5
+# asm 2: vmovapd MASK3_0(%rip),>mask4=%ymm4
+vmovapd MASK3_0(%rip),%ymm4
 
-# qhasm: mask5 aligned= mem256[ MC_MASK3_1 ]
-# asm 1: vmovapd MC_MASK3_1,>mask5=reg256#6
-# asm 2: vmovapd MC_MASK3_1,>mask5=%ymm5
-vmovapd MC_MASK3_1(%rip),%ymm5
+# qhasm: mask5 aligned= mem256[ MASK3_1 ]
+# asm 1: vmovapd MASK3_1(%rip),>mask5=reg256#6
+# asm 2: vmovapd MASK3_1(%rip),>mask5=%ymm5
+vmovapd MASK3_1(%rip),%ymm5
 
 # qhasm: x0 = mem256[ input_0 + 0 ]
 # asm 1: vmovupd   0(<input_0=int64#1),>x0=reg256#7
@@ -3630,35 +3658,35 @@ vmovupd   %ymm4,1760(%rdi)
 # asm 2: vmovupd   <x7=%ymm1,2016(<input_0=%rdi)
 vmovupd   %ymm1,2016(%rdi)
 
-# qhasm: mask0 aligned= mem256[ MC_MASK2_0 ]
-# asm 1: vmovapd MC_MASK2_0,>mask0=reg256#1
-# asm 2: vmovapd MC_MASK2_0,>mask0=%ymm0
-vmovapd MC_MASK2_0(%rip),%ymm0
+# qhasm: mask0 aligned= mem256[ MASK2_0 ]
+# asm 1: vmovapd MASK2_0(%rip),>mask0=reg256#1
+# asm 2: vmovapd MASK2_0(%rip),>mask0=%ymm0
+vmovapd MASK2_0(%rip),%ymm0
 
-# qhasm: mask1 aligned= mem256[ MC_MASK2_1 ]
-# asm 1: vmovapd MC_MASK2_1,>mask1=reg256#2
-# asm 2: vmovapd MC_MASK2_1,>mask1=%ymm1
-vmovapd MC_MASK2_1(%rip),%ymm1
+# qhasm: mask1 aligned= mem256[ MASK2_1 ]
+# asm 1: vmovapd MASK2_1(%rip),>mask1=reg256#2
+# asm 2: vmovapd MASK2_1(%rip),>mask1=%ymm1
+vmovapd MASK2_1(%rip),%ymm1
 
-# qhasm: mask2 aligned= mem256[ MC_MASK1_0 ]
-# asm 1: vmovapd MC_MASK1_0,>mask2=reg256#3
-# asm 2: vmovapd MC_MASK1_0,>mask2=%ymm2
-vmovapd MC_MASK1_0(%rip),%ymm2
+# qhasm: mask2 aligned= mem256[ MASK1_0 ]
+# asm 1: vmovapd MASK1_0(%rip),>mask2=reg256#3
+# asm 2: vmovapd MASK1_0(%rip),>mask2=%ymm2
+vmovapd MASK1_0(%rip),%ymm2
 
-# qhasm: mask3 aligned= mem256[ MC_MASK1_1 ]
-# asm 1: vmovapd MC_MASK1_1,>mask3=reg256#4
-# asm 2: vmovapd MC_MASK1_1,>mask3=%ymm3
-vmovapd MC_MASK1_1(%rip),%ymm3
+# qhasm: mask3 aligned= mem256[ MASK1_1 ]
+# asm 1: vmovapd MASK1_1(%rip),>mask3=reg256#4
+# asm 2: vmovapd MASK1_1(%rip),>mask3=%ymm3
+vmovapd MASK1_1(%rip),%ymm3
 
-# qhasm: mask4 aligned= mem256[ MC_MASK0_0 ]
-# asm 1: vmovapd MC_MASK0_0,>mask4=reg256#5
-# asm 2: vmovapd MC_MASK0_0,>mask4=%ymm4
-vmovapd MC_MASK0_0(%rip),%ymm4
+# qhasm: mask4 aligned= mem256[ MASK0_0 ]
+# asm 1: vmovapd MASK0_0(%rip),>mask4=reg256#5
+# asm 2: vmovapd MASK0_0(%rip),>mask4=%ymm4
+vmovapd MASK0_0(%rip),%ymm4
 
-# qhasm: mask5 aligned= mem256[ MC_MASK0_1 ]
-# asm 1: vmovapd MC_MASK0_1,>mask5=reg256#6
-# asm 2: vmovapd MC_MASK0_1,>mask5=%ymm5
-vmovapd MC_MASK0_1(%rip),%ymm5
+# qhasm: mask5 aligned= mem256[ MASK0_1 ]
+# asm 1: vmovapd MASK0_1(%rip),>mask5=reg256#6
+# asm 2: vmovapd MASK0_1(%rip),>mask5=%ymm5
+vmovapd MASK0_1(%rip),%ymm5
 
 # qhasm: x0 = mem256[ input_0 + 0 ]
 # asm 1: vmovupd   0(<input_0=int64#1),>x0=reg256#7

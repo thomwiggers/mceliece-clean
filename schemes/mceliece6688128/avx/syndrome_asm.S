@@ -1,3 +1,5 @@
+#define syndrome_asm CRYPTO_NAMESPACE(syndrome_asm)
+#define _syndrome_asm _CRYPTO_NAMESPACE(syndrome_asm)
 
 # qhasm: int64 input_0
 
@@ -59,10 +61,12 @@
 
 # qhasm: enter syndrome_asm
 .p2align 5
-.global _MC_syndrome_asm
-.global MC_syndrome_asm
-_MC_syndrome_asm:
-MC_syndrome_asm:
+.hidden _syndrome_asm
+.hidden syndrome_asm
+.global _syndrome_asm
+.global syndrome_asm
+_syndrome_asm:
+syndrome_asm:
 mov %rsp,%r11
 and $31,%r11
 add $32,%r11

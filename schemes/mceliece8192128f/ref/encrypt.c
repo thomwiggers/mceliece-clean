@@ -14,110 +14,126 @@
 #include <string.h>
 
 #include "gf.h"
+#include "crypto_declassify.h"
+#include "crypto_uint32.h"
 
-static inline uint8_t same_mask(uint16_t x, uint16_t y) {
-    uint32_t mask;
+static inline crypto_uint32 uint32_is_equal_declassify(uint32_t t,uint32_t u)
+{
+  crypto_uint32 mask = crypto_uint32_equal_mask(t,u);
+  crypto_declassify(&mask,sizeof mask);
+  return mask;
+}
 
-    mask = x ^ y;
-    mask -= 1;
-    mask >>= 31;
-    mask = -mask;
+static inline unsigned char same_mask(uint16_t x, uint16_t y)
+{
+	uint32_t mask;
 
-    return (uint8_t)mask;
+	mask = x ^ y;
+	mask -= 1;
+	mask >>= 31;
+	mask = -mask;
+
+	return mask & 0xFF;
 }
 
 /* output: e, an error vector of weight t */
-static void gen_e(unsigned char *e) {
-    size_t i, j;
-    int eq;
+static void gen_e(unsigned char *e)
+{
+	int i, j, eq;
 
-    uint16_t ind[ SYS_T ];
-    uint8_t *ind8 = (uint8_t *)ind;
-    uint8_t mask;
-    unsigned char val[ SYS_T ];
+	uint16_t ind[ SYS_T ];
+	unsigned char bytes[ sizeof(ind) ];
+	unsigned char mask;	
+	unsigned char val[ SYS_T ];	
 
-    while (1) {
-        randombytes(ind8, sizeof(ind));
-        // Copy to uint16_t ind in a little-endian way
-        for (i = 0; i < sizeof(ind); i += 2) {
-            ind[i / 2] = ind8[i + 1] << 8 | ind8[i];
-        }
+	while (1)
+	{
+		randombytes(bytes, sizeof(bytes));
 
-        for (i = 0; i < SYS_T; i++) {
-            ind[i] &= GFMASK;
-        }
+		for (i = 0; i < SYS_T; i++)
+			ind[i] = load_gf(bytes + i*2);
 
-        // check for repetition
+		// check for repetition
 
-        eq = 0;
+		eq = 0;
 
-        for (i = 1; i < SYS_T; i++) for (j = 0; j < i; j++)
-                if (ind[i] == ind[j]) {
-                    eq = 1;
-                }
+		for (i = 1; i < SYS_T; i++) 
+			for (j = 0; j < i; j++)
+			        if (uint32_is_equal_declassify(ind[i],ind[j]))
+					eq = 1;
 
-        if (eq == 0) {
-            break;
-        }
-    }
+		if (eq == 0)
+			break;
+	}
 
-    for (j = 0; j < SYS_T; j++) {
-        val[j] = 1 << (ind[j] & 7);
-    }
+	for (j = 0; j < SYS_T; j++)
+		val[j] = 1 << (ind[j] & 7);
 
-    for (i = 0; i < SYS_N / 8; i++) {
-        e[i] = 0;
+	for (i = 0; i < SYS_N/8; i++) 
+	{
+		e[i] = 0;
 
-        for (j = 0; j < SYS_T; j++) {
-            mask = same_mask((uint16_t)i, (ind[j] >> 3));
+		for (j = 0; j < SYS_T; j++)
+		{
+			mask = same_mask(i, (ind[j] >> 3));
 
-            e[i] |= val[j] & mask;
-        }
-    }
+			e[i] |= val[j] & mask;
+		}
+	}
 }
 
 /* input: public key pk, error vector e */
 /* output: syndrome s */
-static void syndrome(unsigned char *s, const unsigned char *pk, const unsigned char *e) {
-    unsigned char b, row[SYS_N / 8];
-    const unsigned char *pk_ptr = pk;
+static void syndrome(unsigned char *s, const unsigned char *pk, unsigned char *e)
+{
+	unsigned char b, row[SYS_N/8];
+	const unsigned char *pk_ptr = pk;
 
-    int i, j;
+	int i, j;
 
-    for (i = 0; i < SYND_BYTES; i++) {
-        s[i] = 0;
-    }
+	for (i = 0; i < SYND_BYTES; i++)
+		s[i] = 0;
 
-    for (i = 0; i < PK_NROWS; i++) {
-        for (j = 0; j < SYS_N / 8; j++) {
-            row[j] = 0;
-        }
+	for (i = 0; i < PK_NROWS; i++)	
+	{
+		for (j = 0; j < SYS_N/8; j++) 
+			row[j] = 0;
 
-        for (j = 0; j < PK_ROW_BYTES; j++) {
-            row[ SYS_N / 8 - PK_ROW_BYTES + j ] = pk_ptr[j];
-        }
+		for (j = 0; j < PK_ROW_BYTES; j++) 
+			row[ SYS_N/8 - PK_ROW_BYTES + j ] = pk_ptr[j];
 
-        row[i / 8] |= 1 << (i % 8);
+		row[i/8] |= 1 << (i%8);
+		
+		b = 0;
+		for (j = 0; j < SYS_N/8; j++)
+			b ^= row[j] & e[j];
 
-        b = 0;
-        for (j = 0; j < SYS_N / 8; j++) {
-            b ^= row[j] & e[j];
-        }
+		b ^= b >> 4;
+		b ^= b >> 2;
+		b ^= b >> 1;
+		b &= 1;
 
-        b ^= b >> 4;
-        b ^= b >> 2;
-        b ^= b >> 1;
-        b &= 1;
+		s[ i/8 ] |= (b << (i%8));
 
-        s[ i / 8 ] |= (b << (i % 8));
-
-        pk_ptr += PK_ROW_BYTES;
-    }
+		pk_ptr += PK_ROW_BYTES;
+	}
 }
 
-void MC_encrypt(unsigned char *s, unsigned char *e, const unsigned char *pk) {
-    gen_e(e);
+void encrypt(unsigned char *s, const unsigned char *pk, unsigned char *e)
+{
+	gen_e(e);
 
-    syndrome(s, pk, e);
+#ifdef KAT
+  {
+    int k;
+    printf("encrypt e: positions");
+    for (k = 0;k < SYS_N;++k)
+      if (e[k/8] & (1 << (k&7)))
+        printf(" %d",k);
+    printf("\n");
+  }
+#endif
+
+	syndrome(s, pk, e);
 }
 

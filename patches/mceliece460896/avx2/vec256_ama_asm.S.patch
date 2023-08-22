@@ -1,0 +1,17 @@
+--- a/vec256_ama_asm.S	
++++ b/vec256_ama_asm.S	
+@@ -1,3 +1,5 @@
++#include "namespace.h"
++
+ #define vec256_ama_asm CRYPTO_NAMESPACE(vec256_ama_asm)
+ #define _vec256_ama_asm _CRYPTO_NAMESPACE(vec256_ama_asm)
+ 
+@@ -115,8 +117,6 @@
+ 
+ # qhasm: enter vec256_ama_asm
+ .p2align 5
+-.hidden _vec256_ama_asm
+-.hidden vec256_ama_asm
+ .global _vec256_ama_asm
+ .global vec256_ama_asm
+ _vec256_ama_asm:

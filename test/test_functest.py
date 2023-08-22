@@ -50,12 +50,16 @@ def test_functest(implementation, impl_path, test_dir,
 )
 @helpers.skip_windows()
 @helpers.filtered_test
-@helpers.slow_test
 def test_functest_sanitizers(implementation, impl_path, test_dir,
                              init, destr):
     dest_dir = os.path.join(test_dir, 'bin')
     env = None
-    if platform.machine() == 'ppc' and os.environ.get('CC', 'gcc') == 'clang':
+    if (implementation.scheme.name == "sphincs-sha256-192s-robust"
+            and 'CI' in os.environ
+            and implementation.name == "clean"
+            and 'clang' in os.environ.get('CC', '')):
+        raise unittest.SkipTest("Clang makes this test use too much RAM")
+    if platform.machine() == 'ppc' and 'clang' in os.environ.get('CC', 'gcc'):
         raise unittest.SkipTest("Clang does not support ASAN on ppc")
     elif platform.machine() in ['armv7l', 'aarch64']:
         env = {'ASAN_OPTIONS': 'detect_leaks=0'}
@@ -70,7 +74,12 @@ def test_functest_sanitizers(implementation, impl_path, test_dir,
                  TYPE=implementation.scheme.type,
                  SCHEME=implementation.scheme.name,
                  IMPLEMENTATION=implementation.name,
-                 EXTRAFLAGS='-g -fsanitize=address,undefined',
+                 EXTRAFLAGS=(
+                     '-g -fsanitize=address,undefined '
+                     '-fno-sanitize-recover=undefined '
+                     # TODO(JMS) Remove explicit -latomic if/when gcc fixes:
+                     # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=81358
+                     '-Wno-unused-command-line-argument -latomic'),
                  SCHEME_DIR=impl_path,
                  DEST_DIR=dest_dir,
                  working_dir=os.path.join(test_dir, 'test'),

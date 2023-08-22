@@ -1,79 +1,86 @@
 #include "vec128.h"
 
-vec128 MC_vec128_set1_16b(uint16_t a) {
-    return _mm_set1_epi16(a);
-}
+/* input: v, an element in GF(2^m)[y]/(y^119+y^8+1) in bitsliced form */
+/* input: a, an element in GF(2^m)[y]/(y^119+y^8+1) as an array of coefficients */
+/* output: out, the product of v and a in bitsliced form */
+void vec128_mul_GF(vec128 out[ GFBITS ], vec128 v[ GFBITS ], gf a[ SYS_T ])
+{
+	int i, j;
+	uint64_t buf[GFBITS][4];
+	vec128 prod[GFBITS];
+	uint64_t p[GFBITS];
 
-vec128 MC_vec128_setzero(void) {
-    return _mm_setzero_si128();
-}
+	const uint64_t allone = -1;
 
-vec128 MC_vec128_and(vec128 a, vec128 b) {
-    return _mm_and_si128(a, b);
-}
+	// polynomial multiplication
 
-vec128 MC_vec128_xor(vec128 a, vec128 b) {
-    return _mm_xor_si128(a, b);
-}
+	for (i = 0; i < GFBITS; i++)
+	{
+		buf[i][0] = 0;
+		buf[i][1] = 0;
+		buf[i][2] = 0;
+		buf[i][3] = 0;
+	}
 
-vec128 MC_vec128_or(vec128 a, vec128 b) {
-    return _mm_or_si128(a, b);
-}
+	for (i = SYS_T-1; i >= 0; i--)	
+	{
+		for (j = 0; j < GFBITS; j++) 
+		{
+			buf[j][3] <<= 1;
+			buf[j][3] |= buf[j][2] >> 63;
+			buf[j][2] <<= 1;
+			buf[j][2] |= buf[j][1] >> 63;
+			buf[j][1] <<= 1;
+			buf[j][1] |= buf[j][0] >> 63;
+			buf[j][0] <<= 1;
+		}
 
-vec128 MC_vec128_sll_2x(vec128 a, int s) {
-    return _mm_slli_epi64(a, s);
-}
+		vec128_mul_gf(prod, v, a[i]);
 
-vec128 MC_vec128_srl_2x(vec128 a, int s) {
-    return _mm_srli_epi64(a, s);
-}
+		for (j = 0; j < GFBITS; j++) 
+		{
+			buf[j][0] ^= vec128_extract(prod[j], 0);
+			buf[j][1] ^= vec128_extract(prod[j], 1);
+		}
+	}
+	
+	// reduction modulo y^119 + y^8 + 1
 
-vec128 MC_vec128_set2x(uint64_t a0, uint64_t a1) {
-    return _mm_set_epi64x(a1, a0);
-}
+	for (i = 0; i < GFBITS; i++) 
+	{
+		p[i] = buf[i][3];
 
-vec128 MC_vec128_unpack_low(vec128 a, vec128 b) {
-    return _mm_unpacklo_epi64(a, b);
-}
+		buf[i][2] ^= p[i] >> (SYS_T - 8 - 64);
+		buf[i][1] ^= p[i] << (64 - (SYS_T - 8 - 64));
+		buf[i][2] ^= p[i] >> (SYS_T - 64);
+		buf[i][1] ^= p[i] << (64 - (SYS_T - 64));
+	}
 
-vec128 MC_vec128_unpack_high(vec128 a, vec128 b) {
-    return _mm_unpackhi_epi64(a, b);
-}
+	//
 
-vec128 MC_vec128_setbits(uint64_t a) {
-    return _mm_set1_epi64x(-a);
-}
+	for (i = 0; i < GFBITS; i++) 
+	{
+		p[i] = buf[i][2];
 
-void MC_vec128_copy(vec128 *dest, const vec128 *src) {
-    int i;
+		buf[i][1] ^= p[i] >> (SYS_T - 8 - 64);
+		buf[i][0] ^= p[i] << (64 - (SYS_T - 8 - 64));
+		buf[i][1] ^= p[i] >> (SYS_T - 64);
+		buf[i][0] ^= p[i] << (64 - (SYS_T - 64));
+	}
 
-    for (i = 0; i < GFBITS; i++) {
-        dest[i] = src[i];
-    }
-}
+	//
 
-void MC_vec128_add(vec128 *c, const vec128 *a, const vec128 *b) {
-    int i;
+	for (i = 0; i < GFBITS; i++) 
+	{
+		p[i] = buf[i][1] & (allone << (SYS_T - 64));
 
-    for (i = 0; i < GFBITS; i++) {
-        c[i] = MC_vec128_xor(a[i], b[i]);
-    }
-}
+		buf[i][0] ^= p[i] >> (SYS_T - 8 - 64);
+		buf[i][0] ^= p[i] >> (SYS_T - 64);
+	}
 
-vec128 MC_vec128_or_reduce(const vec128 *a) {
-    int i;
-    vec128 ret;
+	//
 
-    ret = a[0];
-    for (i = 1; i < GFBITS; i++) {
-        ret = MC_vec128_or(ret, a[i]);
-    }
-
-    return ret;
-}
-
-/* bitsliced field multiplications */
-void MC_vec128_mul(vec128 *h, vec128 *f, const vec128 *g) {
-    MC_vec128_mul_asm(h, f, g, 16);
+	for (i = 0; i < GFBITS; i++) 
+		out[i] = vec128_set2x(buf[i][0], buf[i][1] & (allone >> (128 - SYS_T)));
 }
 

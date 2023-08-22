@@ -1,11 +1,12 @@
-#ifndef MC_ENCRYPT_H
-#define MC_ENCRYPT_H
 /*
   This file is for Niederreiter encryption
 */
 
+#ifndef ENCRYPT_H
+#define ENCRYPT_H
+#define encrypt CRYPTO_NAMESPACE(encrypt)
 
-void MC_encrypt(unsigned char *, unsigned char *, const unsigned char *);
+void encrypt(unsigned char *, const unsigned char *, unsigned char *);
 
 #endif
 

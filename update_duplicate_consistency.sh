@@ -1,13 +1,13 @@
 #!/bin/bash
-rmlint -c sh:hardlink schemes/*/* >/dev/null
+set -e
+rmlint -c sh:hardlink schemes/*/{ref,avx} >/dev/null
 ./rmlint.sh -d > /dev/null
+rmlint -c sh:hardlink schemes/*/{ref,avx} >/dev/null
 
 for scheme in schemes/*; do
     scheme=$(basename $scheme)
     python3 duplicate_file_generator.py $scheme ref clean
-    python3 duplicate_file_generator.py $scheme vec vec
-    python3 duplicate_file_generator.py $scheme sse sse
-    python3 duplicate_file_generator.py $scheme avx avx
+    python3 duplicate_file_generator.py $scheme avx avx2
 done
 
 rm rmlint*

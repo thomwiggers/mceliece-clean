@@ -1,10 +1,12 @@
-#ifndef MC_DECRYPT_H
-#define MC_DECRYPT_H
 /*
   This file is for Nieddereiter decryption
 */
 
-int MC_decrypt(unsigned char *, const unsigned char *, const unsigned char *);
+#ifndef DECRYPT_H
+#define DECRYPT_H
+#define decrypt CRYPTO_NAMESPACE(decrypt)
+
+int decrypt(unsigned char *, const unsigned char *, const unsigned char *);
 
 #endif
 

@@ -2,11 +2,13 @@ import atexit
 import functools
 import logging
 import os
+import secrets
 import shutil
+import string
 import subprocess
 import sys
-import tempfile
 import unittest
+from functools import lru_cache
 
 import pqclean
 
@@ -22,6 +24,12 @@ def cleanup_testcases():
 
 TEST_TEMPDIRS = []
 
+ALPHABET = string.ascii_letters + string.digits + '_'
+def mktmpdir(parent, prefix):
+    """Returns a unique directory name"""
+    uniq = ''.join(secrets.choice(ALPHABET) for i in range(8))
+    return os.path.join(parent, "{}_{}".format(prefix, uniq))
+
 
 def isolate_test_files(impl_path, test_prefix,
                        dir=os.path.join('..', 'testcases')):
@@ -34,24 +42,22 @@ def isolate_test_files(impl_path, test_prefix,
         os.mkdir(dir)
     except FileExistsError:
         pass
-    test_dir = tempfile.mkdtemp(prefix=test_prefix, dir=dir)
+    test_dir = mktmpdir(dir, test_prefix)
     test_dir = os.path.abspath(test_dir)
     TEST_TEMPDIRS.append(test_dir)
 
-    # Create layers in folder structure
-    nested_dir = os.path.join(test_dir, 'crypto_bla')
-    os.mkdir(nested_dir)
-    nested_dir = os.path.join(nested_dir, 'scheme')
-    os.mkdir(nested_dir)
-
-    # Create test dependencies structure
-    os.mkdir(os.path.join(test_dir, 'test'))
-
     # the implementation will go here.
-    new_impl_dir = os.path.abspath(os.path.join(nested_dir, 'impl'))
+    scheme_dir = os.path.join(test_dir, 'crypto_bla', 'scheme')
+    new_impl_dir = os.path.abspath(os.path.join(scheme_dir, 'impl'))
 
     def initializer():
         """Isolate the files to be tested"""
+        # Create layers in folder structure
+        os.makedirs(scheme_dir)
+
+        # Create test dependencies structure
+        os.mkdir(os.path.join(test_dir, 'test'))
+
         # Copy common files (randombytes.c, aes.c, ...)
         shutil.copytree(
             os.path.join('..', 'common'), os.path.join(test_dir, 'common'))
@@ -150,16 +156,7 @@ def skip_windows(message="This test is not supported on Windows"):
     return wrapper
 
 
-def slow_test(f):
-    @functools.wraps(f)
-    def wrapper(*args, **kwargs):
-        if ('CI' in os.environ and 'RUN_SLOW' not in os.environ and
-                os.environ.get('TRAVIS_EVENT_TYPE') != 'cron'):
-            raise unittest.SkipTest("Slow test skipped on CI run")
-        return f(*args, **kwargs)
-    return wrapper
-
-
+@lru_cache(maxsize=None)
 def ensure_available(executable):
     """
     Checks if a command is available.
@@ -245,6 +242,8 @@ def permit_test(testname, *args, **kwargs):
             assert diff_result.returncode == 0, \
                 "Got unexpected return code {}".format(diff_result.returncode)
             for diff_line in diff_result.stdout.decode('utf-8').splitlines():
+                # Git still returns UNIX-style paths on Windows, normalize
+                diff_line = os.path.normpath(diff_line)
                 # don't skip test if there are any changes outside schemes
                 if (not diff_line.startswith('crypto_kem') and
                         not diff_line.startswith('crypto_sign') and
@@ -276,27 +275,11 @@ def filtered_test(func):
     return wrapper
 
 
-__CPUINFO = None
-
-
+@lru_cache(maxsize=1)
 def get_cpu_info():
-    global __CPUINFO
-    while __CPUINFO is None or 'flags' not in __CPUINFO:
+    the_info = None
+    while the_info is None or 'flags' not in the_info:
         import cpuinfo
-        __CPUINFO = cpuinfo.get_cpu_info()
+        the_info = cpuinfo.get_cpu_info()
 
-        # CPUINFO is unreliable on Travis CI Macs
-        if 'CI' in os.environ and sys.platform == 'darwin':
-            __CPUINFO['flags'] = {
-                'aes', 'apic', 'avx1.0', 'clfsh', 'cmov', 'cx16', 'cx8', 'de',
-                'em64t', 'erms', 'f16c', 'fpu', 'fxsr', 'lahf', 'mca', 'mce',
-                'mmx', 'mon', 'msr', 'mtrr', 'osxsave', 'pae', 'pat', 'pcid',
-                'pclmulqdq', 'pge', 'popcnt', 'pse', 'pse36', 'rdrand',
-                'rdtscp', 'rdwrfsgs', 'sep', 'smep', 'ss', 'sse', 'sse2',
-                'sse3', 'sse4.1', 'sse4.2', 'ssse3', 'syscall', 'tsc',
-                'tsc_thread_offset', 'tsci', 'tsctmr', 'vme', 'vmm', 'x2apic',
-                'xd', 'xsave'}
-        else:
-            __CPUINFO['flags'] = set(__CPUINFO['flags'])
-
-    return __CPUINFO
+    return the_info

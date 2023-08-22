@@ -1,3 +1,5 @@
+#define vec256_mul_asm CRYPTO_NAMESPACE(vec256_mul_asm)
+#define _vec256_mul_asm _CRYPTO_NAMESPACE(vec256_mul_asm)
 
 # qhasm: int64 input_0
 
@@ -113,10 +115,12 @@
 
 # qhasm: enter vec256_mul_asm
 .p2align 5
-.global _MC_vec256_mul_asm
-.global MC_vec256_mul_asm
-_MC_vec256_mul_asm:
-MC_vec256_mul_asm:
+.hidden _vec256_mul_asm
+.hidden vec256_mul_asm
+.global _vec256_mul_asm
+.global vec256_mul_asm
+_vec256_mul_asm:
+vec256_mul_asm:
 mov %rsp,%r11
 and $31,%r11
 add $0,%r11

@@ -1,0 +1,17 @@
+--- a/syndrome_asm.S	
++++ b/syndrome_asm.S	
+@@ -1,3 +1,5 @@
++#include "namespace.h"
++
+ #define syndrome_asm CRYPTO_NAMESPACE(syndrome_asm)
+ #define _syndrome_asm _CRYPTO_NAMESPACE(syndrome_asm)
+ 
+@@ -61,8 +63,6 @@
+ 
+ # qhasm: enter syndrome_asm
+ .p2align 5
+-.hidden _syndrome_asm
+-.hidden syndrome_asm
+ .global _syndrome_asm
+ .global syndrome_asm
+ _syndrome_asm:

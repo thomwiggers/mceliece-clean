@@ -1,0 +1,11 @@
+--- a/fft_tr.h	
++++ b/fft_tr.h	
+@@ -12,7 +12,7 @@
+ #include "params.h"
+ #include "vec256.h"
+ 
+-void fft_tr(vec256 *, vec256 [][ GFBITS ]);
++void fft_tr(vec256 *out, vec256 in[][ GFBITS ]);
+ 
+ #endif
+ 

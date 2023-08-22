@@ -1,0 +1,32 @@
+#ifndef {{ NS }}_API_H
+#define {{ NS }}_API_H
+
+#include <stdint.h>
+
+#define {{ NS }}_CRYPTO_ALGNAME "Classic McEliece {{ size }}"
+#define {{ NS }}_CRYPTO_PUBLICKEYBYTES {{ pk_bytes }}
+#define {{ NS }}_CRYPTO_SECRETKEYBYTES {{ sk_bytes }}
+#define {{ NS }}_CRYPTO_CIPHERTEXTBYTES {{ ct_bytes }}
+#define {{ NS }}_CRYPTO_BYTES {{ ss_bytes }}
+
+
+int {{ NS }}_crypto_kem_enc(
+    uint8_t *c,
+    uint8_t *key,
+    const uint8_t *pk
+);
+
+int {{ NS }}_crypto_kem_dec(
+    uint8_t *key,
+    const uint8_t *c,
+    const uint8_t *sk
+);
+
+int {{ NS }}_crypto_kem_keypair
+(
+    uint8_t *pk,
+    uint8_t *sk
+);
+
+#endif
+

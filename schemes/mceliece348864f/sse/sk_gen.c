@@ -4,95 +4,146 @@
 
 #include "sk_gen.h"
 
+#include "randombytes.h"
 #include "controlbits.h"
+#include "transpose.h"
 #include "params.h"
 #include "util.h"
+#include "vec.h"
 #include "gf.h"
+#include "crypto_declassify.h"
+#include "crypto_uint16.h"
+
+static inline crypto_uint16 gf_is_zero_declassify(gf t)
+{
+  crypto_uint16 mask = crypto_uint16_zero_mask(t);
+  crypto_declassify(&mask,sizeof mask);
+  return mask;
+}
+
+/* input: v, a list of GF(2^m) elements in bitsliced form */
+/* input: idx, an index */
+/* return: the idx-th element in v */
+static inline gf extract_gf(vec v[GFBITS], int idx)
+{
+	int i;
+	gf ret;	
+
+	ret = 0;
+	for (i = GFBITS-1; i >= 0; i--)
+	{
+		ret <<= 1;
+		ret |= (v[i] >> idx) & 1;
+	}
+
+	return ret;
+}
+
+/* same as extract_gf but reduces return value to 1 bit */
+static inline vec extract_bit(vec v[GFBITS], int idx)
+{
+	int i;
+	vec ret;	
+
+	ret = 0;
+	for (i = GFBITS-1; i >= 0; i--)
+		ret |= v[i];
+
+	return (ret >> idx) & 1;
+}
 
 /* input: f, element in GF((2^m)^t) */
 /* output: out, minimal polynomial of f */
 /* return: 0 for success and -1 for failure */
-int MC_genpoly_gen(gf *out, gf *f) {
-    int i, j, k, c;
+int genpoly_gen(gf *out, gf *f)
+{
+	int i, j, k;
 
-    gf mat[ SYS_T + 1 ][ SYS_T ];
-    gf mask, inv, t;
+	gf t, inv;
 
-    // fill matrix
+	vec v[ GFBITS ], buf[ GFBITS ][ 64 ], mat[ 64 ][ GFBITS ], mask;
 
-    mat[0][0] = 1;
+	// fill matrix
 
-    for (i = 1; i < SYS_T; i++) {
-        mat[0][i] = 0;
-    }
+	buf[0][0] = 1;
+	for (i = 1; i < GFBITS; i++)
+		buf[i][0] = 0;
 
-    for (i = 0; i < SYS_T; i++) {
-        mat[1][i] = f[i];
-    }
+	for (j = 0; j < GFBITS; j++)
+	for (i = SYS_T-1; i >= 0; i--)
+	{
+		v[j] <<= 1;
+		v[j] |= (f[i] >> j) & 1;
+	}
+	
+	for (i = 0; i < GFBITS; i++)
+		buf[i][1] = v[i];		
 
-    for (j = 2; j <= SYS_T; j++) {
-        MC_GF_mul(mat[j], mat[j - 1], f);
-    }
+	for (k = 2; k <= SYS_T; k++)
+	{
+		vec_GF_mul(v, v, f);
 
-    // gaussian
+		if (k < SYS_T)
+		{
+			for (i = 0; i < GFBITS; i++)
+				buf[i][k] = v[i];		
+		}
+		else
+		{
+			for (i = 0; i < SYS_T; i++)
+				out[i] = extract_gf(v, i);
+		}
+	}
 
-    for (j = 0; j < SYS_T; j++) {
-        for (k = j + 1; k < SYS_T; k++) {
-            mask = MC_gf_iszero(mat[ j ][ j ]);
+	for (i = 0; i < GFBITS; i++)
+		transpose_64x64(buf[i]);
+	
+	for (j = 0; j < SYS_T; j++)
+	for (i = 0; i < GFBITS; i++)
+		mat[j][i] = buf[i][j];
 
-            for (c = j; c < SYS_T + 1; c++) {
-                mat[ c ][ j ] ^= mat[ c ][ k ] & mask;
-            }
+	// gaussian
 
-        }
+	for (i = 0; i < SYS_T; i++)
+	{
+		for (j = i+1; j < SYS_T; j++)
+		{
+			mask = extract_bit(mat[i], i);
+			mask -= 1;
 
-        if ( mat[ j ][ j ] == 0 ) { // return if not systematic
-            return -1;
-        }
+			for (k = 0; k < GFBITS; k++)
+				mat[i][k] ^= mat[j][k] & mask;
 
-        inv = MC_gf_inv(mat[j][j]);
+			out[i] ^= out[j] & mask;
+		}
 
-        for (c = j; c < SYS_T + 1; c++) {
-            mat[ c ][ j ] = MC_gf_mul(mat[ c ][ j ], inv) ;
-        }
+		//
 
-        for (k = 0; k < SYS_T; k++) {
-            if (k != j) {
-                t = mat[ j ][ k ];
+		t = extract_gf(mat[i], i);
 
-                for (c = j; c < SYS_T + 1; c++) {
-                    mat[ c ][ k ] ^= MC_gf_mul(mat[ c ][ j ], t);
-                }
-            }
-        }
-    }
+		if (gf_is_zero_declassify(t)) return -1; // return if not systematic
 
-    for (i = 0; i < SYS_T; i++) {
-        out[i] = mat[ SYS_T ][ i ];
-    }
+		//
 
-    return 0;
-}
+		inv = gf_inv(t);
+		vec_mul_gf(mat[i], mat[i], inv);
 
-/* input: permutation p represented as a list of 32-bit intergers */
-/* output: -1 if some interger repeats in p */
-/*          0 otherwise */
-int MC_perm_check(const uint32_t *p) {
-    int i;
-    uint64_t list[1 << GFBITS];
+		out[i] = gf_mul(out[i], inv);
 
-    for (i = 0; i < (1 << GFBITS); i++) {
-        list[i] = p[i];
-    }
+		for (j = 0; j < SYS_T; j++)
+		{
+			if (j != i)
+			{
+				t = extract_gf(mat[j], i);
 
-    MC_sort_63b(1 << GFBITS, list);
+				vec_mul_gf(v, mat[i], t);
+				vec_add(mat[j], mat[j], v);
 
-    for (i = 1; i < (1 << GFBITS); i++) {
-        if (list[i - 1] == list[i]) {
-            return -1;
-        }
-    }
+				out[j] ^= gf_mul(out[i], t);
+			}
+		}
+	}	
 
-    return 0;
+	return 0;
 }
 

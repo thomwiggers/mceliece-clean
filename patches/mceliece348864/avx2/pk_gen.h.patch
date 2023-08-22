@@ -1,0 +1,11 @@
+--- a/pk_gen.h	
++++ b/pk_gen.h	
+@@ -11,7 +11,7 @@
+ 
+ #include "gf.h"
+ 
+-int pk_gen(unsigned char *, const unsigned char *, uint32_t *, int16_t *);
++int pk_gen(unsigned char *pk, const unsigned char *irr, const uint32_t *perm, int16_t *pi);
+ 
+ #endif
+ 

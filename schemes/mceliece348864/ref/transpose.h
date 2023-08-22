@@ -1,13 +1,14 @@
-#ifndef MC_TRANSPOSE_H
-#define MC_TRANSPOSE_H
 /*
   This file is for matrix transposition
 */
 
+#ifndef TRANSPOSE_H
+#define TRANSPOSE_H
+#define transpose_64x64 CRYPTO_NAMESPACE(transpose_64x64)
 
 #include <stdint.h>
 
-void MC_transpose_64x64(uint64_t *, const uint64_t *);
+void transpose_64x64(uint64_t *, uint64_t *);
 
 #endif
 

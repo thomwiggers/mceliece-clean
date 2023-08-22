@@ -1,0 +1,17 @@
+--- a/vec128_mul_asm.S	
++++ b/vec128_mul_asm.S	
+@@ -1,3 +1,5 @@
++#include "namespace.h"
++
+ #define vec128_mul_asm CRYPTO_NAMESPACE(vec128_mul_asm)
+ #define _vec128_mul_asm _CRYPTO_NAMESPACE(vec128_mul_asm)
+ 
+@@ -169,8 +171,6 @@
+ 
+ # qhasm: enter vec128_mul_asm
+ .p2align 5
+-.hidden _vec128_mul_asm
+-.hidden vec128_mul_asm
+ .global _vec128_mul_asm
+ .global vec128_mul_asm
+ _vec128_mul_asm:

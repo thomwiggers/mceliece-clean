@@ -32,15 +32,14 @@ def test_makefile_dependencies(implementation, impl_path, test_dir,
     sfiles = glob.glob(os.path.join(impl_path, '*.[sS]'))
     incfiles = glob.glob(os.path.join(impl_path, '*.inc'))
     hfiles = glob.glob(os.path.join(impl_path, '*.h'))
-    affected_files = []
-    for file in (cfiles + hfiles + sfiles + incfiles):
-        try:
+    try:
+        for file in (cfiles + hfiles + sfiles + incfiles):
             check_makefile_dependencies(implementation, impl_path, file)
-        except Exception:
-            affected_files.append(os.path.basename(file))
-    if affected_files:
-        raise AssertionError("Affected files:\n" + '\n'.join(affected_files))
-    destr()
+    except Exception as e:
+        print("Affected file: {}".format(file))
+        raise e
+    finally:
+        destr()
 
 
 def touch(time, *files):
@@ -54,11 +53,8 @@ def make_check(path, expect_error=False):
     expected_returncode = 0
     if expect_error:
         expected_returncode = 1 if os.name != 'nt' else 255
-    try:
-        helpers.make(makeflag, working_dir=path,
-                     expected_returncode=expected_returncode)
-    except:
-        print("Did not get expected returncode {}".format(expected_returncode))
+    helpers.make(makeflag, working_dir=path,
+                 expected_returncode=expected_returncode)
 
 
 def check_makefile_dependencies(implementation, impl_path, file):
@@ -66,13 +62,18 @@ def check_makefile_dependencies(implementation, impl_path, file):
     sfiles = glob.glob(os.path.join(impl_path, '*.[sS]'))
     hfiles = glob.glob(os.path.join(impl_path, '*.h'))
     incfiles = glob.glob(os.path.join(impl_path, '*.inc'))
-    ofiles = glob.glob(
-        os.path.join(impl_path,
-                     '*.o' if os.name != 'nt' else '*.obj'))
-    # handle dependency o-files
+    o_ext = '*.o' if os.name != 'nt' else '*.obj'
+    ofiles = glob.glob(os.path.join(impl_path, o_ext))
+
+    # handle dependency files: these also need to be set correctly
     commondir = os.path.join(impl_path, '..', '..', '..', 'common')
-    ofiles += glob.glob(os.path.join(commondir, '*.o'))
-    ofiles += glob.glob(os.path.join(commondir, '**', '*.o'))
+    cfiles += glob.glob(os.path.join(commondir, '*.c'))
+    cfiles += glob.glob(os.path.join(commondir, '**', '*.c'))
+    hfiles += glob.glob(os.path.join(commondir, '*.h'))
+    hfiles += glob.glob(os.path.join(commondir, '**', '*.h'))
+    incfiles.append(os.path.join(commondir, 'keccak4x', 'KeccakP-1600-unrolling.macros'))
+    ofiles += glob.glob(os.path.join(commondir, o_ext))
+    ofiles += glob.glob(os.path.join(commondir, '**', o_ext))
 
     libfile = os.path.join(impl_path, implementation.libname())
 

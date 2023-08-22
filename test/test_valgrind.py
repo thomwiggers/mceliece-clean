@@ -30,11 +30,10 @@ def valgrind_supports_exit_early():
      for impl in pqclean.Scheme.all_supported_implementations()],
     ids=[str(impl) for impl in pqclean.Scheme.all_supported_implementations()],
 )
-@helpers.slow_test
 @helpers.filtered_test
 def test_valgrind(implementation: pqclean.Implementation, impl_path, test_dir,
                   init, destr):
-    if (platform.machine() not in ('i386', 'x86_64') or
+    if (platform.machine() not in ('i386', 'x86_64', 'aarch64') or
             platform.system() != 'Linux'):
         raise unittest.SkipTest()
     init()
@@ -46,6 +45,7 @@ def test_valgrind(implementation: pqclean.Implementation, impl_path, test_dir,
                  SCHEME_DIR=os.path.abspath(impl_path),
                  IMPLEMENTATION=implementation.name,
                  DEST_DIR=dest_dir,
+                 EXTRAFLAGS="-gdwarf-4",
                  NTESTS=1,
                  working_dir=os.path.join(test_dir, 'test'))
     functest_name = './functest_{}_{}'.format(implementation.scheme.name,
@@ -53,6 +53,7 @@ def test_valgrind(implementation: pqclean.Implementation, impl_path, test_dir,
     helpers.run_subprocess(
         ['valgrind',
          '--error-exitcode=1',
+         '--leak-check=yes',
          *(['--exit-on-first-error=yes']
            if valgrind_supports_exit_early()
            else []),

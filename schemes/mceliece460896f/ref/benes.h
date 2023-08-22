@@ -1,13 +1,16 @@
-#ifndef MC_BENES_H
-#define MC_BENES_H
 /*
   This file is for Benes network related functions
 */
 
+#ifndef BENES_H
+#define BENES_H
+#define apply_benes CRYPTO_NAMESPACE(apply_benes)
+#define support_gen CRYPTO_NAMESPACE(support_gen)
+
 #include "gf.h"
 
-void MC_apply_benes(uint8_t *r, const uint8_t *bits, int rev);
-void MC_support_gen(gf *s, const uint8_t *c);
+void apply_benes(unsigned char *, const unsigned char *, int);
+void support_gen(gf *, const unsigned char *);
 
 #endif
 

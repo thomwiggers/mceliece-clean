@@ -1,0 +1,38 @@
+name: Classic McEliece {{ size }}
+type: kem
+claimed-nist-level: {{ nist_level }}
+claimed-security: IND-CCA2
+length-public-key: {{ pk_bytes }}
+length-secret-key: {{ sk_bytes }}
+length-ciphertext: {{ ct_bytes }}
+length-shared-secret: {{ ss_bytes }}
+nistkat-sha256: {{ kat_hash }}
+principal-submitters:
+  - Daniel J. Bernstein
+  - Tung Chou
+  - Tanja Lange
+  - Ingo von Maurich
+  - Rafael Misoczki
+  - Ruben Niederhagen
+  - Edoardo Persichetti
+  - Christiane Peters
+  - Peter Schwabe
+  - Nicolas Sendrier
+  - Jakub Szefer
+  - Wen Wang
+auxiliary-submitters: []
+implementations:
+    - name: clean
+      version: {{ version }}
+    - name: avx2
+      version: {{version}}
+      supported_platforms:
+        - architecture: x86_64
+          operating_systems:
+            - Linux
+            - Darwin
+          required_flags:
+            - avx2
+            - popcnt{% if "f" in scheme %}
+            - bmi1
+{% endif %}

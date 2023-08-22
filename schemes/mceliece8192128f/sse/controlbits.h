@@ -1,15 +1,14 @@
-#ifndef MC_CONTROLBITS_H
-#define MC_CONTROLBITS_H
-/*
-  This file is for functions required for generating the control bits of the Benes network w.r.t. a random permutation
-  see the Lev-Pippenger-Valiant paper https://www.computer.org/csdl/trans/tc/1981/02/06312171.pdf
-*/
+/* This file is for implementing the Nassimi-Sahni algorithm */
+/* See David Nassimi, Sartaj Sahni "Parallel algorithms to set up the Benes permutationnetwork" */
+/* See also https://cr.yp.to/papers/controlbits-20200923.pdf */
 
+#ifndef CONTROLBITS_H
+#define CONTROLBITS_H
 
-#include <stdint.h>
+#define controlbitsfrompermutation CRYPTO_NAMESPACE(controlbitsfrompermutation)
 
-void MC_sort_63b(int n, uint64_t *x);
-void MC_controlbits(unsigned char *out, const uint32_t *pi);
+#include <inttypes.h>
+
+extern void controlbitsfrompermutation(unsigned char *,const int16_t *,long long,long long);
 
 #endif
-

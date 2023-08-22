@@ -1,13 +1,13 @@
-#ifndef MC_BM_H
-#define MC_BM_H
 /*
   This file is for the Berlekamp-Massey algorithm
   see http://crypto.stanford.edu/~mironov/cs359/massey.pdf
 */
 
-#include "gf.h"
+#ifndef BM_H
+#define BM_H
+#define bm CRYPTO_NAMESPACE(bm)
 
-void MC_bm(gf *, gf *);
+void bm(gf *, gf *);
 
 #endif
 

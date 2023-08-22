@@ -1,0 +1,47 @@
+--- a/operations.c	
++++ b/operations.c	
+@@ -3,7 +3,6 @@
+ #include "controlbits.h"
+ #include "randombytes.h"
+ #include "crypto_hash.h"
+-#include "encrypt.h"
+ #include "decrypt.h"
+ #include "params.h"
+ #include "sk_gen.h"
+@@ -13,6 +12,9 @@
+ #include <stdint.h>
+ #include <string.h>
+ 
++/* Include last because of issues with unistd.h's encrypt definition */
++#include "encrypt.h"
++
+ /* check if the padding bits of pk are all zero */
+ static int check_pk_padding(const unsigned char * pk)
+ {
+@@ -55,7 +57,7 @@
+ 
+ 	// clear outputs (set to all 0's) if padding bits are not all zero
+ 
+-	mask = padding_ok;
++	mask = (unsigned char)padding_ok;
+ 	mask ^= 0xFF;
+ 
+ 	for (i = 0; i < SYND_BYTES; i++)
+@@ -103,7 +105,7 @@
+ 
+ 	padding_ok = check_c_padding(c);
+ 
+-	ret_decrypt = decrypt(e, sk + 40, c);
++	ret_decrypt = (unsigned char)decrypt(e, sk + 40, c);
+ 
+ 	m = ret_decrypt;
+ 	m -= 1;
+@@ -120,7 +122,7 @@
+ 
+ 	// clear outputs (set to all 1's) if padding bits are not all zero
+ 
+-	mask = padding_ok;
++	mask = (unsigned char)padding_ok;
+ 
+ 	for (i = 0; i < 32; i++)
+ 		key[i] |= mask;

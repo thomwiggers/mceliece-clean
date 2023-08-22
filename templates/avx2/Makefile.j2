@@ -1,0 +1,29 @@
+# This Makefile can be used with GNU Make or BSD Make
+
+LIB = lib{{scheme}}_avx2.a
+
+SOURCES = {{ sources | join(" ") | wordwrap(wrapstring=" \\\n\t\t") }}
+
+HEADERS = {{ headers | join(" ") | wordwrap(wrapstring=" \\\n\t\t") }}
+
+OBJECTS = {{ objects | join(" ") | wordwrap(wrapstring=" \\\n\t\t") }}
+
+
+CFLAGS  = -O3 -std=c99 -mpopcnt -mavx2 -Wall -Wextra -pedantic -Werror -Wpedantic \
+		  -fwrapv -Wredundant-decls -Wcast-align -Wmissing-prototypes \
+		  -I../../../common/ $(EXTRAFLAGS)
+
+all: $(LIB)
+
+%.o: %.c $(HEADERS)
+	$(CC) $(CFLAGS)   -c -o $@ $<
+
+%.o: %.S
+	$(CC) -c -o $@ $<
+
+$(LIB): $(OBJECTS)
+	$(AR) -r $@ $(OBJECTS)
+
+clean:
+	$(RM) $(OBJECTS)
+	$(RM) $(LIB)

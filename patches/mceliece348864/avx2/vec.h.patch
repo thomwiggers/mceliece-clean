@@ -1,0 +1,11 @@
+--- a/vec.h	
++++ b/vec.h	
+@@ -48,7 +48,7 @@
+ 	vec_mul_asm(out, v, bits);
+ }
+ 
+-void vec_GF_mul(vec [], vec [], gf []);
++void vec_GF_mul(vec out[GFBITS], vec v[GFBITS], gf a[SYS_T]);
+ 
+ #endif
+ 

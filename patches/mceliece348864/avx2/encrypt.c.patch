@@ -1,0 +1,20 @@
+--- a/encrypt.c	
++++ b/encrypt.c	
+@@ -4,7 +4,6 @@
+   This file is for Niederreiter encryption
+ */
+ 
+-#include "encrypt.h"
+ 
+ #include "util.h"
+ #include "params.h"
+@@ -13,6 +12,9 @@
+ #include "crypto_declassify.h"
+ #include "crypto_uint16.h"
+ #include "crypto_uint32.h"
++
++/* include last because of conflict with unistd.h's encrypt function */
++#include "encrypt.h"
+ 
+ static inline crypto_uint16 uint16_is_smaller_declassify(uint16_t t,uint16_t u)
+ {

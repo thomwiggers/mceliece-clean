@@ -1,6 +1,5 @@
-#include "api.h"
+#include "operations.h"
 
-#include "aes256ctr.h"
 #include "controlbits.h"
 #include "randombytes.h"
 #include "crypto_hash.h"
@@ -14,123 +13,135 @@
 #include <stdint.h>
 #include <string.h>
 
-int MC_crypto_kem_enc(
-    uint8_t *c,
-    uint8_t *key,
-    const uint8_t *pk
-) {
-    uint8_t two_e[ 1 + SYS_N / 8 ] = {2};
-    uint8_t *e = two_e + 1;
-    uint8_t one_ec[ 1 + SYS_N / 8 + (SYND_BYTES + 32) ] = {1};
+int crypto_kem_enc(
+       unsigned char *c,
+       unsigned char *key,
+       const unsigned char *pk
+)
+{
+	unsigned char e[ SYS_N/8 ];
+	unsigned char one_ec[ 1 + SYS_N/8 + SYND_BYTES ] = {1};
 
-    MC_encrypt(c, e, pk);
+	//
 
-    crypto_hash_32b(c + SYND_BYTES, two_e, sizeof(two_e));
+	encrypt(c, pk, e);
 
-    memcpy(one_ec + 1, e, SYS_N / 8);
-    memcpy(one_ec + 1 + SYS_N / 8, c, SYND_BYTES + 32);
+	memcpy(one_ec + 1, e, SYS_N/8);
+	memcpy(one_ec + 1 + SYS_N/8, c, SYND_BYTES);
 
-    crypto_hash_32b(key, one_ec, sizeof(one_ec));
+	crypto_hash_32b(key, one_ec, sizeof(one_ec));
 
-    return 0;
+	return 0;
 }
 
-int MC_crypto_kem_dec(
-    uint8_t *key,
-    const uint8_t *c,
-    const uint8_t *sk
-) {
-    int i;
+int crypto_kem_dec(
+       unsigned char *key,
+       const unsigned char *c,
+       const unsigned char *sk
+)
+{
+	int i;
 
-    uint8_t ret_confirm = 0;
-    uint8_t ret_decrypt = 0;
+	unsigned char ret_decrypt = 0;
 
-    uint16_t m;
+	uint16_t m;
 
-    uint8_t conf[32];
-    uint8_t two_e[ 1 + SYS_N / 8 ] = {2};
-    uint8_t *e = two_e + 1;
-    uint8_t preimage[ 1 + SYS_N / 8 + (SYND_BYTES + 32) ];
-    uint8_t *x = preimage;
+	unsigned char e[ SYS_N/8 ];
+	unsigned char preimage[ 1 + SYS_N/8 + SYND_BYTES ];
+	unsigned char *x = preimage;
+	const unsigned char *s = sk + 40 + IRR_BYTES + COND_BYTES;
 
-    //
+	//
 
-    ret_decrypt = (uint8_t)MC_decrypt(e, sk + SYS_N / 8, c);
+	ret_decrypt = decrypt(e, sk + 40, c);
 
-    crypto_hash_32b(conf, two_e, sizeof(two_e));
+	m = ret_decrypt;
+	m -= 1;
+	m >>= 8;
 
-    for (i = 0; i < 32; i++) {
-        ret_confirm |= conf[i] ^ c[SYND_BYTES + i];
-    }
+	*x++ = m & 1;
+	for (i = 0; i < SYS_N/8; i++) 
+		*x++ = (~m & s[i]) | (m & e[i]);
 
-    m = ret_decrypt | ret_confirm;
-    m -= 1;
-    m >>= 8;
+	for (i = 0; i < SYND_BYTES; i++) 
+		*x++ = c[i];
 
-    *x++ = (~m &     0) | (m &    1);
-    for (i = 0; i < SYS_N / 8;         i++) {
-        *x++ = (~m & sk[i]) | (m & e[i]);
-    }
-    for (i = 0; i < SYND_BYTES + 32; i++) {
-        *x++ = c[i];
-    }
+	crypto_hash_32b(key, preimage, sizeof(preimage)); 
 
-    crypto_hash_32b(key, preimage, sizeof(preimage));
-
-    return 0;
+	return 0;
 }
 
-int MC_crypto_kem_keypair
+int crypto_kem_keypair
 (
-    uint8_t *pk,
-    uint8_t *sk
-) {
-    int i;
-    uint8_t seed[ 32 ];
-    uint8_t r[ SYS_T * 2 + (1 << GFBITS)*sizeof(uint32_t) + SYS_N / 8 + 32 ];
-    uint8_t nonce[ 16 ] = {0};
-    uint8_t *rp;
+       unsigned char *pk,
+       unsigned char *sk 
+)
+{
+	int i;
+	unsigned char seed[ 33 ] = {64};
+	unsigned char r[ SYS_N/8 + (1 << GFBITS)*sizeof(uint32_t) + SYS_T*2 + 32 ];
+	unsigned char *rp, *skp;
+	uint64_t pivots;
 
-    gf f[ SYS_T ]; // element in GF(2^mt)
-    gf irr[ SYS_T ]; // Goppa polynomial
-    uint32_t perm[ 1 << GFBITS ]; // random permutation
+	gf f[ SYS_T ]; // element in GF(2^mt)
+	gf irr[ SYS_T ]; // Goppa polynomial
+	uint32_t perm[ 1 << GFBITS ]; // random permutation as 32-bit integers
+	int16_t pi[ 1 << GFBITS ]; // random permutation
 
-    randombytes(seed, sizeof(seed));
+	randombytes(seed+1, 32);
 
-    while (1) {
-        rp = r;
-        MC_aes256ctr(r, sizeof(r), nonce, seed);
-        memcpy(seed, &r[ sizeof(r) - 32 ], 32);
+	while (1)
+	{
+		rp = &r[ sizeof(r)-32 ];
+		skp = sk;
 
-        for (i = 0; i < SYS_T; i++) {
-            f[i] = MC_load2(rp + i * 2);
-        }
-        rp += sizeof(f);
-        if (MC_genpoly_gen(irr, f)) {
-            continue;
-        }
+		// expanding and updating the seed
 
-        for (i = 0; i < (1 << GFBITS); i++) {
-            perm[i] = MC_load4(rp + i * 4);
-        }
-        rp += sizeof(perm);
-        if (MC_perm_check(perm)) {
-            continue;
-        }
+		shake(r, sizeof(r), seed, 33);
+		memcpy(skp, seed+1, 32);
+		skp += 32 + 8;
+		memcpy(seed+1, &r[ sizeof(r)-32 ], 32);
 
-        for (i = 0; i < SYS_T;   i++) {
-            MC_store2(sk + SYS_N / 8 + i * 2, irr[i]);
-        }
-        if (MC_pk_gen(pk, perm, sk + SYS_N / 8)) {
-            continue;
-        }
+		// generating irreducible polynomial
 
-        memcpy(sk, rp, SYS_N / 8);
-        MC_controlbits(sk + SYS_N / 8 + IRR_BYTES, perm);
+		rp -= sizeof(f); 
 
-        break;
-    }
+		for (i = 0; i < SYS_T; i++) 
+			f[i] = load_gf(rp + i*2); 
 
-    return 0;
+		if (genpoly_gen(irr, f)) 
+			continue;
+
+		for (i = 0; i < SYS_T; i++)
+			store_gf(skp + i*2, irr[i]);
+
+		skp += IRR_BYTES;
+
+		// generating permutation
+
+		rp -= sizeof(perm);
+
+		for (i = 0; i < (1 << GFBITS); i++) 
+			perm[i] = load4(rp + i*4); 
+
+		if (pk_gen(pk, skp - IRR_BYTES, perm, pi, &pivots))
+			continue;
+
+		controlbitsfrompermutation(skp, pi, GFBITS, 1 << GFBITS);
+		skp += COND_BYTES;
+
+		// storing the random string s
+
+		rp -= SYS_N/8;
+		memcpy(skp, rp, SYS_N/8);
+
+		// storing positions of the 32 pivots
+
+		store8(sk + 32, pivots);
+
+		break;
+	}
+
+	return 0;
 }
 
